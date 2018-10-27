@@ -2,10 +2,10 @@ package opdracht_optimalisatietechnieken;
 
 public class Location {
 	private int id;
-	private int latitude;
-	private int longitude;
+	private double latitude;
+	private double longitude;
 	
-	public Location(int id, int latitude, int longitude) {
+	public Location(int id, double latitude, double longitude) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -19,19 +19,24 @@ public class Location {
 		this.id = id;
 	}
 
-	public int getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(int latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public int getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(int longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+
+	@Override
+	public String toString() {
+		return "Locatie met id: " +  id + "\tlatitude:" + latitude + "\tlongitude: " + longitude;
 	}
 }
