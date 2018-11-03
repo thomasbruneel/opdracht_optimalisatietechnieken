@@ -9,7 +9,7 @@ import java.util.*;
 public class Main {
 
 	public static void main(String[] args) {
-		String fileName = "tvh_problem_1.txt";
+		String fileName = "tvh_problem_3.txt";
 		String line = "";
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
@@ -18,7 +18,7 @@ public class Main {
 			// skip first line
 			bufferedReader.readLine();
 
-			// truck cap, truck working time, service time
+			// truck cap, truck working time
 			sc = new Scanner(bufferedReader.readLine());
 			sc.next();
 			int TRUCK_CAPACITY = sc.nextInt();
@@ -27,10 +27,7 @@ public class Main {
 			sc.next();
 			int TRUCK_WORKING_TIME = sc.nextInt();
 			sc.close();
-			sc = new Scanner(bufferedReader.readLine());
-			sc.next();
-			int SERVICE_TIME = sc.nextInt();
-			sc.close();
+
 			// skip empty line
 			bufferedReader.readLine();
 
@@ -46,12 +43,13 @@ public class Main {
 				int id = Integer.parseInt(array[0]);
 				double latitude = Double.parseDouble(array[1]);
 				double longitude = Double.parseDouble(array[2]);
-				locationList.add(new Location(id, latitude, longitude));
+				String name = array[3];
+				locationList.add(new Location(id, latitude, longitude, name));
 			}
-			
+
 			// skip empty line
 			bufferedReader.readLine();
-			
+
 			// DEPOTS
 			// adding location-objects to locationList
 			List<Depot> depotList = new ArrayList<Depot>();
@@ -65,7 +63,7 @@ public class Main {
 				Location location = locationList.get(Integer.parseInt(array[1]));
 				depotList.add(new Depot(id, location));
 			}
-			
+
 			// skip empty line
 			bufferedReader.readLine();
 
@@ -85,7 +83,7 @@ public class Main {
 			}
 			// skip empty line
 			bufferedReader.readLine();
-			
+
 			// MACHINE TYPES
 			// adding type-objects to machineTypeList
 			List<MachineType> machineTypeList = new ArrayList<MachineType>();
@@ -97,13 +95,14 @@ public class Main {
 				String[] array = bufferedReader.readLine().trim().split("\\s+");
 				int id = Integer.parseInt(array[0]);
 				int volume = Integer.parseInt(array[1]);
-				String typeName = array[2];
-				machineTypeList.add(new MachineType(id, volume, typeName));
+				int serviceTime = Integer.parseInt(array[2]);
+				String typeName = array[3];
+				machineTypeList.add(new MachineType(id, volume, serviceTime, typeName));
 			}
-			
+
 			// skip empty line
 			bufferedReader.readLine();
-			
+
 			// MACHINE TYPES
 			// adding type-objects to machineTypeList
 			List<Machine> machineList = new ArrayList<Machine>();
@@ -118,10 +117,10 @@ public class Main {
 				Location location = locationList.get(Integer.parseInt(array[2]));
 				machineList.add(new Machine(id, machineType, location));
 			}
-			
+
 			// skip empty line
-			bufferedReader.readLine();		
-			
+			bufferedReader.readLine();
+
 			// DROPS
 			// adding drop-objects to dropList
 			List<Drop> dropList = new ArrayList<Drop>();
@@ -136,10 +135,10 @@ public class Main {
 				Location location = locationList.get(Integer.parseInt(array[2]));
 				dropList.add(new Drop(id, machineType, location));
 			}
-			
+
 			// skip empty line
-			bufferedReader.readLine();	
-			
+			bufferedReader.readLine();
+
 			// COLLECTS
 			// adding collect-objects to dropList
 			List<Collect> collectList = new ArrayList<Collect>();
@@ -151,15 +150,14 @@ public class Main {
 				String[] array = bufferedReader.readLine().trim().split("\\s+");
 				int id = Integer.parseInt(array[0]);
 				Machine machine = machineList.get(Integer.parseInt(array[1]));
-				Location location = locationList.get(Integer.parseInt(array[2]));
-				collectList.add(new Collect(id, machine, location));
-			}			
-			
+				collectList.add(new Collect(id, machine));
+			}
+
 			// skip empty line
 			bufferedReader.readLine();
 			// skip unnecessary line
-			bufferedReader.readLine();	
-			
+			bufferedReader.readLine();
+
 			int[][] timeMatrix = new int[numberOfLocations][numberOfLocations];
 			for (int i = 0; i < timeMatrix.length; i++) {
 				String[] array = bufferedReader.readLine().trim().split("\\s+");
@@ -167,12 +165,12 @@ public class Main {
 					timeMatrix[i][j] = Integer.parseInt(array[j]);
 				}
 			}
-			
+
 			// skip empty line
 			bufferedReader.readLine();
 			// skip unnecessary line
-			bufferedReader.readLine();			
-						
+			bufferedReader.readLine();
+
 			int[][] distanceMatrix = new int[numberOfLocations][numberOfLocations];
 			for (int i = 0; i < timeMatrix.length; i++) {
 				String[] array = bufferedReader.readLine().trim().split("\\s+");
@@ -180,12 +178,13 @@ public class Main {
 					distanceMatrix[i][j] = Integer.parseInt(array[j]);
 				}
 			}
-			
-			
-			
-			
-		
 			bufferedReader.close();
+
+			Problem p = new Problem(TRUCK_CAPACITY, TRUCK_WORKING_TIME, locationList, depotList, truckList,
+					machineTypeList, machineList, dropList, collectList, timeMatrix, distanceMatrix);
+			System.out.println(p.getDepotList().get(0).toString());
+			
+			p.solve();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

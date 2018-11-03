@@ -4,11 +4,13 @@ public class MachineType {
 
 	private int id;
 	private int volume;
+	private int serviceTime;
 	private String typeName;
 	
-	public MachineType(int id, int volume, String typeName) {
+	public MachineType(int id, int volume, int serviceTime, String typeName) {
 		this.id = id;
 		this.volume = volume;
+		this.serviceTime = serviceTime;
 		this.typeName = typeName;
 	}
 
@@ -28,6 +30,14 @@ public class MachineType {
 		this.volume = volume;
 	}
 
+	public int getServiceTime() {
+		return serviceTime;
+	}
+
+	public void setServiceTime(int serviceTime) {
+		this.serviceTime = serviceTime;
+	}
+
 	public String getTypeName() {
 		return typeName;
 	}
@@ -38,7 +48,8 @@ public class MachineType {
 	
 	@Override
 	public String toString() {
-		return "Machine-type met id: " + id + " met een volume van: " + volume + " en typenaam : " + typeName;
+		return "Machine-type met id: " + id + " met een volume van: " + volume + ", servicetijd van:" + serviceTime 
+				+ " en typenaam : " + typeName;
 	}
 	
 	

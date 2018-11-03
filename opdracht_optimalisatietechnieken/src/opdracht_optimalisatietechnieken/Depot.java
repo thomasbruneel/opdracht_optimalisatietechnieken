@@ -28,7 +28,7 @@ public class Depot {
 	
 	@Override
 	public String toString() {
-		return "Depot met id: " +  id + "op locatie met gegevens: " + location;
+		return "Depot met id: " +  id + " op locatie met gegevens: " + location;
 	}
 
 }

@@ -6,81 +6,77 @@ import java.util.List;
 public class Problem {
 	private final int TRUCK_CAPACITY;
 	private final int TRUCK_WORKING_TIME;
-	private final int SERVICE_TIME;
-	private List<Location> location;
-	private List<Depot> depot;
-	private List<Truck> truck;
-	private List<MachineType> machineType;
-	private List<Machine> machine;
-	private List<Drop> drop;
-	private List<Collect> collect;
+	private List<Location> locationList;
+	private List<Depot> depotList;
+	private List<Truck> truckList;
+	private List<MachineType> machineTypeList;
+	private List<Machine> machineList;
+	private List<Drop> dropList;
+	private List<Collect> collectList;
 	private int[][] timeMatrix;
 	private int[][] distanceMatrix;
 	
-	public Problem(int TRUCK_CAPACITY, int TRUCK_WORKING_TIME, int SERVICE_TIME, List<Location> location,
-			List<Depot> depot, List<Truck> truck, List<MachineType> machineType, List<Machine> machine, List<Drop> drop,
-			List<Collect> collect, int[][] timeMatrix, int[][] distanceMatrix) {
-		super();
-		this.TRUCK_CAPACITY = TRUCK_CAPACITY;
-		this.TRUCK_WORKING_TIME = TRUCK_WORKING_TIME;
-		this.SERVICE_TIME = SERVICE_TIME;
-		this.location = location;
-		this.depot = depot;
-		this.truck = truck;
-		this.machineType = machineType;
-		this.machine = machine;
-		this.drop = drop;
-		this.collect = collect;
+	public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
+			List<Truck> truckList, List<MachineType> machineTypeList, List<Machine> machineList, List<Drop> dropList,
+			List<Collect> collectList, int[][] timeMatrix, int[][] distanceMatrix) {
+		TRUCK_CAPACITY = tRUCK_CAPACITY;
+		TRUCK_WORKING_TIME = tRUCK_WORKING_TIME;
+		this.locationList = locationList;
+		this.depotList = depotList;
+		this.truckList = truckList;
+		this.machineTypeList = machineTypeList;
+		this.machineList = machineList;
+		this.dropList = dropList;
+		this.collectList = collectList;
 		this.timeMatrix = timeMatrix;
 		this.distanceMatrix = distanceMatrix;
 	}
 	
-	public void Solve() {
-		// TODO 
+	public void solve() {
+	 // TODO svekke-generated method	
 	}
 	
-	// GETTERS AND SETTERS
-	public List<Location> getLocation() {
-		return location;
+	public List<Location> getLocationList() {
+		return locationList;
 	}
-	public void setLocation(List<Location> location) {
-		this.location = location;
+	public void setLocationList(List<Location> locationList) {
+		this.locationList = locationList;
 	}
-	public List<Depot> getDepot() {
-		return depot;
+	public List<Depot> getDepotList() {
+		return depotList;
 	}
-	public void setDepot(List<Depot> depot) {
-		this.depot = depot;
+	public void setDepotList(List<Depot> depotList) {
+		this.depotList = depotList;
 	}
-	public List<Truck> getTruck() {
-		return truck;
+	public List<Truck> getTruckList() {
+		return truckList;
 	}
-	public void setTruck(List<Truck> truck) {
-		this.truck = truck;
+	public void setTruckList(List<Truck> truckList) {
+		this.truckList = truckList;
 	}
-	public List<MachineType> getMachineType() {
-		return machineType;
+	public List<MachineType> getMachineTypeList() {
+		return machineTypeList;
 	}
-	public void setMachineType(List<MachineType> machineType) {
-		this.machineType = machineType;
+	public void setMachineTypeList(List<MachineType> machineTypeList) {
+		this.machineTypeList = machineTypeList;
 	}
-	public List<Machine> getMachine() {
-		return machine;
+	public List<Machine> getMachineList() {
+		return machineList;
 	}
-	public void setMachine(List<Machine> machine) {
-		this.machine = machine;
+	public void setMachineList(List<Machine> machineList) {
+		this.machineList = machineList;
 	}
-	public List<Drop> getDrop() {
-		return drop;
+	public List<Drop> getDropList() {
+		return dropList;
 	}
-	public void setDrop(List<Drop> drop) {
-		this.drop = drop;
+	public void setDropList(List<Drop> dropList) {
+		this.dropList = dropList;
 	}
-	public List<Collect> getCollect() {
-		return collect;
+	public List<Collect> getCollectList() {
+		return collectList;
 	}
-	public void setCollect(List<Collect> collect) {
-		this.collect = collect;
+	public void setCollectList(List<Collect> collectList) {
+		this.collectList = collectList;
 	}
 	public int[][] getTimeMatrix() {
 		return timeMatrix;
@@ -99,9 +95,6 @@ public class Problem {
 	}
 	public int getTRUCK_WORKING_TIME() {
 		return TRUCK_WORKING_TIME;
-	}
-	public int getSERVICE_TIME() {
-		return SERVICE_TIME;
 	}
 	
 	
