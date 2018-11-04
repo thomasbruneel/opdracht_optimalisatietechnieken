@@ -35,7 +35,9 @@ public class Problem {
 	public void solve() {
 	 // TODO svekke-generated method	
 	}
-	
+
+
+	//Getters & Setters
 	public List<Location> getLocationList() {
 		return locationList;
 	}
