@@ -6,26 +6,32 @@ import java.util.Map;
 
 public class Solution {
 
-    Map<Integer, List<Location>> oplossing;
-    int AantalKm;
+    Map<Truck, List<Location>> oplossing;
+    int aantalKm;
 
     public Solution() {
         oplossing = new HashMap<>();
     }
-
-    public Map<Integer, List<Location>> getOplossing() {
-        return oplossing;
+    
+    public void addOplossing(Truck truck,List<Location> locaties){
+    	oplossing.put(truck, locaties);
     }
 
-    public void setOplossing(Map<Integer, List<Location>> oplossing) {
-        this.oplossing = oplossing;
-    }
+    public Map<Truck, List<Location>> getOplossing() {
+		return oplossing;
+	}
 
-    public int getAantalKm() {
-        return AantalKm;
-    }
+	public void setOplossing(Map<Truck, List<Location>> oplossing) {
+		this.oplossing = oplossing;
+	}
 
-    public void setAantalKm(int aantalKm) {
-        AantalKm = aantalKm;
-    }
+	public int getAantalKm() {
+		return aantalKm;
+	}
+
+	public void setAantalKm(int aantalKm) {
+		this.aantalKm = aantalKm;
+	}
+
+
 }
