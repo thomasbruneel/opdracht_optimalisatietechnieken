@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c039d4d0-3997-46ee-b5d7-63b4592a92ca" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Solution.java" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Solution.java" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,17 +17,11 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1366">
-              <caret line="177" column="70" lean-forward="true" selection-start-line="177" selection-start-column="70" selection-end-line="177" selection-end-column="70" />
+            <state relative-caret-position="1135">
+              <caret line="166" column="0" lean-forward="true" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#902#912#0" expanded="true" />
-                <element signature="e#1551#1558#0" expanded="true" />
-                <element signature="e#2099#2106#0" expanded="true" />
-                <element signature="e#2766#2779#0" expanded="true" />
-                <element signature="e#3438#3447#0" expanded="true" />
-                <element signature="e#4083#4089#0" expanded="true" />
-                <element signature="e#4725#4734#0" expanded="true" />
+                <marker date="1541342346592" expanded="true" signature="8102:8103" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -75,7 +66,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="42">
               <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-              <folding />
+              <folding>
+                <marker date="1541342346553" expanded="true" signature="992:993" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -93,8 +86,8 @@
       <file leaf-file-name="Collect.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Collect.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="27" column="4" lean-forward="true" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
+            <state relative-caret-position="672">
+              <caret line="32" column="0" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -105,7 +98,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="63">
               <caret line="3" column="17" lean-forward="false" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
-              <folding />
+              <folding>
+                <marker date="1541342346599" expanded="true" signature="1033:1034" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -129,7 +124,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
     <option name="width" value="976" />
@@ -314,7 +309,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -361,13 +356,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#902#912#0" expanded="true" />
-            <element signature="e#1551#1558#0" expanded="true" />
-            <element signature="e#2099#2106#0" expanded="true" />
-            <element signature="e#2766#2779#0" expanded="true" />
-            <element signature="e#3438#3447#0" expanded="true" />
-            <element signature="e#4083#4089#0" expanded="true" />
-            <element signature="e#4725#4734#0" expanded="true" />
+            <marker date="1541342346592" expanded="true" signature="8102:8103" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -376,31 +365,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="63">
           <caret line="3" column="17" lean-forward="false" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
-          <folding />
+          <folding>
+            <marker date="1541342346599" expanded="true" signature="1033:1034" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1366">
-          <caret line="177" column="70" lean-forward="true" selection-start-line="177" selection-start-column="70" selection-end-line="177" selection-end-column="70" />
+        <state relative-caret-position="1135">
+          <caret line="166" column="0" lean-forward="true" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#902#912#0" expanded="true" />
-            <element signature="e#1551#1558#0" expanded="true" />
-            <element signature="e#2099#2106#0" expanded="true" />
-            <element signature="e#2766#2779#0" expanded="true" />
-            <element signature="e#3438#3447#0" expanded="true" />
-            <element signature="e#4083#4089#0" expanded="true" />
-            <element signature="e#4725#4734#0" expanded="true" />
+            <marker date="1541342346592" expanded="true" signature="8102:8103" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Collect.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="27" column="4" lean-forward="true" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
+        <state relative-caret-position="672">
+          <caret line="32" column="0" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -409,7 +394,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="42">
           <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-          <folding />
+          <folding>
+            <marker date="1541342346553" expanded="true" signature="992:993" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
