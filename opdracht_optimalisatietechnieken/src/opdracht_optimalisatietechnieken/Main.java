@@ -8,11 +8,18 @@ import java.util.*;
 
 public class Main {
 
+    public static final String FILENAME = "tvh_problem_3.txt";
+
     public static void main(String[] args) {
-        String fileName = "tvh_problem_3.txt";
-        String line = "";
+
+        Problem p = readInput();
+        p.solve();
+    }
+
+    private static Problem readInput() {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+            System.out.println("Reading input...");
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(FILENAME));
             Scanner sc;
 
             // skip first line
@@ -183,23 +190,19 @@ public class Main {
             Problem p = new Problem(TRUCK_CAPACITY, TRUCK_WORKING_TIME, locationList, depotList, truckList,
                     machineTypeList, machineList, dropList, collectList, timeMatrix, distanceMatrix);
             System.out.println(p.getDepotList().get(0).toString());
-
-            Solution s = new Solution();
-            s.addSolution(truckList.get(1), locationList);
-            s.calculateTotalKm(p.getDistanceMatrix());
-
-            p.solve();
-
+            System.out.println("Input OK");
+            return p;
 
 
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+            System.out.println("Error reading file '" + FILENAME + "'");
             e.printStackTrace();
         } catch (IOException ex) {
-            System.out.println("Error reading file '" + fileName + "'");
+            System.out.println("Error reading file '" + FILENAME + "'");
             // Or we could just do this:
             // ex.printStackTrace();
         }
+        return null;
     }
 
 }

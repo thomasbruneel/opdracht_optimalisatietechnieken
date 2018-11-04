@@ -3,11 +3,8 @@ package opdracht_optimalisatietechnieken;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-<<<<<<< HEAD
 import java.util.Map;
-=======
 import java.util.Random;
->>>>>>> 1aa36c33d1941c477d03f4019416b4b805b1dcb7
 
 public class Problem {
     private final int TRUCK_CAPACITY;
