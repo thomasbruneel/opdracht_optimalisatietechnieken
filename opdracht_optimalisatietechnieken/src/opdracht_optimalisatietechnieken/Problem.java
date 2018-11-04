@@ -33,8 +33,13 @@ public class Problem {
 	}
 	
 	public void solve() {
-	 // TODO svekke-generated method	
-	}
+
+	    boolean isFeasible = false;
+	 // Initiële feasible oplossing maken
+        do {
+
+        }while (isFeasible);
+    }
 
 
 	//Getters & Setters
