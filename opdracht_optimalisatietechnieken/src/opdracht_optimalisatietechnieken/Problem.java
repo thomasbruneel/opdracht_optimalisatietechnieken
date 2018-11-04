@@ -95,16 +95,13 @@ public class Problem {
     		int previousLocation=-1;
     		
     	    for(Action a:actions){
-    	    	if(previousLocation==-1){	//startlocatie
+    	    	if(previousLocation==-1){	//startlocatie enkel collect mogelijk
     	    		if(a.getType()==true){		//type is collect
         	    		capacity=capacity+a.getMachine().getMachineType().getVolume();
         	    		
         	    	}
-        	    	else{		//type is drop
-        	    		capacity=capacity-a.getMachine().getMachineType().getVolume();
-        	    	}
+        	    	
     	    		// nog geen driving time berekenen
-    	    		
     	    		
     	    	}
     	    	else{
@@ -115,7 +112,7 @@ public class Problem {
         	    	else{		//type is drop
         	    		capacity=capacity-a.getMachine().getMachineType().getVolume();
         	    	}
-    	    		drivingTime=drivingTime+distanceMatrix[previousLocation][a.getLocation().getId()];
+    	    		drivingTime=drivingTime+timeMatrix[previousLocation][a.getLocation().getId()];
     	    	}
     	    	previousLocation=a.getLocation().getId();
     	    	serviceTime=serviceTime+a.getMachine().getMachineType().getServiceTime();
