@@ -46,12 +46,12 @@ public class Solution {
             int temp = 0;
             Location start = entry.getKey().getStartLocation();
             Location end = entry.getKey().getEndLocation();
-            for (Location l : entry.getValue()) {
-                if (entry.getValue().indexOf(l) == 0) {
-                    temp += distanceMatrix[start.getId()][l.getId()];
+            for (Action action : entry.getValue()) {
+                if (entry.getValue().indexOf(action) == 0) {
+                    temp += distanceMatrix[start.getId()][action.getLocation().getId()];
                 } else {
-                    int index = entry.getValue().indexOf(l);
-                    temp += distanceMatrix[entry.getValue().get(index - 1).getId()][l.getId()];
+                    int index = entry.getValue().indexOf(action);
+                    temp += distanceMatrix[entry.getValue().get(index - 1).getLocation().getId()][action.getLocation().getId()];
                 }
             }
             result += temp;

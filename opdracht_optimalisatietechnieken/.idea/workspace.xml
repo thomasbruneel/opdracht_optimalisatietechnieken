@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c039d4d0-3997-46ee-b5d7-63b4592a92ca" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Collect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Collect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Depot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Depot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Drop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Drop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Location.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Location.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Machine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Machine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/MachineType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/MachineType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Solution.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Solution.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Truck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Truck.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,35 +23,35 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="7" />
+          <entry key="java" value="10" />
           <entry key="txt" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="7" />
+          <entry key="JAVA" value="10" />
           <entry key="PLAIN_TEXT" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="961" />
+          <entry key="java" value="1294" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="961" />
+          <entry key="JAVA" value="1294" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="190" selection-start-line="190" selection-end-line="190" />
+            <state relative-caret-position="117">
+              <caret line="191" column="40" selection-start-line="191" selection-start-column="40" selection-end-line="191" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -66,16 +59,36 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tvh_problem_3.txt">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="228" column="78" selection-start-line="228" selection-start-column="78" selection-end-line="228" selection-end-column="78" />
+            <state relative-caret-position="714">
+              <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+              <folding>
+                <element signature="method#solve#0;class#Problem#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Action.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+              <folding>
+                <element signature="method#Action#0;class#Action#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>getKey</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -91,8 +104,8 @@
         <option value="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Drop.java" />
         <option value="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Machine.java" />
         <option value="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/MachineType.java" />
-        <option value="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java" />
         <option value="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Solution.java" />
+        <option value="$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java" />
       </list>
     </option>
   </component>
@@ -142,7 +155,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1541339594207" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1541341182800" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -222,12 +235,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1540539542073</updated>
-      <workItem from="1541334985501" duration="4500000" />
+      <workItem from="1541334985501" duration="6150000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4500000" />
+    <option name="totallyTimeSpent" value="6150000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -244,15 +257,15 @@
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32915717" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.398017" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3286119" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.398017" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="10" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.3286119" />
       <window_info anchor="right" id="Database" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -269,36 +282,6 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java</url>
-          <line>188</line>
-          <properties />
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java</url>
-          <line>190</line>
-          <properties />
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java</url>
-          <line>186</line>
-          <properties />
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java</url>
-          <line>187</line>
-          <properties />
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Truck.java">
@@ -343,16 +326,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-357">
-          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
-          <folding>
-            <element signature="method#solve#0;class#Problem#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Location.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -364,30 +337,51 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tvh_problem_3.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="228" column="78" selection-start-line="228" selection-start-column="78" selection-end-line="228" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Solution.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="57" column="9" lean-forward="true" selection-start-line="57" selection-start-column="9" selection-end-line="57" selection-end-column="9" />
+        <state relative-caret-position="253">
+          <caret line="41" column="54" selection-start-line="41" selection-start-column="40" selection-end-line="41" selection-end-column="54" />
           <folding>
             <element signature="method#Solution#0;class#Solution#0" />
+            <element signature="method#calculateTotalKm#0;class#Solution#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Action.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <folding>
+            <element signature="method#Action#0;class#Action#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Problem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+          <folding>
+            <element signature="method#solve#0;class#Problem#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/opdracht_optimalisatietechnieken/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="190" selection-start-line="190" selection-end-line="190" />
+        <state relative-caret-position="117">
+          <caret line="191" column="40" selection-start-line="191" selection-start-column="40" selection-end-line="191" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tvh_problem_3.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="228" column="78" selection-start-line="228" selection-start-column="78" selection-end-line="228" selection-end-column="78" />
         </state>
       </provider>
     </entry>
