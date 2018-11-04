@@ -17,8 +17,6 @@
 *.tar.gz
 *.rar
 
-# workspace #
-workspace.xml
 
 #Google Drive Sync#
 *.ini
