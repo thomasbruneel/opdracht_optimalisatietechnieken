@@ -1,8 +1,13 @@
 package opdracht_optimalisatietechnieken;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Map;
+=======
+import java.util.Random;
+>>>>>>> 1aa36c33d1941c477d03f4019416b4b805b1dcb7
 
 public class Problem {
     private final int TRUCK_CAPACITY;
@@ -35,11 +40,52 @@ public class Problem {
 
     public void solve() {
 
-        boolean isFeasible = false;
-        // Initiële feasible oplossing maken
-        do {
+        // STAP1: Initiële feasible oplossing maken
 
-        } while (isFeasible);
+        // ---WORK IN PROGRESS---
+
+        boolean isFeasible = true;
+        Random random = new Random();
+        Solution solution;
+        do {
+            List<Drop> tempDrop = new ArrayList<>(dropList);
+            List<Collect> tempCollect = new ArrayList<>(collectList);
+            solution = new Solution();
+
+            Truck firstTruck = truckList.get(random.nextInt(truckList.size() - 1));
+            solution.addTruck(firstTruck);
+
+            int truckCapacity = 0;
+            int truckTime = 0;
+            Drop randomDrop = tempDrop.get(random.nextInt(tempDrop.size() - 1));
+            Collect collectbijDrop = null;
+            Iterator<Collect> it = tempCollect.iterator();
+            while (collectbijDrop == null && it.hasNext()) {
+                collectbijDrop = it.next();
+                if (collectbijDrop.getMachine().getMachineType() != randomDrop.getMachineType()) collectbijDrop = null;
+                else {
+                    truckTime+=timeMatrix[firstTruck.getStartLocation().getId()][collectbijDrop.getMachine().getLocation().getId()];
+                    truckTime+=collectbijDrop.getMachine().getMachineType().getServiceTime();
+                    truckTime+=timeMatrix[collectbijDrop.getMachine().getLocation().getId()][randomDrop.getLocation().getId()];
+                    truckTime+=collectbijDrop.getMachine().getMachineType().getServiceTime();
+                    truckTime+=timeMatrix[randomDrop.getLocation().getId()][firstTruck.getEndLocation().getId()];
+                    truckCapacity+=collectbijDrop.getMachine().getMachineType().getVolume();
+                }
+
+            }
+            System.out.println(randomDrop);
+            System.out.println(collectbijDrop);
+            System.out.println(truckCapacity);
+            System.out.println(truckTime);
+
+        } while (!isFeasible);
+
+        //Beste = initiële
+
+        //STAP2: Neighbours zoeken +feasible checken
+
+        //STAP3: Stopcriterium
+
     }
     
     public boolean checkFeasibility(Solution s){
