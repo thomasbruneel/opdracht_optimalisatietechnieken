@@ -6,32 +6,59 @@ import java.util.Map;
 
 public class Solution {
 
-    Map<Truck, List<Location>> oplossing;
-    int aantalKm;
+    Map<Truck, List<Action>> route;
+    int totalKm;
 
     public Solution() {
-        oplossing = new HashMap<>();
-    }
-    
-    public void addOplossing(Truck truck,List<Location> locaties){
-    	oplossing.put(truck, locaties);
+        route = new HashMap<>();
+        int totalKm = 0;
     }
 
-    public Map<Truck, List<Location>> getOplossing() {
-		return oplossing;
-	}
+    public void addSolution(Truck truck, List<Action> locations) {
+        route.put(truck, locations);
+    }
 
-	public void setOplossing(Map<Truck, List<Location>> oplossing) {
-		this.oplossing = oplossing;
-	}
+    public List<Action> getSolutionRoute(Truck truck) {
+        return route.get(truck);
+    }
 
-	public int getAantalKm() {
-		return aantalKm;
-	}
+    public Map<Truck, List<Action>> getSolution() {
+        return route;
+    }
 
-	public void setAantalKm(int aantalKm) {
-		this.aantalKm = aantalKm;
-	}
+    public void setSolution(Map<Truck, List<Action>> locations) {
+        this.route = locations;
+    }
 
+    public int getTotalKm() {
+        return totalKm;
+    }
+
+    public void setTotalKm(int totalKm) {
+        this.totalKm = totalKm;
+    }
+
+    //calculate total distance of the different trucks and their routes in the solution
+    public int calculateTotalKm(int[][] distanceMatrix) {
+        int result = 0;
+
+        for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
+            int temp = 0;
+            Location start = entry.getKey().getStartLocation();
+            Location end = entry.getKey().getEndLocation();
+            for (Location l : entry.getValue()) {
+                if (entry.getValue().indexOf(l) == 0) {
+                    temp += distanceMatrix[start.getId()][l.getId()];
+                } else {
+                    int index = entry.getValue().indexOf(l);
+                    temp += distanceMatrix[entry.getValue().get(index - 1).getId()][l.getId()];
+                }
+            }
+            result += temp;
+        }
+        this.totalKm = result;
+        return result;
+    }
 
 }
+
