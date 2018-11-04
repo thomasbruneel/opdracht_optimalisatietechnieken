@@ -2,6 +2,7 @@ package opdracht_optimalisatietechnieken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Problem {
     private final int TRUCK_CAPACITY;
@@ -39,6 +40,52 @@ public class Problem {
         do {
 
         } while (isFeasible);
+    }
+    
+    public boolean checkFeasibility(Solution s){
+    	Map<Truck, List<Action>> route=s.getSolution();		//alle trucks
+    	for (List<Action> actions : route.values()) {		//actions per truck
+    		double serviceTime=0;
+    		double drivingTime=0;
+    		double workingTime=0;
+    		double capacity=0;
+    		int previousLocation=-1;
+    		
+    	    for(Action a:actions){
+    	    	if(previousLocation==-1){	//startlocatie
+    	    		if(a.getType()==true){		//type is collect
+        	    		capacity=capacity+a.getMachine().getMachineType().getVolume();
+        	    		
+        	    	}
+        	    	else{		//type is drop
+        	    		capacity=capacity-a.getMachine().getMachineType().getVolume();
+        	    	}
+    	    		// nog geen driving time berekenen
+    	    		
+    	    		
+    	    	}
+    	    	else{
+    	    		if(a.getType()==true){		//type is collect
+        	    		capacity=capacity+a.getMachine().getMachineType().getVolume();
+        	    		
+        	    	}
+        	    	else{		//type is drop
+        	    		capacity=capacity-a.getMachine().getMachineType().getVolume();
+        	    	}
+    	    		drivingTime=drivingTime+distanceMatrix[previousLocation][a.getLocation().getId()];
+    	    	}
+    	    	previousLocation=a.getLocation().getId();
+    	    	serviceTime=serviceTime+a.getMachine().getMachineType().getServiceTime();
+    	    	workingTime=serviceTime+drivingTime;
+    	    	
+    	    	if(capacity>TRUCK_CAPACITY||workingTime>TRUCK_WORKING_TIME){
+    	    		return false;
+    	    	}
+    	    	
+    	    	
+    	    }
+    	}
+		return true;
     }
 
 
