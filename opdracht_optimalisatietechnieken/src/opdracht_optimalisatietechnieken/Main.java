@@ -11,8 +11,16 @@ public class Main {
     public static final String FILENAME = "tvh_problem_3.txt";
 
     public static void main(String[] args) {
-
+        
+        List<Action> actionlist = new ArrayList<>();
         Problem p = readInput();
+        for (Drop d : p.getDropList()){
+            actionlist.add(new Action(false,d.getLocation(),new Machine(d.getMachineType().getId(), d.getMachineType(),d.getLocation())));
+        }
+        Solution s = new Solution();
+        s.addSolution(p.getTruckList().get(0), actionlist);
+        s.calculateTotalKm(p.getDistanceMatrix());
+        s.calculateTotalTime(p.getTimeMatrix());
         p.solve();
     }
 

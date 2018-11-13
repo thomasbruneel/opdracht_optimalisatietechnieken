@@ -1,9 +1,12 @@
 package opdracht_optimalisatietechnieken;
 
+import java.util.List;
+
 public class Truck {
     private int id;
     private Location startLocation;
     private Location endLocation;
+    private int totalKm, totalTime;
 
     public Truck(int id, Location startLocation, Location endLocation) {
         this.id = id;
@@ -33,6 +36,26 @@ public class Truck {
 
     public void setEndLocation(Location endLocation) {
         this.endLocation = endLocation;
+    }
+
+    public int getTotalKm() {
+        return totalKm;
+    }
+
+    public void setTotalKm(int totalKm) {
+        this.totalKm = totalKm;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public void calculateTotalDistanceAndTime(int[][] distanceMatrix, int [][] timeMatrix, List<Action> actions){
+        
     }
 
     @Override
