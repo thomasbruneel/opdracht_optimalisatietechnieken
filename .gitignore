@@ -16,8 +16,6 @@
 *.ear
 *.tar.gz
 *.rar
-
-# XML files
 *.xml
 
 #Google Drive Sync#
