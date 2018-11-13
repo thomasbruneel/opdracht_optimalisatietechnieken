@@ -1,6 +1,7 @@
 package opdracht_optimalisatietechnieken;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class Problem {
     private List<Collect> collectList;
     private int[][] timeMatrix;
     private int[][] distanceMatrix;
+    private Solution bestSolution;
 
     public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
                    List<Truck> truckList, List<MachineType> machineTypeList, List<Machine> machineList, List<Drop> dropList,
@@ -33,6 +35,7 @@ public class Problem {
         this.collectList = collectList;
         this.timeMatrix = timeMatrix;
         this.distanceMatrix = distanceMatrix;
+        this.bestSolution = new Solution();
     }
 
     public void solve() {
@@ -41,13 +44,36 @@ public class Problem {
 
         // ---WORK IN PROGRESS---
 
+        Map<Machine,Depot> depotInventory = calculateInventory();
+
+
         boolean isFeasible = true;
         Random random = new Random();
-        Solution solution;
         do {
             List<Drop> tempDrop = new ArrayList<>(dropList);
             List<Collect> tempCollect = new ArrayList<>(collectList);
+<<<<<<< HEAD
             solution = new Solution(distanceMatrix, timeMatrix);
+=======
+
+            Drop randomDrop = tempDrop.get(random.nextInt(tempDrop.size() - 1));
+            List<Machine> availableMachines = randomDrop.calculatAvailableMachines(tempCollect,depotInventory);
+
+            Machine chosenMachine = availableMachines.get(random.nextInt(availableMachines.size() -1));
+
+            Action collectAction = new Action(chosenMachine);
+            Action dropAction = new Action(randomDrop.getLocation(),chosenMachine);
+
+            Truck randomTruck = truckList.get(random.nextInt(truckList.size()-1));
+
+            bestSolution.addPaar(randomTruck,collectAction,dropAction);
+
+
+
+
+            /*Begin alternatieve oplossing
+            solution = new Solution();
+>>>>>>> bbcec87b4987f475c2b446529b8eb3cb6d2a09a3
 
             Truck firstTruck = truckList.get(random.nextInt(truckList.size() - 1));
             solution.addTruck(firstTruck);
@@ -75,6 +101,7 @@ public class Problem {
             System.out.println(truckCapacity);
             System.out.println(truckTime);
 
+            */
         } while (!isFeasible);
 
         //Beste = initiële
@@ -83,6 +110,20 @@ public class Problem {
 
         //STAP3: Stopcriterium
 
+    }
+
+    private Map<Machine,Depot> calculateInventory() {
+    	Map <Machine,Depot> depotInventory=new HashMap<>();
+    	for(Machine m:machineList){
+    		for(Depot d:depotList){
+    			if(m.getLocation().getId()==d.getLocation().getId()){
+    				depotInventory.put(m, d);
+    				break;
+    			}
+    		}
+    	}
+    	
+        return depotInventory;
     }
 
     public boolean checkFeasibility(Solution s) {

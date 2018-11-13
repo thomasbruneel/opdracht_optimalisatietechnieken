@@ -11,6 +11,18 @@ public class Action {
         this.machine = machine;
     }
 
+    public Action(Machine machine){
+        this.type = true;
+        this.location = machine.getLocation();
+        this.machine = machine;
+    }
+
+    public Action(Location location, Machine machine){
+        this.type = false;
+        this.location = location;
+        this.machine = machine;
+    }
+
     public boolean getType() {
         return type;
     }

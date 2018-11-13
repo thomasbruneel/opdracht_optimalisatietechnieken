@@ -1,5 +1,10 @@
 package opdracht_optimalisatietechnieken;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class Drop {
     private int id;
     private MachineType machineType;
@@ -42,4 +47,11 @@ public class Drop {
     }
 
 
+    public List<Machine> calculatAvailableMachines(List<Collect> tempCollect, Map<Machine, Depot> depotInventory) {
+        List<Machine> oplossing = new ArrayList<>();
+        tempCollect = tempCollect.stream().filter(p -> p.getMachine().getMachineType() == this.machineType).collect(Collectors.toList());
+        for(Collect c : tempCollect) oplossing.add(c.getMachine());
+        for(Machine m : depotInventory.keySet()) if(m.getMachineType() == this.machineType) oplossing.add(m);
+        return oplossing;
+    }
 }
