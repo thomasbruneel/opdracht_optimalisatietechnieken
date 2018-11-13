@@ -1,9 +1,13 @@
 package opdracht_optimalisatietechnieken;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static opdracht_optimalisatietechnieken.Main.*;
 
 public class Solution {
 
@@ -63,6 +67,22 @@ public class Solution {
         }
         this.totalKm = result;
         return result;
+    }
+    
+    public void writeOuput() throws IOException{
+		BufferedWriter bw=new BufferedWriter(new FileWriter("tvh_solution.txt"));
+		bw.write("PROBLEM: "+FILENAME);
+		bw.write("\n");
+		bw.write("DISTANCE: "+totalKm);
+		bw.write("\n");
+		bw.write("TRUCKS: "+route.size());
+		for(Map.Entry<Truck, List<Action>> entry: route.entrySet()){
+			bw.write(entry.getKey().getId()+"<distance> <time> <locationId(:machine_id)...> ");
+			bw.write("\n");
+		}
+		bw.close();
+		
+		
     }
 
 }
