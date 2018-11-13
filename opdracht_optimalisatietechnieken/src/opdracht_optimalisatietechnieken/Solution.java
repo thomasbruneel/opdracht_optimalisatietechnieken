@@ -108,8 +108,9 @@ public class Solution {
 		bw.write("DISTANCE: "+totalKm);
 		bw.write("\n");
 		bw.write("TRUCKS: "+route.size());
+		bw.write("\n");
 		for(Map.Entry<Truck, List<Action>> entry: route.entrySet()){
-			bw.write(entry.getKey().getId()+"<distance> <time> <locationId(:machine_id)...> ");
+			bw.write(entry.getKey().getId()+" "+"<distance>"+" "+"<time>"+" "+"<locationId(:machine_id)...>");
 			bw.write("\n");
 		}
 		bw.close();
