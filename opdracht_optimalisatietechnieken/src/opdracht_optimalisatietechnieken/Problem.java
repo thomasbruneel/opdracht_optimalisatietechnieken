@@ -57,7 +57,6 @@ public class Problem {
             for (Drop r: tempDrop) {
 
                 List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
-                System.out.println(availableMachines.size());
                 Machine chosenMachine;
                 chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) : availableMachines.get(random.nextInt(availableMachines.size() - 1));
 
@@ -74,10 +73,22 @@ public class Problem {
 
                 bestSolution.addPaar(randomTruck, collectAction, dropAction);
                 bestSolution.calculateTotalDistanceAndTime();
-                System.out.println(randomTruck.getTotalTime());
+                System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
             }
 
+            System.out.println("Rest van collects verwerken: " + tempCollect.size());
 
+            for(Collect c: tempCollect){
+                Location randomDepot = depotList.get(random.nextInt(depotList.size()-1)).getLocation();
+                Action collectAction = new Action(c.getMachine());
+                Action dropAction = new Action(randomDepot,c.getMachine());
+
+                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
+
+                bestSolution.addPaar(randomTruck,collectAction,dropAction);
+                bestSolution.calculateTotalDistanceAndTime();
+                System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
+            }
             /*Begin alternatieve oplossing
             solution = new Solution();
 
