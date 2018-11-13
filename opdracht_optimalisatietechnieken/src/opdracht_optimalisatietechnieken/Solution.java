@@ -117,5 +117,10 @@ public class Solution {
 		
     }
 
+    public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
+        if(!route.keySet().contains(randomTruck)) addTruck(randomTruck);
+        route.get(randomTruck).add(collectAction);
+        route.get(randomTruck).add(dropAction);
+    }
 }
 
