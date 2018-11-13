@@ -1,5 +1,8 @@
 package opdracht_optimalisatietechnieken;
 
+import java.util.List;
+import java.util.Map;
+
 public class Drop {
     private int id;
     private MachineType machineType;
@@ -42,4 +45,8 @@ public class Drop {
     }
 
 
+    public List<Machine> calculatAvailableMachines(List<Collect> tempCollect, Map<Machine, Depot> machineList) {
+        return null;
+
+    }
 }
