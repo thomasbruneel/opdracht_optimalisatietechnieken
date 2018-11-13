@@ -36,6 +36,10 @@ public class Machine {
         this.location = location;
     }
 
+    public int getServiceTime(){
+        return this.machineType.getServiceTime();
+    }
+
     @Override
     public String toString() {
         return "Machine met id: " + id + " van het type met gegevens (" + machineType + ")\n "

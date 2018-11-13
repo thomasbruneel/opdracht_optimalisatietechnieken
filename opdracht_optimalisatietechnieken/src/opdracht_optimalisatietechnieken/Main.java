@@ -17,10 +17,9 @@ public class Main {
         for (Drop d : p.getDropList()){
             actionlist.add(new Action(false,d.getLocation(),new Machine(d.getMachineType().getId(), d.getMachineType(),d.getLocation())));
         }
-        Solution s = new Solution();
-        s.addSolution(p.getTruckList().get(0), actionlist);
-        s.calculateTotalKm(p.getDistanceMatrix());
-        s.calculateTotalTime(p.getTimeMatrix());
+        Solution s = new Solution(p.getDistanceMatrix(), p.getTimeMatrix());
+        p.getTruckList().get(0).calculateTotalDistanceAndTime(p.getDistanceMatrix(),p.getTimeMatrix(),actionlist);
+
         p.solve();
     }
 

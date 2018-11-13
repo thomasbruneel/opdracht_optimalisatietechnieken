@@ -54,8 +54,27 @@ public class Truck {
         this.totalTime = totalTime;
     }
 
+    //calculates and sets the total distance & total time for this truck with Actionlist actions
     public void calculateTotalDistanceAndTime(int[][] distanceMatrix, int [][] timeMatrix, List<Action> actions){
-        
+        this.totalKm = getMatrixResult(distanceMatrix, actions);
+        this.totalTime = getMatrixResult(timeMatrix, actions);
+    }
+
+    //returns results for Action sequence in actionList out of matrix
+    public int getMatrixResult(int [][] matrix, List<Action> actions){
+        int result = 0;
+
+        for (Action action : actions){
+            if (actions.indexOf(action) == 0){
+                result +=  matrix[startLocation.getId()][action.getLocation().getId()];
+            }else{
+                result += matrix[actions.get(actions.indexOf(action)-1).getLocation().getId()][action.getLocation().getId()];
+            }
+
+        }
+        result+= matrix[actions.get(actions.size()-1).getLocation().getId()][endLocation.getId()];
+
+        return result;
     }
 
     @Override

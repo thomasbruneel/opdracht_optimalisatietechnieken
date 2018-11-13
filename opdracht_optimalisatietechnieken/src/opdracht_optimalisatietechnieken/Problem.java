@@ -47,7 +47,7 @@ public class Problem {
         do {
             List<Drop> tempDrop = new ArrayList<>(dropList);
             List<Collect> tempCollect = new ArrayList<>(collectList);
-            solution = new Solution();
+            solution = new Solution(distanceMatrix, timeMatrix);
 
             Truck firstTruck = truckList.get(random.nextInt(truckList.size() - 1));
             solution.addTruck(firstTruck);
