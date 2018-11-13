@@ -54,7 +54,7 @@ public class Problem {
             isFeasible = true;
             List<Drop> tempDrop = new ArrayList<>(dropList);
             List<Collect> tempCollect = new ArrayList<>(collectList);
-            Solution solution = new Solution(distanceMatrix, timeMatrix);
+            bestSolution = new Solution(distanceMatrix, timeMatrix);
 
             for (Drop r: tempDrop) {
 
