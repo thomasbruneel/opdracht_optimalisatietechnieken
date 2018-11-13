@@ -21,6 +21,7 @@ public class Main {
         p.getTruckList().get(0).calculateTotalDistanceAndTime(p.getDistanceMatrix(),p.getTimeMatrix(),actionlist);
         //s.writeOuput();
         p.solve();
+        System.out.println("Done");
     }
 
     private static Problem readInput() {
