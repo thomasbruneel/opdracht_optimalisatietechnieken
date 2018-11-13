@@ -90,6 +90,7 @@ public class Problem {
 
                 bestSolution.addPaar(randomTruck,collectAction,dropAction);
                 bestSolution.calculateTotalDistanceAndTime();
+                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) isFeasible = false;
                 System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
             }
             /*Begin alternatieve oplossing
