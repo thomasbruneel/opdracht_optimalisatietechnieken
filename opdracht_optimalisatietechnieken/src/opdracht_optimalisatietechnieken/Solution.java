@@ -98,13 +98,35 @@ public class Solution {
         bw.write("TRUCKS: " + route.size());
         bw.write("\n");
         for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
-        	bw.write(entry.getKey().getId()+" "+"<distance>"+" "+"<time>"+" "+"<locationId(:machine_id)...>");
+        	bw.write(entry.getKey().getId()+" "+entry.getKey().getTotalKm()+" "+entry.getKey().getTotalTime()+" "+showStops(entry.getValue()));
             bw.write("\n");
         }
         bw.close();
     }
 
-    public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
+    private String showStops(List<Action> actions) {
+    	StringBuilder sb = new StringBuilder();
+    	int currentLocation=-1;
+    	int currentMachine=-1;
+		int previousLocation=actions.get(0).getLocation().getId();
+		sb.append(String.valueOf(previousLocation));
+		for(Action action: actions){
+			currentLocation=action.getLocation().getId();
+			currentMachine=action.getMachine().getId();
+			if(previousLocation==currentLocation){
+				sb.append(":"+currentMachine);
+			}
+			else{
+				sb.append(" "+currentLocation+":"+currentMachine);
+				
+			}
+			previousLocation=currentMachine;
+			
+		}
+		return sb.toString();
+	}
+
+	public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
         if(!route.keySet().contains(randomTruck)) addTruck(randomTruck);
         route.get(randomTruck).add(collectAction);
         route.get(randomTruck).add(dropAction);
