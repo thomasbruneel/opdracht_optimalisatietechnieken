@@ -49,7 +49,7 @@ public class Problem {
         Random random = new Random();
         int attempt = 0;
         do {
-            outerloop:
+            if(attempt%100 == 0) truckList.add(new Truck(attempt,locationList.get(random.nextInt(locationList.size()-1)),locationList.get(random.nextInt(locationList.size()-1))));
 
             attempt++;
             System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
