@@ -77,7 +77,7 @@ public class Solution {
     public void calculateTotalDistanceAndTime() {
         updateTrucksDistanceAndTime();
         for (Map.Entry<Truck, List<Action>> entry : this.route.entrySet()) {
-            this.totalDistance = entry.getKey().getTotalKm();
+            this.totalDistance += entry.getKey().getTotalKm();
             this.totalTime += entry.getKey().getTotalTime();
         }
     }

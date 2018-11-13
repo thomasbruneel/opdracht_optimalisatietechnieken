@@ -132,6 +132,7 @@ public class Problem {
         return depotInventory;
     }
 
+    //checks feasibility of full solution
     public boolean checkFeasibility(Solution s) {
         Map<Truck, List<Action>> route = s.getSolution();        //alle trucks
         for (List<Action> actions : route.values()) {        //actions per truck
