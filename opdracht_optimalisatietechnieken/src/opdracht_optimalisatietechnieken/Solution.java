@@ -7,17 +7,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static opdracht_optimalisatietechnieken.Main.*;
 
 public class Solution {
 
     Map<Truck, List<Action>> route;
-    int totalKm, totalTime;
+    int totalDistance, totalTime;
 
-    public Solution() {
+    int[][] distanceMatrix;
+    int[][] timeMatrix;
+
+    public Solution(int[][] distanceMatrix, int[][] timeMatrix) {
         route = new HashMap<>();
         int totalKm = 0;
         int totalTime = 0;
+        this.distanceMatrix = distanceMatrix;
+        this.timeMatrix = timeMatrix;
     }
 
     public void addTruck(Truck truck) {
@@ -25,6 +31,7 @@ public class Solution {
     }
 
     public void addSolution(Truck truck, List<Action> locations) {
+        truck.calculateTotalDistanceAndTime(this.distanceMatrix,this.timeMatrix,locations);
         route.put(truck, locations);
     }
 
@@ -40,12 +47,13 @@ public class Solution {
         this.route = locations;
     }
 
-    public int getTotalKm() {
-        return totalKm;
+    public int getTotalDistance() {
+        this.updateTrucksDistanceAndTime();
+        return totalDistance;
     }
 
-    public void setTotalKm(int totalKm) {
-        this.totalKm = totalKm;
+    public void setTotalDistance(int totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     public Map<Truck, List<Action>> getRoute() {
@@ -57,6 +65,7 @@ public class Solution {
     }
 
     public int getTotalTime() {
+        this.updateTrucksDistanceAndTime();
         return totalTime;
     }
 
@@ -64,58 +73,35 @@ public class Solution {
         this.totalTime = totalTime;
     }
 
-    //calculate total distance of the different trucks and their routes in the solution
-    public int calculateTotalKm(int[][] distanceMatrix) {
-        int result = 0;
-
-        result = getMatrixResult(distanceMatrix, result);
-        this.totalKm = result;
-        return result;
-    }
-
-    //calculate total time of tdifferent truck routes in the solution
-    public int calculateTotalTime(int[][] TimeMatrix) {
-        int result = 0;
-
-        result = getMatrixResult(TimeMatrix, result);
-        this.totalTime = result;
-        return result;
-    }
-
-    //Calculate sum from matrix
-    private int getMatrixResult(int[][] TimeMatrix, int result) {
-        for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
-            int temp = 0;
-            Location start = entry.getKey().getStartLocation();
-            Location end = entry.getKey().getEndLocation();
-            for (Action action : entry.getValue()) {
-                if (entry.getValue().indexOf(action) == 0) {
-                    temp += TimeMatrix[start.getId()][action.getLocation().getId()];
-                } else {
-                    int index = entry.getValue().indexOf(action);
-                    temp += TimeMatrix[entry.getValue().get(index - 1).getLocation().getId()][action.getLocation().getId()];
-                }
-            }
-            result += temp;
+    //calculate total time of complete solution
+    public void calculateTotalDistanceAndTime() {
+        updateTrucksDistanceAndTime();
+        for (Map.Entry<Truck, List<Action>> entry : this.route.entrySet()) {
+            this.totalDistance = entry.getKey().getTotalKm();
+            this.totalTime += entry.getKey().getTotalTime();
         }
-        return result;
     }
-    
-    public void writeOuput() throws IOException{
-		BufferedWriter bw=new BufferedWriter(new FileWriter("tvh_solution.txt"));
-		bw.write("PROBLEM: "+FILENAME);
-		bw.write("\n");
-		bw.write("DISTANCE: "+totalKm);
-		bw.write("\n");
-		bw.write("TRUCKS: "+route.size());
-		bw.write("\n");
-		for(Map.Entry<Truck, List<Action>> entry: route.entrySet()){
-			bw.write(entry.getKey().getId()+" "+"<distance>"+" "+"<time>"+" "+"<locationId(:machine_id)...>");
-			bw.write("\n");
-		}
-		bw.close();
-		
-		
+
+    //Updates Trucks totalTime and totalDistance
+    public void updateTrucksDistanceAndTime() {
+        for (Map.Entry<Truck, List<Action>> entry : this.route.entrySet()) {
+            entry.getKey().calculateTotalDistanceAndTime(this.distanceMatrix, this.timeMatrix, entry.getValue());
+        }
+    }
+
+    public void writeOuput() throws IOException {
+        BufferedWriter bw = new BufferedWriter(new FileWriter("tvh_solution.txt"));
+        bw.write("PROBLEM: " + FILENAME);
+        bw.write("\n");
+        bw.write("DISTANCE: " + totalDistance);
+        bw.write("\n");
+        bw.write("TRUCKS: " + route.size());
+        bw.write("\n");
+        for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
+        	bw.write(entry.getKey().getId()+" "+"<distance>"+" "+"<time>"+" "+"<locationId(:machine_id)...>");
+            bw.write("\n");
+        }
+        bw.close();
     }
 
     public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
