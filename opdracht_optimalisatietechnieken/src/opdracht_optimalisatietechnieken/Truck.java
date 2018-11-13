@@ -73,7 +73,6 @@ public class Truck {
             } else {
                 result += matrix[actions.get(actions.indexOf(action) - 1).getLocation().getId()][action.getLocation().getId()];
             }
-
         }
         result += matrix[actions.get(actions.size() - 1).getLocation().getId()][endLocation.getId()];
 

@@ -157,14 +157,14 @@ public class Solution {
             if (previousLocation == currentLocation) {
                 sb.append(":" + currentMachine);
             } else {
-                sb.append(" " + currentLocation + ":" + currentMachine);
+                sb.append(" " + currentLocation + ":" + currentMachine + " ");
 
             }
             previousLocation = currentLocation;
 
         }
         if(previousLocation!=truck.getEndLocation().getId()){
-        	sb.append(String.valueOf(truck.getEndLocation().getId()));
+        	sb.append(truck.getEndLocation().getId());
         }
         
         return sb.toString();
