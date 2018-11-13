@@ -1,6 +1,7 @@
 package opdracht_optimalisatietechnieken;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,17 @@ public class Problem {
     }
 
     private Map<Machine,Depot> calculateInventory() {
-        return null;
+    	Map <Machine,Depot> depotInventory=new HashMap<>();
+    	for(Machine m:machineList){
+    		for(Depot d:depotList){
+    			if(m.getLocation().getId()==d.getLocation().getId()){
+    				depotInventory.put(m, d);
+    				break;
+    			}
+    		}
+    	}
+    	
+        return depotInventory;
     }
 
     public boolean checkFeasibility(Solution s) {
