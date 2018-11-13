@@ -31,7 +31,7 @@ public class Solution {
     }
 
     public void addSolution(Truck truck, List<Action> locations) {
-        truck.calculateTotalDistanceAndTime(this.distanceMatrix,this.timeMatrix,locations);
+        truck.calculateTotalDistanceAndTime(this.distanceMatrix, this.timeMatrix, locations);
         route.put(truck, locations);
     }
 
@@ -88,6 +88,48 @@ public class Solution {
         }
     }
 
+    //TODO:
+    public boolean isFeasible() {
+/*        Map<Truck, List<Action>> route = s.getSolution();        //alle trucks
+        for (List<Action> actions : route.values()) {        //actions per truck
+            double serviceTime = 0;
+            double drivingTime = 0;
+            double workingTime = 0;
+            double capacity = 0;
+            int previousLocation = -1;
+
+            for (Action a : actions) {
+                if (previousLocation == -1) {    //startlocatie enkel collect mogelijk
+                    if (a.getType() == true) {        //type is collect
+                        capacity = capacity + a.getMachine().getMachineType().getVolume();
+
+                    }
+
+                    // nog geen driving time berekenen
+
+                } else {
+                    if (a.getType() == true) {        //type is collect
+                        capacity = capacity + a.getMachine().getMachineType().getVolume();
+
+                    } else {        //type is drop
+                        capacity = capacity - a.getMachine().getMachineType().getVolume();
+                    }
+                    drivingTime = drivingTime + timeMatrix[previousLocation][a.getLocation().getId()];
+                }
+                previousLocation = a.getLocation().getId();
+                serviceTime = serviceTime + a.getMachine().getMachineType().getServiceTime();
+                workingTime = serviceTime + drivingTime;
+
+                if (capacity > TRUCK_CAPACITY || workingTime > TRUCK_WORKING_TIME) {
+                    return false;
+                }
+
+
+            }
+        }*/
+        return true;
+    }
+
     public void writeOuput() throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter("tvh_solution.txt"));
         bw.write("PROBLEM: " + FILENAME);
@@ -97,39 +139,38 @@ public class Solution {
         bw.write("TRUCKS: " + route.size());
         bw.write("\n");
         for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
-        	bw.write(entry.getKey().getId()+" "+entry.getKey().getTotalKm()+" "+entry.getKey().getTotalTime()+" "+showStops(entry.getValue()));
+            bw.write(entry.getKey().getId() + " " + entry.getKey().getTotalKm() + " " + entry.getKey().getTotalTime() + " " + showStops(entry.getValue()));
             bw.write("\n");
         }
         bw.close();
     }
 
     private String showStops(List<Action> actions) {
-    	StringBuilder sb = new StringBuilder();
-    	int currentLocation=-1;
-    	int currentMachine=-1;
-		int previousLocation=actions.get(0).getLocation().getId();
-		sb.append(String.valueOf(previousLocation));
-		for(Action action: actions){
-			currentLocation=action.getLocation().getId();
-			currentMachine=action.getMachine().getId();
-			if(previousLocation==currentLocation){
-				sb.append(":"+currentMachine);
-			}
-			else{
-				sb.append(" "+currentLocation+":"+currentMachine);
-				
-			}
-			previousLocation=currentMachine;
-			
-		}
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        int currentLocation = -1;
+        int currentMachine = -1;
+        int previousLocation = actions.get(0).getLocation().getId();
+        sb.append(String.valueOf(previousLocation));
+        for (Action action : actions) {
+            currentLocation = action.getLocation().getId();
+            currentMachine = action.getMachine().getId();
+            if (previousLocation == currentLocation) {
+                sb.append(":" + currentMachine);
+            } else {
+                sb.append(" " + currentLocation + ":" + currentMachine);
 
-	public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
-        if(!route.keySet().contains(randomTruck)) addTruck(randomTruck);
+            }
+            previousLocation = currentMachine;
+
+        }
+        return sb.toString();
+    }
+
+    public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
+        if (!route.keySet().contains(randomTruck)) addTruck(randomTruck);
         route.get(randomTruck).add(collectAction);
         route.get(randomTruck).add(dropAction);
-        randomTruck.calculateTotalDistanceAndTime(distanceMatrix,timeMatrix,route.get(randomTruck));
+        randomTruck.calculateTotalDistanceAndTime(distanceMatrix, timeMatrix, route.get(randomTruck));
     }
 }
 
