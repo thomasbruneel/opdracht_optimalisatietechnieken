@@ -55,8 +55,9 @@ public class Problem {
 
             Drop randomDrop = tempDrop.get(random.nextInt(tempDrop.size() - 1));
             List<Machine> availableMachines = randomDrop.calculatAvailableMachines(tempCollect,depotInventory);
-
-            Machine chosenMachine = availableMachines.get(random.nextInt(availableMachines.size() -1));
+            System.out.println(availableMachines.size());
+            Machine chosenMachine;
+            chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) :  availableMachines.get(random.nextInt(availableMachines.size() -1));
 
             Action collectAction = new Action(chosenMachine);
             Action dropAction = new Action(randomDrop.getLocation(),chosenMachine);
