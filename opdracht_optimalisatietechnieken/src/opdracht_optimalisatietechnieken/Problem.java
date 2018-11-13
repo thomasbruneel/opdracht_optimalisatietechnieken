@@ -73,7 +73,7 @@ public class Problem {
                 Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
 
                 bestSolution.addPaar(randomTruck, collectAction, dropAction);
-
+                bestSolution.calculateTotalDistanceAndTime();
                 System.out.println(randomTruck.getTotalTime());
             }
 
