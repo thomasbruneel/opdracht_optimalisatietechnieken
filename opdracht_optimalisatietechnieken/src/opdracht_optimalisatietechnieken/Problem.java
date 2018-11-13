@@ -45,23 +45,27 @@ public class Problem {
 
         // ---WORK IN PROGRESS---
 
-        Map<Machine,Depot> depotInventory = calculateInventory();
-
-
         boolean isFeasible = true;
         Random random = new Random();
+        int attempt = 0;
         do {
+            outerloop:
+
+            attempt++;
+            System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
+
             isFeasible = true;
             List<Drop> tempDrop = new ArrayList<>(dropList);
             List<Collect> tempCollect = new ArrayList<>(collectList);
             bestSolution = new Solution(distanceMatrix, timeMatrix);
+            Map<Machine,Depot> depotInventory = calculateInventory();
 
             for (Drop r: tempDrop) {
 
                 List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
                 Machine chosenMachine;
                 chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) : availableMachines.get(random.nextInt(availableMachines.size() - 1));
-
+                depotInventory.remove(chosenMachine);
                 Collect collect = null;
                 for (Collect c : tempCollect){
                     if (c.getMachine() == chosenMachine) collect = c;
@@ -75,13 +79,17 @@ public class Problem {
 
                 bestSolution.addPaar(randomTruck, collectAction, dropAction);
                 bestSolution.calculateTotalDistanceAndTime();
-                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) isFeasible = false;
+                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) {
+                    isFeasible = false;
+                    break;
+                }
                 System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
             }
 
             System.out.println("Rest van collects verwerken: " + tempCollect.size());
 
             for(Collect c: tempCollect){
+                if(!isFeasible) break;
                 Location randomDepot = depotList.get(random.nextInt(depotList.size()-1)).getLocation();
                 Action collectAction = new Action(c.getMachine());
                 Action dropAction = new Action(randomDepot,c.getMachine());
@@ -93,36 +101,7 @@ public class Problem {
                 if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) isFeasible = false;
                 System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
             }
-            /*Begin alternatieve oplossing
-            solution = new Solution();
 
-            Truck firstTruck = truckList.get(random.nextInt(truckList.size() - 1));
-            solution.addTruck(firstTruck);
-
-            int truckCapacity = 0;
-            int truckTime = 0;
-            Drop r = tempDrop.get(random.nextInt(tempDrop.size() - 1));
-            Collect collectbijDrop = null;
-            Iterator<Collect> it = tempCollect.iterator();
-            while (collectbijDrop == null && it.hasNext()) {
-                collectbijDrop = it.next();
-                if (collectbijDrop.getMachine().getMachineType() != r.getMachineType()) collectbijDrop = null;
-                else {
-                    truckTime += timeMatrix[firstTruck.getStartLocation().getId()][collectbijDrop.getMachine().getLocation().getId()];
-                    truckTime += collectbijDrop.getMachine().getMachineType().getServiceTime();
-                    truckTime += timeMatrix[collectbijDrop.getMachine().getLocation().getId()][r.getLocation().getId()];
-                    truckTime += collectbijDrop.getMachine().getMachineType().getServiceTime();
-                    truckTime += timeMatrix[r.getLocation().getId()][firstTruck.getEndLocation().getId()];
-                    truckCapacity += collectbijDrop.getMachine().getMachineType().getVolume();
-                }
-
-            }
-            System.out.println(r);
-            System.out.println(collectbijDrop);
-            System.out.println(truckCapacity);
-            System.out.println(truckTime);
-
-            */
         } while (!isFeasible);
 
         //Beste = initiële
