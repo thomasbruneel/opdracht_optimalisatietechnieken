@@ -35,7 +35,7 @@ public class Problem {
         this.collectList = collectList;
         this.timeMatrix = timeMatrix;
         this.distanceMatrix = distanceMatrix;
-        this.bestSolution = new Solution();
+        this.bestSolution = new Solution(distanceMatrix, timeMatrix);
     }
 
     public void solve() {
@@ -52,9 +52,7 @@ public class Problem {
         do {
             List<Drop> tempDrop = new ArrayList<>(dropList);
             List<Collect> tempCollect = new ArrayList<>(collectList);
-<<<<<<< HEAD
-            solution = new Solution(distanceMatrix, timeMatrix);
-=======
+            Solution solution = new Solution(distanceMatrix, timeMatrix);
 
             Drop randomDrop = tempDrop.get(random.nextInt(tempDrop.size() - 1));
             List<Machine> availableMachines = randomDrop.calculatAvailableMachines(tempCollect,depotInventory);
@@ -73,7 +71,6 @@ public class Problem {
 
             /*Begin alternatieve oplossing
             solution = new Solution();
->>>>>>> bbcec87b4987f475c2b446529b8eb3cb6d2a09a3
 
             Truck firstTruck = truckList.get(random.nextInt(truckList.size() - 1));
             solution.addTruck(firstTruck);

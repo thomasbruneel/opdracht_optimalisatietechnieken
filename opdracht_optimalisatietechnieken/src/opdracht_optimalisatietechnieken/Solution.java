@@ -100,30 +100,7 @@ public class Solution {
             bw.write(entry.getKey().getId() + "<distance> <time> <locationId(:machine_id)...> ");
             bw.write("\n");
         }
-<<<<<<< HEAD
         bw.close();
-
-
-=======
-        return result;
-    }
-    
-    public void writeOuput() throws IOException{
-		BufferedWriter bw=new BufferedWriter(new FileWriter("tvh_solution.txt"));
-		bw.write("PROBLEM: "+FILENAME);
-		bw.write("\n");
-		bw.write("DISTANCE: "+totalKm);
-		bw.write("\n");
-		bw.write("TRUCKS: "+route.size());
-		bw.write("\n");
-		for(Map.Entry<Truck, List<Action>> entry: route.entrySet()){
-			bw.write(entry.getKey().getId()+" "+"<distance>"+" "+"<time>"+" "+"<locationId(:machine_id)...>");
-			bw.write("\n");
-		}
-		bw.close();
-		
-		
->>>>>>> bbcec87b4987f475c2b446529b8eb3cb6d2a09a3
     }
 
     public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
