@@ -10,7 +10,7 @@ public class Main {
 
     public static final String FILENAME = "tvh_problem_3.txt";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         
         List<Action> actionlist = new ArrayList<>();
         Problem p = readInput();
@@ -19,7 +19,7 @@ public class Main {
         }
         Solution s = new Solution(p.getDistanceMatrix(), p.getTimeMatrix());
         p.getTruckList().get(0).calculateTotalDistanceAndTime(p.getDistanceMatrix(),p.getTimeMatrix(),actionlist);
-
+        s.writeOuput();
         p.solve();
     }
 
