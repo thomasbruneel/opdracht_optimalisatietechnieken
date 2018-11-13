@@ -164,11 +164,9 @@ public class Solution {
 
         }
         if(previousLocation!=truck.getEndLocation().getId()){
-<<<<<<< HEAD
-        	sb.append(truck.getEndLocation().getId());
-=======
+
         	sb.append(" "+truck.getEndLocation().getId());
->>>>>>> ec70ccc106f6ebeb795381d25dbd6f17ab101f04
+
         }
         
         return sb.toString();
