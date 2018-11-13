@@ -108,6 +108,7 @@ public class Solution {
         if(!route.keySet().contains(randomTruck)) addTruck(randomTruck);
         route.get(randomTruck).add(collectAction);
         route.get(randomTruck).add(dropAction);
+        randomTruck.calculateTotalDistanceAndTime(distanceMatrix,timeMatrix,route.get(randomTruck));
     }
 }
 
