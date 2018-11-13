@@ -151,6 +151,16 @@ public class Problem {
         return depotInventory;
     }
 
+    public boolean checkTemporaryFeasibility(){
+        /*TODO: Truck totaltime < 600
+          TODO: Capacity < 100%
+          TODO: check if drop/collectlists are empty
+          TODO: ...
+        */
+
+    return true;
+    }
+
     //Getters & Setters
     public List<Location> getLocationList() {
         return locationList;
