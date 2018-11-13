@@ -51,6 +51,10 @@ public class Action {
         return type;
     }
 
+    public int getServiceTime(){
+        return this.machine.getServiceTime();
+    }
+
     @Override
     public String toString() {
         return "Action{" +

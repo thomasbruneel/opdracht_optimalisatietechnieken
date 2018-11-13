@@ -54,19 +54,28 @@ public class Problem {
             List<Collect> tempCollect = new ArrayList<>(collectList);
             Solution solution = new Solution(distanceMatrix, timeMatrix);
 
-            Drop randomDrop = tempDrop.get(random.nextInt(tempDrop.size() - 1));
-            List<Machine> availableMachines = randomDrop.calculatAvailableMachines(tempCollect,depotInventory);
+            for (Drop r: tempDrop) {
 
-            Machine chosenMachine = availableMachines.get(random.nextInt(availableMachines.size() -1));
+                List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
+                System.out.println(availableMachines.size());
+                Machine chosenMachine;
+                chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) : availableMachines.get(random.nextInt(availableMachines.size() - 1));
 
-            Action collectAction = new Action(chosenMachine);
-            Action dropAction = new Action(randomDrop.getLocation(),chosenMachine);
+                Collect collect = null;
+                for (Collect c : tempCollect){
+                    if (c.getMachine() == chosenMachine) collect = c;
+                }
+                tempCollect.remove(collect);
 
-            Truck randomTruck = truckList.get(random.nextInt(truckList.size()-1));
+                Action collectAction = new Action(chosenMachine);
+                Action dropAction = new Action(r.getLocation(), chosenMachine);
 
-            bestSolution.addPaar(randomTruck,collectAction,dropAction);
+                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
 
-
+                bestSolution.addPaar(randomTruck, collectAction, dropAction);
+                bestSolution.calculateTotalDistanceAndTime();
+                System.out.println(randomTruck.getTotalTime());
+            }
 
 
             /*Begin alternatieve oplossing
@@ -77,23 +86,23 @@ public class Problem {
 
             int truckCapacity = 0;
             int truckTime = 0;
-            Drop randomDrop = tempDrop.get(random.nextInt(tempDrop.size() - 1));
+            Drop r = tempDrop.get(random.nextInt(tempDrop.size() - 1));
             Collect collectbijDrop = null;
             Iterator<Collect> it = tempCollect.iterator();
             while (collectbijDrop == null && it.hasNext()) {
                 collectbijDrop = it.next();
-                if (collectbijDrop.getMachine().getMachineType() != randomDrop.getMachineType()) collectbijDrop = null;
+                if (collectbijDrop.getMachine().getMachineType() != r.getMachineType()) collectbijDrop = null;
                 else {
                     truckTime += timeMatrix[firstTruck.getStartLocation().getId()][collectbijDrop.getMachine().getLocation().getId()];
                     truckTime += collectbijDrop.getMachine().getMachineType().getServiceTime();
-                    truckTime += timeMatrix[collectbijDrop.getMachine().getLocation().getId()][randomDrop.getLocation().getId()];
+                    truckTime += timeMatrix[collectbijDrop.getMachine().getLocation().getId()][r.getLocation().getId()];
                     truckTime += collectbijDrop.getMachine().getMachineType().getServiceTime();
-                    truckTime += timeMatrix[randomDrop.getLocation().getId()][firstTruck.getEndLocation().getId()];
+                    truckTime += timeMatrix[r.getLocation().getId()][firstTruck.getEndLocation().getId()];
                     truckCapacity += collectbijDrop.getMachine().getMachineType().getVolume();
                 }
 
             }
-            System.out.println(randomDrop);
+            System.out.println(r);
             System.out.println(collectbijDrop);
             System.out.println(truckCapacity);
             System.out.println(truckTime);
@@ -123,6 +132,7 @@ public class Problem {
         return depotInventory;
     }
 
+    //checks feasibility of full solution
     public boolean checkFeasibility(Solution s) {
         Map<Truck, List<Action>> route = s.getSolution();        //alle trucks
         for (List<Action> actions : route.values()) {        //actions per truck
