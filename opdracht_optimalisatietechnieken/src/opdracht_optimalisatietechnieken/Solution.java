@@ -150,7 +150,7 @@ public class Solution {
         int currentLocation = -1;
         int currentMachine = -1;
         int previousLocation = truck.getStartLocation().getId();
-        sb.append(String.valueOf(previousLocation));
+        sb.append(previousLocation);
         for (Action action : actions) {
             currentLocation = action.getLocation().getId();
             currentMachine = action.getMachine().getId();
@@ -164,7 +164,7 @@ public class Solution {
 
         }
         if(previousLocation!=truck.getEndLocation().getId()){
-        	sb.append(String.valueOf(truck.getEndLocation().getId()));
+        	sb.append(" "+truck.getEndLocation().getId());
         }
         
         return sb.toString();
