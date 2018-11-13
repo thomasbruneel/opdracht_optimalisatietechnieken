@@ -139,17 +139,17 @@ public class Solution {
         bw.write("TRUCKS: " + route.size());
         bw.write("\n");
         for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
-            bw.write(entry.getKey().getId() + " " + entry.getKey().getTotalKm() + " " + entry.getKey().getTotalTime() + " " + showStops(entry.getValue()));
+            bw.write(entry.getKey().getId() + " " + entry.getKey().getTotalKm() + " " + entry.getKey().getTotalTime() + " " + showStops(entry.getKey(),entry.getValue()));
             bw.write("\n");
         }
         bw.close();
     }
 
-    private String showStops(List<Action> actions) {
+    private String showStops(Truck truck,List<Action> actions) {
         StringBuilder sb = new StringBuilder();
         int currentLocation = -1;
         int currentMachine = -1;
-        int previousLocation = actions.get(0).getLocation().getId();
+        int previousLocation = truck.getStartLocation().getId();
         sb.append(String.valueOf(previousLocation));
         for (Action action : actions) {
             currentLocation = action.getLocation().getId();
@@ -160,9 +160,13 @@ public class Solution {
                 sb.append(" " + currentLocation + ":" + currentMachine);
 
             }
-            previousLocation = currentMachine;
+            previousLocation = currentLocation;
 
         }
+        if(previousLocation!=truck.getEndLocation().getId()){
+        	sb.append(String.valueOf(truck.getEndLocation().getId()));
+        }
+        
         return sb.toString();
     }
 
