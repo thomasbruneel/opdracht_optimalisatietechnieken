@@ -48,7 +48,6 @@ public class Solution {
     }
 
     public int getTotalDistance() {
-        this.updateTrucksDistanceAndTime();
         return totalDistance;
     }
 
@@ -65,7 +64,6 @@ public class Solution {
     }
 
     public int getTotalTime() {
-        this.updateTrucksDistanceAndTime();
         return totalTime;
     }
 
@@ -75,6 +73,8 @@ public class Solution {
 
     //calculate total time of complete solution
     public void calculateTotalDistanceAndTime() {
+        this.totalTime = 0;
+        this.totalDistance = 0;
         for (Map.Entry<Truck, List<Action>> entry : this.route.entrySet()) {
             this.totalDistance += entry.getKey().getTotalKm();
             this.totalTime += entry.getKey().getTotalTime();
