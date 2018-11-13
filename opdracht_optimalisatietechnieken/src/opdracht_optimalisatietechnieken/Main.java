@@ -19,7 +19,7 @@ public class Main {
         }
         Solution s = new Solution(p.getDistanceMatrix(), p.getTimeMatrix());
         p.getTruckList().get(0).calculateTotalDistanceAndTime(p.getDistanceMatrix(),p.getTimeMatrix(),actionlist);
-        s.writeOuput();
+        //s.writeOuput();
         p.solve();
     }
 

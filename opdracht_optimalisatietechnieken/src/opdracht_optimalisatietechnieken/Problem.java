@@ -1,5 +1,6 @@
 package opdracht_optimalisatietechnieken;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,6 +51,7 @@ public class Problem {
         boolean isFeasible = true;
         Random random = new Random();
         do {
+            isFeasible = true;
             List<Drop> tempDrop = new ArrayList<>(dropList);
             List<Collect> tempCollect = new ArrayList<>(collectList);
             Solution solution = new Solution(distanceMatrix, timeMatrix);
@@ -73,6 +75,7 @@ public class Problem {
 
                 bestSolution.addPaar(randomTruck, collectAction, dropAction);
                 bestSolution.calculateTotalDistanceAndTime();
+                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) isFeasible = false;
                 System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
             }
 
@@ -127,6 +130,11 @@ public class Problem {
 
         //STAP3: Stopcriterium
 
+        try {
+            bestSolution.writeOuput();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Map<Machine,Depot> calculateInventory() {
