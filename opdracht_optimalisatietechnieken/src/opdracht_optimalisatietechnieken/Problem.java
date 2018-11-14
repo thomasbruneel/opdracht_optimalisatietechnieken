@@ -49,7 +49,7 @@ public class Problem {
         Random random = new Random();
         int attempt = 0;
         do {
-            if(attempt%100 == 0) truckList.add(new Truck(truckList.size(),locationList.get(random.nextInt(locationList.size()-1)),locationList.get(random.nextInt(locationList.size()-1))));
+            //if(attempt%100 == 0) truckList.add(new Truck(truckList.size(),locationList.get(random.nextInt(locationList.size()-1)),locationList.get(random.nextInt(locationList.size()-1))));
 
             attempt++;
             System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
@@ -131,16 +131,6 @@ public class Problem {
         return depotInventory;
     }
 
-    public boolean checkTemporaryFeasibility(){
-        /*TODO: Truck totaltime < 600
-          TODO: Capacity < 100%
-          TODO: check if drop/collectlists are empty
-          TODO: ...
-        */
-
-    return true;
-    }
-
     //Getters & Setters
     public List<Location> getLocationList() {
         return locationList;
@@ -220,5 +210,40 @@ public class Problem {
 
     public int getTRUCK_WORKING_TIME() {
         return TRUCK_WORKING_TIME;
+    }
+
+    //generate initial solution
+    public Solution generateInitialSolution(){
+        Solution solution = new Solution(this.distanceMatrix, this.timeMatrix);
+
+        Random random = new Random();
+        List<Drop> tempDrop = new ArrayList<>(dropList);
+        List<Collect> tempCollect = new ArrayList<>(collectList);
+        List<Truck> tempTrucks = new ArrayList<>(truckList);
+        List<Action> actions = new ArrayList<>();
+        Map<Machine, Depot> depotInventory = calculateInventory();
+
+        //selecteer een random truck uit de trucklist
+        Truck randomTruck = tempTrucks.get(random.nextInt(truckList.size()-1));
+        tempTrucks.remove(randomTruck);
+
+        //stel feasible route voor deze truck op
+
+        //eerst collect dichtst bij startpositie kiezen en toevoegen aan acties
+        Collect c = randomTruck.getClosestCollect(randomTruck.getStartLocation(), distanceMatrix,collectList);
+        collectList.remove(c);
+        actions.add(new Action(true,c.getMachine().getLocation(),c.getMachine()));
+
+        
+
+
+        return solution;
+    }
+
+    //TODO
+    public Drop getRelatedDrop(Collect c ){
+        Drop drop;
+
+        return drop;
     }
 }

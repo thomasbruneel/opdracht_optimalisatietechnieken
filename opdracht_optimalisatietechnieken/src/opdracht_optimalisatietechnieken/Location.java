@@ -1,5 +1,7 @@
 package opdracht_optimalisatietechnieken;
 
+import java.util.List;
+
 public class Location {
     private int id;
     private double latitude;

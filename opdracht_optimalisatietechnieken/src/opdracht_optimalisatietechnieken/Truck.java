@@ -7,11 +7,13 @@ public class Truck {
     private Location startLocation;
     private Location endLocation;
     private int totalKm, totalTime;
+    private int resterendVolume;
 
     public Truck(int id, Location startLocation, Location endLocation) {
         this.id = id;
         this.startLocation = startLocation;
         this.endLocation = endLocation;
+        this.resterendVolume = 100;
     }
 
     public int getId() {
@@ -50,6 +52,14 @@ public class Truck {
         return totalTime;
     }
 
+    public int getResterendVolume() {
+        return resterendVolume;
+    }
+
+    public void setResterendVolume(int resterendVolume) {
+        this.resterendVolume = resterendVolume;
+    }
+
     public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
@@ -83,5 +93,33 @@ public class Truck {
     public String toString() {
         return "Truck met id: " + id + " met\nstartlocatie met gegevens:( " + startLocation +
                 ")\nen eindlocatie met gegevens:( " + endLocation + ")";
+    }
+
+    //returns the nearest collect from collectList to the startlocation of the truck
+    public Collect getClosestCollect(Location l, int[][] distanceMatrix, List<Collect> collectList) {
+        Collect result = null;
+        int distance = 100000;
+        //First collect: c = startlocation
+        if (l == this.startLocation) {
+            for (Collect c : collectList) {
+                if (distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()] < distance) {
+                    distance = distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()];
+                    result = c;
+                } else {
+
+                }
+            }
+            return result;
+        } else {
+            for (Collect c : collectList) {
+                if (distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()] < distance) {
+                    distance = distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()];
+                    result = c;
+                } else {
+
+                }
+            }
+            return result;
+        }
     }
 }

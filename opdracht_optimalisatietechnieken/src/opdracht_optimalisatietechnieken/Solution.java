@@ -12,14 +12,14 @@ import static opdracht_optimalisatietechnieken.Main.*;
 
 public class Solution {
 
-    Map<Truck, List<Action>> route;
+    Map<Truck, List<Action>> routes;
     int totalDistance, totalTime;
 
     int[][] distanceMatrix;
     int[][] timeMatrix;
 
     public Solution(int[][] distanceMatrix, int[][] timeMatrix) {
-        route = new HashMap<>();
+        routes = new HashMap<>();
         int totalKm = 0;
         int totalTime = 0;
         this.distanceMatrix = distanceMatrix;
@@ -27,24 +27,24 @@ public class Solution {
     }
 
     public void addTruck(Truck truck) {
-        route.put(truck, new ArrayList<>());
+        routes.put(truck, new ArrayList<>());
     }
 
     public void addSolution(Truck truck, List<Action> locations) {
         truck.calculateTotalDistanceAndTime(this.distanceMatrix, this.timeMatrix, locations);
-        route.put(truck, locations);
+        routes.put(truck, locations);
     }
 
     public List<Action> getSolutionRoute(Truck truck) {
-        return route.get(truck);
+        return routes.get(truck);
     }
 
     public Map<Truck, List<Action>> getSolution() {
-        return route;
+        return routes;
     }
 
     public void setSolution(Map<Truck, List<Action>> locations) {
-        this.route = locations;
+        this.routes = locations;
     }
 
     public int getTotalDistance() {
@@ -55,12 +55,12 @@ public class Solution {
         this.totalDistance = totalDistance;
     }
 
-    public Map<Truck, List<Action>> getRoute() {
-        return route;
+    public Map<Truck, List<Action>> getRoutes() {
+        return routes;
     }
 
-    public void setRoute(Map<Truck, List<Action>> route) {
-        this.route = route;
+    public void setRoutes(Map<Truck, List<Action>> routes) {
+        this.routes = routes;
     }
 
     public int getTotalTime() {
@@ -75,7 +75,7 @@ public class Solution {
     public void calculateTotalDistanceAndTime() {
         this.totalTime = 0;
         this.totalDistance = 0;
-        for (Map.Entry<Truck, List<Action>> entry : this.route.entrySet()) {
+        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             this.totalDistance += entry.getKey().getTotalKm();
             this.totalTime += entry.getKey().getTotalTime();
         }
@@ -83,15 +83,16 @@ public class Solution {
 
     //Updates Trucks totalTime and totalDistance
     public void updateTrucksDistanceAndTime() {
-        for (Map.Entry<Truck, List<Action>> entry : this.route.entrySet()) {
+        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().calculateTotalDistanceAndTime(this.distanceMatrix, this.timeMatrix, entry.getValue());
         }
     }
 
-    //TODO:
+    //checkt of gehele solution feasible is.
+    // TODO
     public boolean isFeasible() {
-/*        Map<Truck, List<Action>> route = s.getSolution();        //alle trucks
-        for (List<Action> actions : route.values()) {        //actions per truck
+/*        Map<Truck, List<Action>> routes = s.getSolution();        //alle trucks
+        for (List<Action> actions : routes.values()) {        //actions per truck
             double serviceTime = 0;
             double drivingTime = 0;
             double workingTime = 0;
@@ -130,22 +131,69 @@ public class Solution {
         return true;
     }
 
+    // Checks if adding Action action to actionList from Truck truck results in feasible solution
+    // TODO: extra constraints toevoegen?
+    public boolean checkTemporaryFeasibility(Truck truck, Action action) {
+
+        if (truck.getTotalTime() + action.getServiceTime() > 600) {
+            return false;
+        } else if (!checkVolume(truck,action)){
+            return false;
+        } else if (!checkRelatedCollect(truck, action)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    //checks if volume change from action is allowed. (volume constraint truck)
+    public boolean checkVolume(Truck truck, Action action){
+        //false = drop & true = collect
+        if (action.getType()){
+            truck.setResterendVolume(truck.getResterendVolume()+action.getActionVolumeChange());
+        }else{
+            truck.setResterendVolume(truck.getResterendVolume()-action.getActionVolumeChange());
+        }
+
+        if(truck.getResterendVolume() < 0 || truck.getResterendVolume()> 100){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    //Checks if there is a drop, the collect from that machine is already executed
+    public boolean checkRelatedCollect(Truck truck, Action action){
+        if (action.getType()){
+            return true;
+        }else{
+            for (Action a : routes.get(truck)){
+                if (action.getMachine() == a.getMachine() && !a.getType()){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            return false;
+        }
+    }
+
     public void writeOuput() throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter("tvh_solution.txt"));
         bw.write("PROBLEM: " + FILENAME);
         bw.write("\n");
         bw.write("DISTANCE: " + totalDistance);
         bw.write("\n");
-        bw.write("TRUCKS: " + route.size());
+        bw.write("TRUCKS: " + routes.size());
         bw.write("\n");
-        for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
-            bw.write(entry.getKey().getId() + " " + entry.getKey().getTotalKm() + " " + entry.getKey().getTotalTime() + " " + showStops(entry.getKey(),entry.getValue()));
+        for (Map.Entry<Truck, List<Action>> entry : routes.entrySet()) {
+            bw.write(entry.getKey().getId() + " " + entry.getKey().getTotalKm() + " " + entry.getKey().getTotalTime() + " " + showStops(entry.getKey(), entry.getValue()));
             bw.write("\n");
         }
         bw.close();
     }
 
-    private String showStops(Truck truck,List<Action> actions) {
+    private String showStops(Truck truck, List<Action> actions) {
         StringBuilder sb = new StringBuilder();
         int currentLocation = -1;
         int currentMachine = -1;
@@ -163,20 +211,20 @@ public class Solution {
             previousLocation = currentLocation;
 
         }
-        if(previousLocation!=truck.getEndLocation().getId()){
+        if (previousLocation != truck.getEndLocation().getId()) {
 
-        	sb.append(" "+truck.getEndLocation().getId());
+            sb.append(" " + truck.getEndLocation().getId());
 
         }
-        
+
         return sb.toString();
     }
 
     public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
-        if (!route.keySet().contains(randomTruck)) addTruck(randomTruck);
-        route.get(randomTruck).add(collectAction);
-        route.get(randomTruck).add(dropAction);
-        randomTruck.calculateTotalDistanceAndTime(distanceMatrix, timeMatrix, route.get(randomTruck));
+        if (!routes.keySet().contains(randomTruck)) addTruck(randomTruck);
+        routes.get(randomTruck).add(collectAction);
+        routes.get(randomTruck).add(dropAction);
+        randomTruck.calculateTotalDistanceAndTime(distanceMatrix, timeMatrix, routes.get(randomTruck));
     }
 }
 

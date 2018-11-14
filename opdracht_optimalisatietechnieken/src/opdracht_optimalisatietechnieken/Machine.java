@@ -46,4 +46,7 @@ public class Machine {
                 + "op locatie met gegevens (" + location + ")";
     }
 
+    public int getVolume() {
+        return this.machineType.getVolume();
+    }
 }
