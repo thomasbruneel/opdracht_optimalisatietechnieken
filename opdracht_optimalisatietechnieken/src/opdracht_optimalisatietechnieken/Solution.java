@@ -92,6 +92,7 @@ public class Solution {
     public boolean isFeasible(int machineSize) {
     	//System.out.println("aantal trucks: "+route.size());
     	boolean[] collect=new boolean[machineSize];// wordt gebruikt voor te checken of machine 2 maal verplaatst zou worden
+    	boolean[] drop=new boolean[machineSize];// idem + wordt gebruikt voor te checken of machine eerst gecollect wordt en dan gedropt wordt
     	//double t=0;
     	for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
     		Truck truck=entry.getKey();
@@ -125,6 +126,18 @@ public class Solution {
                 else{
                 	//action is drop
                 	capacity=capacity-currentMachine.getMachineType().getVolume();
+                	
+                	if(drop[currentMachine.getId()]==false){
+                		drop[currentMachine.getId()]=true;
+                	}
+                	else{
+                		return false;
+                	}
+                	
+                	if(collect[currentMachine.getId()]==false){
+                		return false;
+                	}
+
                 }
                 	
                 serviceTime=currentMachine.getMachineType().getServiceTime();
