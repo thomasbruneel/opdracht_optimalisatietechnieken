@@ -89,46 +89,70 @@ public class Solution {
     }
 
     //TODO:
-    public boolean isFeasible() {
-/*        Map<Truck, List<Action>> route = s.getSolution();        //alle trucks
-        for (List<Action> actions : route.values()) {        //actions per truck
-            double serviceTime = 0;
-            double drivingTime = 0;
-            double workingTime = 0;
+    public boolean isFeasible(int machineSize) {
+    	//System.out.println("aantal trucks: "+route.size());
+    	boolean[] collect=new boolean[machineSize];// wordt gebruikt voor te checken of machine 2 maal verplaatst zou worden
+    	//double t=0;
+    	for (Map.Entry<Truck, List<Action>> entry : route.entrySet()) {
+    		Truck truck=entry.getKey();
+    		List<Action> actions=entry.getValue();
+            double truckTime = 0;
             double capacity = 0;
-            int previousLocation = -1;
+            int currentLocation = -1;
+            Machine currentMachine = null;
+            
+            int previousLocation = truck.getStartLocation().getId();
+            for(Action action:actions){
+                double serviceTime = 0;
+                double drivingTime = 0;
+ 
+                currentLocation = action.getLocation().getId();
+                currentMachine = action.getMachine();
 
-            for (Action a : actions) {
-                if (previousLocation == -1) {    //startlocatie enkel collect mogelijk
-                    if (a.getType() == true) {        //type is collect
-                        capacity = capacity + a.getMachine().getMachineType().getVolume();
-
-                    }
-
-                    // nog geen driving time berekenen
-
-                } else {
-                    if (a.getType() == true) {        //type is collect
-                        capacity = capacity + a.getMachine().getMachineType().getVolume();
-
-                    } else {        //type is drop
-                        capacity = capacity - a.getMachine().getMachineType().getVolume();
-                    }
-                    drivingTime = drivingTime + timeMatrix[previousLocation][a.getLocation().getId()];
+                
+                if(action.getType()==true){
+                	//action is collect
+                	capacity=capacity+currentMachine.getMachineType().getVolume();
+                	
+                	if(collect[currentMachine.getId()]==false){
+                		collect[currentMachine.getId()]=true;
+                	}
+                	else{
+                		return false;
+                	}
+                	
                 }
-                previousLocation = a.getLocation().getId();
-                serviceTime = serviceTime + a.getMachine().getMachineType().getServiceTime();
-                workingTime = serviceTime + drivingTime;
-
-                if (capacity > TRUCK_CAPACITY || workingTime > TRUCK_WORKING_TIME) {
-                    return false;
+                else{
+                	//action is drop
+                	capacity=capacity-currentMachine.getMachineType().getVolume();
                 }
-
+                	
+                serviceTime=currentMachine.getMachineType().getServiceTime();
+                drivingTime=timeMatrix[previousLocation][currentLocation];
+                truckTime=truckTime+serviceTime+drivingTime;
+                if(truckTime>600||capacity>100){
+                	return false;
+                }
+                
+                previousLocation = currentLocation;
+                
 
             }
-        }*/
-        return true;
-    }
+            if(previousLocation!=truck.getEndLocation().getId()){
+            	truckTime=truckTime+timeMatrix[previousLocation][truck.getEndLocation().getId()];
+            	if(truckTime>600){
+            		return false;
+            	}
+            }
+            
+            //t=t+truckTime;
+
+           }
+    	//System.out.println("total time "+t);
+    	return true;
+    	}
+    	
+    
 
     public void writeOuput() throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter("tvh_solution.txt"));
