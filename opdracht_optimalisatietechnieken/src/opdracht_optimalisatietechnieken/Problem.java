@@ -9,216 +9,261 @@ import java.util.Map;
 import java.util.Random;
 
 public class Problem {
-    private final int TRUCK_CAPACITY;
-    private final int TRUCK_WORKING_TIME;
-    private List<Location> locationList;
-    private List<Depot> depotList;
-    private List<Truck> truckList;
-    private List<MachineType> machineTypeList;
-    private List<Machine> machineList;
-    private List<Drop> dropList;
-    private List<Collect> collectList;
-    private int[][] timeMatrix;
-    private int[][] distanceMatrix;
-    private Solution bestSolution;
+	private final int TRUCK_CAPACITY;
+	private final int TRUCK_WORKING_TIME;
+	private List<Location> locationList;
+	private List<Depot> depotList;
+	private List<Truck> truckList;
+	private List<MachineType> machineTypeList;
+	private List<Machine> machineList;
+	private List<Drop> dropList;
+	private List<Collect> collectList;
+	private List<List<Location>> orderedLocations;
+	private int[][] timeMatrix;
+	private int[][] distanceMatrix;
+	private Solution bestSolution;
 
-    public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
-                   List<Truck> truckList, List<MachineType> machineTypeList, List<Machine> machineList, List<Drop> dropList,
-                   List<Collect> collectList, int[][] timeMatrix, int[][] distanceMatrix) {
-        TRUCK_CAPACITY = tRUCK_CAPACITY;
-        TRUCK_WORKING_TIME = tRUCK_WORKING_TIME;
-        this.locationList = locationList;
-        this.depotList = depotList;
-        this.truckList = truckList;
-        this.machineTypeList = machineTypeList;
-        this.machineList = machineList;
-        this.dropList = dropList;
-        this.collectList = collectList;
-        this.timeMatrix = timeMatrix;
-        this.distanceMatrix = distanceMatrix;
-        this.bestSolution = new Solution(distanceMatrix, timeMatrix);
-    }
+	public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
+			List<Truck> truckList, List<MachineType> machineTypeList, List<Machine> machineList, List<Drop> dropList,
+			List<Collect> collectList, int[][] timeMatrix, int[][] distanceMatrix) {
+		TRUCK_CAPACITY = tRUCK_CAPACITY;
+		TRUCK_WORKING_TIME = tRUCK_WORKING_TIME;
+		this.locationList = locationList;
+		this.depotList = depotList;
+		this.truckList = truckList;
+		this.machineTypeList = machineTypeList;
+		this.machineList = machineList;
+		this.dropList = dropList;
+		this.collectList = collectList;
+		this.timeMatrix = timeMatrix;
+		this.distanceMatrix = distanceMatrix;
+		this.bestSolution = new Solution(distanceMatrix, timeMatrix);
+		
+		
+		
+		/* TODO MAYBE 
+		// Per locatie A een lijst van locaties bijhouden gesorteerd per afstand
+		orderedLocations = new ArrayList<>();
+		
+		
+		for(int i = 0; i<locationList.size(); i++) {
+			Location loc = locationList.get(i);
+			loc.initOrderedLocationList(distanceMatrix[i]);
+		}
+		*/
+		
+	}
 
-    public void solve() {
+	public void solve() {
 
-        // STAP1: Initiële feasible oplossing maken
+		// STAP1: Initiële feasible oplossing maken
 
-        // ---WORK IN PROGRESS---
+		// ---WORK IN PROGRESS---
 
-        boolean isFeasible = true;
-        Random random = new Random();
-        int attempt = 0;
-        do {
-            if(attempt%100 == 0) truckList.add(new Truck(truckList.size(),locationList.get(random.nextInt(locationList.size()-1)),locationList.get(random.nextInt(locationList.size()-1))));
+		boolean isFeasible = true;
+		Random random = new Random();
+		int attempt = 0;
+		do {
+			if (attempt % 100 == 0)
+				truckList.add(new Truck(truckList.size(), locationList.get(random.nextInt(locationList.size() - 1)),
+						locationList.get(random.nextInt(locationList.size() - 1))));
 
-            attempt++;
-            System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
+			attempt++;
+			
+			System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
 
-            isFeasible = true;
-            List<Drop> tempDrop = new ArrayList<>(dropList);
-            List<Collect> tempCollect = new ArrayList<>(collectList);
-            bestSolution = new Solution(distanceMatrix, timeMatrix);
-            Map<Machine,Depot> depotInventory = calculateInventory();
+			isFeasible = true;
+			List<Drop> tempDrop = new ArrayList<>(dropList);
+			List<Collect> tempCollect = new ArrayList<>(collectList);
+			bestSolution = new Solution(distanceMatrix, timeMatrix);
+			Map<Machine, Depot> depotInventory = calculateInventory();
 
-            for (Drop r: tempDrop) {
+			for (Drop r : tempDrop) {
 
-                List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
-                Machine chosenMachine;
-                chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) : availableMachines.get(random.nextInt(availableMachines.size() - 1));
-                depotInventory.remove(chosenMachine);
-                Collect collect = null;
-                for (Collect c : tempCollect){
-                    if (c.getMachine() == chosenMachine) collect = c;
-                }
-                tempCollect.remove(collect);
+				List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
+				Machine chosenMachine;
+				chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0)
+						: availableMachines.get(random.nextInt(availableMachines.size() - 1));
+				depotInventory.remove(chosenMachine);
+				Collect collect = null;
+				for (Collect c : tempCollect) {
+					if (c.getMachine() == chosenMachine)
+						collect = c;
+				}
+				tempCollect.remove(collect);
 
-                Action collectAction = new Action(chosenMachine);
-                Action dropAction = new Action(r.getLocation(), chosenMachine);
+				Action collectAction = new Action(chosenMachine);
+				Action dropAction = new Action(r.getLocation(), chosenMachine);
 
-                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
+				Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
 
-                bestSolution.addPaar(randomTruck, collectAction, dropAction);
-                bestSolution.calculateTotalDistanceAndTime();
-                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) {
-                    isFeasible = false;
-                    break;
-                }
-                System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
-            }
+				bestSolution.addPaar(randomTruck, collectAction, dropAction);
+				bestSolution.calculateTotalDistanceAndTime();
+				if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) {
+					isFeasible = false;
+					break;
+				}
+				System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
+			}
 
-            System.out.println("Rest van collects verwerken: " + tempCollect.size());
+			System.out.println("Rest van collects verwerken: " + tempCollect.size());
 
-            for(Collect c: tempCollect){
-                if(!isFeasible) break;
-                Location randomDepot = depotList.get(random.nextInt(depotList.size()-1)).getLocation();
-                Action collectAction = new Action(c.getMachine());
-                Action dropAction = new Action(randomDepot,c.getMachine());
+			for (Collect c : tempCollect) {
+				if (!isFeasible)
+					break;
+				Location randomDepot = depotList.get(random.nextInt(depotList.size() - 1)).getLocation();
+				Action collectAction = new Action(c.getMachine());
+				Action dropAction = new Action(randomDepot, c.getMachine());
 
-                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
+				Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
 
-                bestSolution.addPaar(randomTruck,collectAction,dropAction);
-                bestSolution.calculateTotalDistanceAndTime();
-                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) isFeasible = false;
-                System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
-            }
+				bestSolution.addPaar(randomTruck, collectAction, dropAction);
+				bestSolution.calculateTotalDistanceAndTime();
+				if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME)
+					isFeasible = false;
+				System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
+			}
 
-        } while (!isFeasible);
+		} while (!isFeasible);
 
-        //Beste = initiële
+		// Beste = initiële
 
-        //STAP2: Neighbours zoeken +feasible checken
+		// STAP2: Neighbours zoeken +feasible checken
 
-        //STAP3: Stopcriterium
+		// STAP3: Stopcriterium
 
-        try {
-            bestSolution.writeOuput();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			bestSolution.writeOuput();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    private Map<Machine,Depot> calculateInventory() {
-    	Map <Machine,Depot> depotInventory=new HashMap<>();
-    	for(Machine m:machineList){
-    		for(Depot d:depotList){
-    			if(m.getLocation().getId()==d.getLocation().getId()){
-    				depotInventory.put(m, d);
-    				break;
-    			}
-    		}
-    	}
-    	
-        return depotInventory;
-    }
+	private Map<Machine, Depot> calculateInventory() {
+		Map<Machine, Depot> depotInventory = new HashMap<>();
+		for (Machine m : machineList) {
+			for (Depot d : depotList) {
+				if (m.getLocation().getId() == d.getLocation().getId()) {
+					depotInventory.put(m, d);
+					break;
+				}
+			}
+		}
 
-    public boolean checkTemporaryFeasibility(){
-        /*TODO: Truck totaltime < 600
-          TODO: Capacity < 100%
-          TODO: check if drop/collectlists are empty
-          TODO: ...
-        */
+		return depotInventory;
+	}
 
-    return true;
-    }
+	public boolean checkTemporaryFeasibility() {
+		/*
+		 * TODO: Truck totaltime < 600 TODO: Capacity < 100% TODO: check if
+		 * drop/collectlists are empty TODO: ...
+		 */
 
-    //Getters & Setters
-    public List<Location> getLocationList() {
-        return locationList;
-    }
+		return true;
+	}
 
-    public void setLocationList(List<Location> locationList) {
-        this.locationList = locationList;
-    }
+	// Getters & Setters
+	public List<Location> getLocationList() {
+		return locationList;
+	}
 
-    public List<Depot> getDepotList() {
-        return depotList;
-    }
+	public void setLocationList(List<Location> locationList) {
+		this.locationList = locationList;
+	}
 
-    public void setDepotList(List<Depot> depotList) {
-        this.depotList = depotList;
-    }
+	public List<Depot> getDepotList() {
+		return depotList;
+	}
 
-    public List<Truck> getTruckList() {
-        return truckList;
-    }
+	public void setDepotList(List<Depot> depotList) {
+		this.depotList = depotList;
+	}
 
-    public void setTruckList(List<Truck> truckList) {
-        this.truckList = truckList;
-    }
+	public List<Truck> getTruckList() {
+		return truckList;
+	}
 
-    public List<MachineType> getMachineTypeList() {
-        return machineTypeList;
-    }
+	public void setTruckList(List<Truck> truckList) {
+		this.truckList = truckList;
+	}
 
-    public void setMachineTypeList(List<MachineType> machineTypeList) {
-        this.machineTypeList = machineTypeList;
-    }
+	public List<MachineType> getMachineTypeList() {
+		return machineTypeList;
+	}
 
-    public List<Machine> getMachineList() {
-        return machineList;
-    }
+	public void setMachineTypeList(List<MachineType> machineTypeList) {
+		this.machineTypeList = machineTypeList;
+	}
 
-    public void setMachineList(List<Machine> machineList) {
-        this.machineList = machineList;
-    }
+	public List<Machine> getMachineList() {
+		return machineList;
+	}
 
-    public List<Drop> getDropList() {
-        return dropList;
-    }
+	public void setMachineList(List<Machine> machineList) {
+		this.machineList = machineList;
+	}
 
-    public void setDropList(List<Drop> dropList) {
-        this.dropList = dropList;
-    }
+	public List<Drop> getDropList() {
+		return dropList;
+	}
 
-    public List<Collect> getCollectList() {
-        return collectList;
-    }
+	public void setDropList(List<Drop> dropList) {
+		this.dropList = dropList;
+	}
 
-    public void setCollectList(List<Collect> collectList) {
-        this.collectList = collectList;
-    }
+	public List<Collect> getCollectList() {
+		return collectList;
+	}
 
-    public int[][] getTimeMatrix() {
-        return timeMatrix;
-    }
+	public void setCollectList(List<Collect> collectList) {
+		this.collectList = collectList;
+	}
 
-    public void setTimeMatrix(int[][] timeMatrix) {
-        this.timeMatrix = timeMatrix;
-    }
+	public int[][] getTimeMatrix() {
+		return timeMatrix;
+	}
 
-    public int[][] getDistanceMatrix() {
-        return distanceMatrix;
-    }
+	public void setTimeMatrix(int[][] timeMatrix) {
+		this.timeMatrix = timeMatrix;
+	}
 
-    public void setDistanceMatrix(int[][] distanceMatrix) {
-        this.distanceMatrix = distanceMatrix;
-    }
+	public int[][] getDistanceMatrix() {
+		return distanceMatrix;
+	}
 
-    public int getTRUCK_CAPACITY() {
-        return TRUCK_CAPACITY;
-    }
+	public void setDistanceMatrix(int[][] distanceMatrix) {
+		this.distanceMatrix = distanceMatrix;
+	}
 
-    public int getTRUCK_WORKING_TIME() {
-        return TRUCK_WORKING_TIME;
-    }
+	public int getTRUCK_CAPACITY() {
+		return TRUCK_CAPACITY;
+	}
+
+	public int getTRUCK_WORKING_TIME() {
+		return TRUCK_WORKING_TIME;
+	}
+	
+	public Location getClosestLocation (Location startLocation, List<Location> list) {
+		int startLocationId = startLocation.getId();
+		int[] distRow = distanceMatrix[startLocationId];
+		int locationWithSmallesDistanceId = startLocationId;
+		int smallestDistance = Integer.MAX_VALUE;
+		
+		if(list.isEmpty()) return null; // return null when list is empty
+		
+		for(Location loc : list) {
+			int locId = loc.getId();
+			
+			// skip update of smallest distance if location to check is the same as the start location
+			if(locId!=startLocationId){
+				int distanceToLocation = distRow[locId];
+				if(smallestDistance > distanceToLocation)
+					smallestDistance = distanceToLocation;
+					locationWithSmallesDistanceId = locId;
+			}
+		}
+		
+		return locationList.get(locationWithSmallesDistanceId);
+	}
+	
 }
