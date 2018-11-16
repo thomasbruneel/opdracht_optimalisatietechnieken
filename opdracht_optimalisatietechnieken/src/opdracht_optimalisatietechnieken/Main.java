@@ -11,17 +11,8 @@ public class Main {
     public static final String FILENAME = "tvh_problem_4.txt";
 
     public static void main(String[] args) throws IOException {
-
-        List<Action> actionlist = new ArrayList<>();
         Problem p = readInput();
-        for (Drop d : p.getDropList()){
-            actionlist.add(new Action(false,d.getLocation(),new Machine(d.getMachineType().getId(), d.getMachineType(),d.getLocation())));
-        }
-        Solution s = new Solution(p.getDistanceMatrix(), p.getTimeMatrix());
-        p.getTruckList().get(0).calculateTotalDistanceAndTime(p.getDistanceMatrix(),p.getTimeMatrix(),actionlist);
-        //s.writeOuput();
         p.solve();
-        System.out.println("Done");
     }
 
     private static Problem readInput() {
