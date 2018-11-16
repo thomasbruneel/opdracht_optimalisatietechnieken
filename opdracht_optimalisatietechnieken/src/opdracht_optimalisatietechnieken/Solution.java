@@ -208,7 +208,7 @@ public class Solution {
         
         return sb.toString();
     }
-
+        //Kan suuuuuuuuuuuuuuuper veel eficiënter :p
     public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
         if (!route.keySet().contains(randomTruck)) addTruck(randomTruck);
         route.get(randomTruck).add(collectAction);
