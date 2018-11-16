@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Problem {
     private final int TRUCK_CAPACITY;
@@ -49,7 +50,10 @@ public class Problem {
         Random random = new Random();
         int attempt = 0;
         do {
-            if(attempt%100 == 0) truckList.add(new Truck(truckList.size(),locationList.get(random.nextInt(locationList.size()-1)),locationList.get(random.nextInt(locationList.size()-1))));
+            //add dummytruck
+            if(attempt%100 == 0) truckList.add(new Truck(truckList.size(),
+                    depotList.get(random.nextInt(depotList.size())).getLocation(),
+                    depotList.get(random.nextInt(depotList.size())).getLocation()));
 
             attempt++;
             System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
@@ -59,12 +63,18 @@ public class Problem {
             List<Collect> tempCollect = new ArrayList<>(collectList);
             bestSolution = new Solution(distanceMatrix, timeMatrix);
             Map<Machine,Depot> depotInventory = calculateInventory();
+            List<Location> depotLocations = new ArrayList<>();
+            for (Depot d : depotList) depotLocations.add(d.getLocation());
 
             for (Drop r: tempDrop) {
 
                 List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
+                List<Location> availableMachinesLocations = new ArrayList<>();
+                for (Machine m: availableMachines) availableMachinesLocations.add(m.getLocation());
                 Machine chosenMachine;
-                chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) : availableMachines.get(random.nextInt(availableMachines.size() - 1));
+                Location closestmachineLocation = getClosestLocation(r.getLocation(),availableMachinesLocations);
+                //keuze machine
+                chosenMachine = availableMachines.get(availableMachinesLocations.indexOf(closestmachineLocation));
                 depotInventory.remove(chosenMachine);
                 Collect collect = null;
                 for (Collect c : tempCollect){
@@ -72,10 +82,21 @@ public class Problem {
                 }
                 tempCollect.remove(collect);
 
+                Truck randomTruck = null;
+                if(depotLocations.contains(chosenMachine.getLocation())){
+                    List<Truck> truckswithstartDepot = truckList.stream().filter(t -> t.getStartLocation() == chosenMachine.getLocation()).collect(Collectors.toList());
+                    randomTruck = truckswithstartDepot.get(random.nextInt(truckswithstartDepot.size()));
+                } else {
+                    Location depotLocation = getClosestLocation(r.getLocation(),depotLocations);
+                    List<Truck> truckswithstartDepot = truckList.stream().filter(t -> t.getStartLocation() == depotLocation).collect(Collectors.toList());
+                    randomTruck = truckswithstartDepot.get(random.nextInt(truckswithstartDepot.size()));
+                }
+
+                
+
+
                 Action collectAction = new Action(chosenMachine);
                 Action dropAction = new Action(r.getLocation(), chosenMachine);
-
-                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
 
                 bestSolution.addPaar(randomTruck, collectAction, dropAction);
                 bestSolution.calculateTotalDistanceAndTime();
@@ -90,11 +111,11 @@ public class Problem {
 
             for(Collect c: tempCollect){
                 if(!isFeasible) break;
-                Location randomDepot = depotList.get(random.nextInt(depotList.size()-1)).getLocation();
+                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
+
+                Location randomDepot = randomTruck.getEndLocation();
                 Action collectAction = new Action(c.getMachine());
                 Action dropAction = new Action(randomDepot,c.getMachine());
-
-                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
 
                 bestSolution.addPaar(randomTruck,collectAction,dropAction);
                 bestSolution.calculateTotalDistanceAndTime();
