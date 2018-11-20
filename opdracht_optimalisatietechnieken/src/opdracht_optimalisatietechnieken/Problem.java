@@ -34,12 +34,13 @@ public class Problem {
         this.bestSolution = new Solution(distanceMatrix, timeMatrix);
     }
 
-    public void solve() {
+    public void solve(String outputfilename) {
 
         Solution initialSolution = generateInitialSolution();
 
         try {
-            initialSolution.writeOuput();
+            initialSolution.updateTrucksDistancesAndTimes();
+            initialSolution.writeOuput(outputfilename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,19 +212,18 @@ public class Problem {
                 //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
                 //uitbreiding: eerst andere resterende collects en drops selecteren.
 
-                return route;
             }
 
             //er zijn nog collects die uitgevoerd moeten worden.
         } else {
             collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
-            depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix, depotList);
 
             collectAction = new Action(true, collect.getMachine().getLocation(), collect.getMachine());
 
             //geen drops meer of geen drop van zelfde type --> collect droppen in depot
             //Collect at Collect --> Drop at Depot
             if (tempDrop.isEmpty() || !collect.hasRelatedDrop(tempDrop)) {
+                depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix,depotList);
                 dropAction = new Action(false, depot.getLocation(), collect.getMachine());
 
                 route.add(collectAction);
@@ -245,7 +245,6 @@ public class Problem {
                     //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
                     //uitbreiding: eerst andere resterende collects en drops selecteren.
 
-                    return route;
                 }
 
                 //nog overeenkomstige drops beschikbaar
@@ -273,8 +272,8 @@ public class Problem {
                     //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
                     //uitbreiding: eerst andere resterende collects en drops selecteren.
 
-                    return route;
                 }
+
             }
 
         }
@@ -322,9 +321,6 @@ public class Problem {
         } else {
             collect = route.get(route.size() - 1).getLocation().getClosestCollect(distanceMatrix, tempCollect);
         }
-
-        tempCollect.remove(collect);
-
         return collect;
     }
 
@@ -336,11 +332,13 @@ public class Problem {
         for (Action a : route) {
             //Time constraint
             if (route.indexOf(a) == 0) {
-                time += distanceMatrix[truck.getStartLocation().getId()][a.getLocation().getId()];
+                time += timeMatrix[truck.getStartLocation().getId()][a.getLocation().getId()];
             } else {
-                time += distanceMatrix[route.get(route.indexOf(a) - 1).getLocation().getId()][a.getLocation().getId()];
+                time += timeMatrix[route.get(route.indexOf(a) - 1).getLocation().getId()][a.getLocation().getId()];
             }
             time += a.getServiceTime();
+            time += timeMatrix[route.get(route.size() - 1).getLocation().getId()][truck.getEndLocation().getId()];
+
 
             //Volume constraint
             if (a.getType()) {
@@ -356,8 +354,8 @@ public class Problem {
                 return false;
             }
 
-        }
 
+        }
         return true;
     }
 }

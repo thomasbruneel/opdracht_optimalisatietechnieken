@@ -31,7 +31,6 @@ public class Solution {
     }
 
     public void addSolution(Truck truck, List<Action> locations) {
-        truck.updateTruckInfo(this.distanceMatrix, this.timeMatrix, locations);
         routes.put(truck, locations);
     }
 
@@ -71,25 +70,14 @@ public class Solution {
         this.totalTime = totalTime;
     }
 
-    //calculate total time of complete solution
-    public void calculateTotalDistanceAndTime() {
-        this.totalTime = 0;
-        this.totalDistance = 0;
-        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
-            this.totalDistance += entry.getKey().getTotalKm();
-            this.totalTime += entry.getKey().getTotalTime();
-        }
-    }
-
-    //Updates Trucks totalTime and totalDistance
-    public void updateTrucksDistanceAndTime() {
+    // Updates Trucks totalTime and totalDistance
+    public void updateTrucksDistancesAndTimes() {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
         }
     }
 
-    //checkt of gehele solution feasible is.
-    // TODO
+    // TODO: feasibility van totale oplossing checken
     public boolean isFeasible() {
 /*        Map<Truck, List<Action>> routes = s.getSolution();        //alle trucks
         for (List<Action> actions : routes.values()) {        //actions per truck
@@ -131,30 +119,8 @@ public class Solution {
         return true;
     }
 
-    // Checks if adding Action action to actionList from Truck truck results in feasible solution
-    // TODO: extra constraints toevoegen?
-    public boolean checkTemporaryFeasibility(Truck truck, Action action) {
-        if (truck.getTotalTime() + action.getServiceTime() > 600) {
-            return false;
-        } else if (!truck.checkVolume(action)) {
-            return false;
-        } else return checkRelatedCollect(truck, action);
-    }
-
-    //Checks if there is a drop, the collect from that machine is already executed
-    public boolean checkRelatedCollect(Truck truck, Action action) {
-        if (action.getType()) {
-            return true;
-        } else {
-            for (Action a : routes.get(truck)) {
-                return action.getMachine() == a.getMachine() && !a.getType();
-            }
-            return false;
-        }
-    }
-
-    public void writeOuput() throws IOException {
-        BufferedWriter bw = new BufferedWriter(new FileWriter("tvh_solution.txt"));
+    public void writeOuput(String outputfilename) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outputfilename));
         bw.write("PROBLEM: " + FILENAME);
         bw.write("\n");
         bw.write("DISTANCE: " + totalDistance);
@@ -195,11 +161,5 @@ public class Solution {
         return sb.toString();
     }
 
-    public void addPaar(Truck randomTruck, Action collectAction, Action dropAction) {
-        if (!routes.keySet().contains(randomTruck)) addTruck(randomTruck);
-        routes.get(randomTruck).add(collectAction);
-        routes.get(randomTruck).add(dropAction);
-        randomTruck.updateTruckInfo(distanceMatrix, timeMatrix, routes.get(randomTruck));
-    }
 }
 

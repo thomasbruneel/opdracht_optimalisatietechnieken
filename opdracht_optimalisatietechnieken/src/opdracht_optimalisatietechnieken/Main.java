@@ -8,12 +8,13 @@ import java.util.*;
 
 public class Main {
 
-    public static final String FILENAME = "tvh_problem_4.txt";
+    public static final String FILENAME = "tvh_problem_3.txt";
+    public static final String OUTPUT_FILENAME = "tvh_solution.txt";
 
     public static void main(String[] args) {
 
         Problem p = readInput();
-        p.solve();
+        p.solve(OUTPUT_FILENAME);
 
         System.out.println("Done");
     }
