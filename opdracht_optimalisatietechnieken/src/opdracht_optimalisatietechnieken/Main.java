@@ -10,10 +10,10 @@ public class Main {
 
     public static final String FILENAME = "tvh_problem_4.txt";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         Problem p = readInput();
-        p.generateInitialSolution();
+        p.solve();
 
         System.out.println("Done");
     }

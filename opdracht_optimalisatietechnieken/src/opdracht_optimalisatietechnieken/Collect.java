@@ -1,5 +1,8 @@
 package opdracht_optimalisatietechnieken;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Collect {
     private int id;
     private Machine machine;
@@ -23,6 +26,32 @@ public class Collect {
 
     public void setMachine(Machine machine) {
         this.machine = machine;
+    }
+
+    //returns closest drop with same machine type
+    public Drop getClosestRelatedDrop(int[][] distanceMatrix, List<Drop> dropList){
+        Drop d= null;
+        List<Drop> tempDrops = new ArrayList<>();
+        for (Drop drop : dropList){
+            if (this.getMachine().getMachineType() == drop.getMachineType()){
+                tempDrops.add(drop);
+            }
+        }
+
+        d = this.getMachine().getLocation().getClosestDrop(distanceMatrix, tempDrops);
+
+        dropList.remove(d);
+        return d;
+    }
+
+    public boolean hasRelatedDrop (List<Drop> drops){
+        for(Drop d: drops){
+            if(this.getMachine().getMachineType() == d.getMachineType()){
+                return true;
+            }else{
+            }
+        }
+        return false;
     }
 
     @Override

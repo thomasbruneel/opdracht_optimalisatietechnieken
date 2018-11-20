@@ -31,7 +31,7 @@ public class Solution {
     }
 
     public void addSolution(Truck truck, List<Action> locations) {
-        truck.calculateTotalDistanceAndTime(this.distanceMatrix, this.timeMatrix, locations);
+        truck.updateTruckInfo(this.distanceMatrix, this.timeMatrix, locations);
         routes.put(truck, locations);
     }
 
@@ -84,7 +84,7 @@ public class Solution {
     //Updates Trucks totalTime and totalDistance
     public void updateTrucksDistanceAndTime() {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
-            entry.getKey().calculateTotalDistanceAndTime(this.distanceMatrix, this.timeMatrix, entry.getValue());
+            entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
         }
     }
 
@@ -134,45 +134,20 @@ public class Solution {
     // Checks if adding Action action to actionList from Truck truck results in feasible solution
     // TODO: extra constraints toevoegen?
     public boolean checkTemporaryFeasibility(Truck truck, Action action) {
-
         if (truck.getTotalTime() + action.getServiceTime() > 600) {
             return false;
-        } else if (!checkVolume(truck,action)){
+        } else if (!truck.checkVolume(action)) {
             return false;
-        } else if (!checkRelatedCollect(truck, action)){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    //checks if volume change from action is allowed. (volume constraint truck)
-    public boolean checkVolume(Truck truck, Action action){
-        //false = drop & true = collect
-        if (action.getType()){
-            truck.setResterendVolume(truck.getResterendVolume()+action.getActionVolumeChange());
-        }else{
-            truck.setResterendVolume(truck.getResterendVolume()-action.getActionVolumeChange());
-        }
-
-        if(truck.getResterendVolume() < 0 || truck.getResterendVolume()> 100){
-            return false;
-        }else{
-            return true;
-        }
+        } else return checkRelatedCollect(truck, action);
     }
 
     //Checks if there is a drop, the collect from that machine is already executed
-    public boolean checkRelatedCollect(Truck truck, Action action){
-        if (action.getType()){
+    public boolean checkRelatedCollect(Truck truck, Action action) {
+        if (action.getType()) {
             return true;
-        }else{
-            for (Action a : routes.get(truck)){
-                if (action.getMachine() == a.getMachine() && !a.getType()){
-                    return true;
-                }else{
-                    return false;
-                }
+        } else {
+            for (Action a : routes.get(truck)) {
+                return action.getMachine() == a.getMachine() && !a.getType();
             }
             return false;
         }
@@ -224,7 +199,7 @@ public class Solution {
         if (!routes.keySet().contains(randomTruck)) addTruck(randomTruck);
         routes.get(randomTruck).add(collectAction);
         routes.get(randomTruck).add(dropAction);
-        randomTruck.calculateTotalDistanceAndTime(distanceMatrix, timeMatrix, routes.get(randomTruck));
+        randomTruck.updateTruckInfo(distanceMatrix, timeMatrix, routes.get(randomTruck));
     }
 }
 

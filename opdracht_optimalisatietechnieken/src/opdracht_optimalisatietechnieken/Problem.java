@@ -1,12 +1,7 @@
 package opdracht_optimalisatietechnieken;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Problem {
     private final int TRUCK_CAPACITY;
@@ -41,93 +36,27 @@ public class Problem {
 
     public void solve() {
 
-        // STAP1: Initiële feasible oplossing maken
-
-        // ---WORK IN PROGRESS---
-
-        boolean isFeasible = true;
-        Random random = new Random();
-        int attempt = 0;
-        do {
-            //if(attempt%100 == 0) truckList.add(new Truck(truckList.size(),locationList.get(random.nextInt(locationList.size()-1)),locationList.get(random.nextInt(locationList.size()-1))));
-
-            attempt++;
-            System.out.println("--------------------New solution attempt: " + attempt + "--------------------");
-
-            isFeasible = true;
-            List<Drop> tempDrop = new ArrayList<>(dropList);
-            List<Collect> tempCollect = new ArrayList<>(collectList);
-            bestSolution = new Solution(distanceMatrix, timeMatrix);
-            Map<Machine,Depot> depotInventory = calculateInventory();
-
-            for (Drop r: tempDrop) {
-
-                List<Machine> availableMachines = r.calculatAvailableMachines(tempCollect, depotInventory);
-                Machine chosenMachine;
-                chosenMachine = availableMachines.size() < 2 ? availableMachines.get(0) : availableMachines.get(random.nextInt(availableMachines.size() - 1));
-                depotInventory.remove(chosenMachine);
-                Collect collect = null;
-                for (Collect c : tempCollect){
-                    if (c.getMachine() == chosenMachine) collect = c;
-                }
-                tempCollect.remove(collect);
-
-                Action collectAction = new Action(chosenMachine);
-                Action dropAction = new Action(r.getLocation(), chosenMachine);
-
-                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
-
-                bestSolution.addPaar(randomTruck, collectAction, dropAction);
-                bestSolution.calculateTotalDistanceAndTime();
-                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) {
-                    isFeasible = false;
-                    break;
-                }
-                System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
-            }
-
-            System.out.println("Rest van collects verwerken: " + tempCollect.size());
-
-            for(Collect c: tempCollect){
-                if(!isFeasible) break;
-                Location randomDepot = depotList.get(random.nextInt(depotList.size()-1)).getLocation();
-                Action collectAction = new Action(c.getMachine());
-                Action dropAction = new Action(randomDepot,c.getMachine());
-
-                Truck randomTruck = truckList.get(random.nextInt(truckList.size() - 1));
-
-                bestSolution.addPaar(randomTruck,collectAction,dropAction);
-                bestSolution.calculateTotalDistanceAndTime();
-                if (randomTruck.getTotalTime() > TRUCK_WORKING_TIME) isFeasible = false;
-                System.out.println("Truck: " + randomTruck.getId() + " TotTime: " + randomTruck.getTotalTime());
-            }
-
-        } while (!isFeasible);
-
-        //Beste = initiële
-
-        //STAP2: Neighbours zoeken +feasible checken
-
-        //STAP3: Stopcriterium
+        Solution initialSolution = generateInitialSolution();
 
         try {
-            bestSolution.writeOuput();
+            initialSolution.writeOuput();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
-    private Map<Machine,Depot> calculateInventory() {
-    	Map <Machine,Depot> depotInventory=new HashMap<>();
-    	for(Machine m:machineList){
-    		for(Depot d:depotList){
-    			if(m.getLocation().getId()==d.getLocation().getId()){
-    				depotInventory.put(m, d);
-    				break;
-    			}
-    		}
-    	}
-    	
+    private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {
+        Map<Machine, Depot> depotInventory = new HashMap<>();
+        for (Machine m : machineList) {
+            for (Depot d : depotList) {
+                if (m.getLocation().getId() == d.getLocation().getId()) {
+                    depotInventory.put(m, d);
+                    break;
+                }
+            }
+        }
+
         return depotInventory;
     }
 
@@ -213,37 +142,222 @@ public class Problem {
     }
 
     //generate initial solution
-    public Solution generateInitialSolution(){
+    //TODO
+    public Solution generateInitialSolution() {
         Solution solution = new Solution(this.distanceMatrix, this.timeMatrix);
-
         Random random = new Random();
         List<Drop> tempDrop = new ArrayList<>(dropList);
         List<Collect> tempCollect = new ArrayList<>(collectList);
         List<Truck> tempTrucks = new ArrayList<>(truckList);
-        List<Action> actions = new ArrayList<>();
-        Map<Machine, Depot> depotInventory = calculateInventory();
-
-        //selecteer een random truck uit de trucklist
-        Truck randomTruck = tempTrucks.get(random.nextInt(truckList.size()-1));
-        tempTrucks.remove(randomTruck);
-
-        //stel feasible route voor deze truck op
-
-        //eerst collect dichtst bij startpositie kiezen en toevoegen aan acties
-        Collect c = randomTruck.getClosestCollect(randomTruck.getStartLocation(), distanceMatrix,collectList);
-        collectList.remove(c);
-        actions.add(new Action(true,c.getMachine().getLocation(),c.getMachine()));
-
-        
+        List<Machine> tempMachines = new ArrayList<>(machineList);
+        List<Action> actions;
 
 
+        //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
+        while (!tempCollect.isEmpty() && !tempDrop.isEmpty()) {
+
+            //selecteer een random truck uit de trucklist
+            Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
+            tempTrucks.remove(randomTruck);
+
+            List<Action> route = new ArrayList<>();
+
+            //stel feasible route voor deze truck op
+            actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
+
+            // voeg deze truck met zijn route toe aan de solution
+            solution.addSolution(randomTruck, actions);
+
+        }
         return solution;
     }
 
-    //TODO
-    public Drop getRelatedDrop(Collect c ){
-        Drop drop;
+    private List<Action> createRoute(Truck randomTruck, List<Collect> tempCollect, List<Drop> tempDrop, List<Machine> tempMachines, List<Action> route) {
 
+        Map<Machine, Depot> inventory = calculateInventory(tempMachines);
+
+        Collect collect;
+        Drop drop;
+        Depot depot;
+
+        Action collectAction;
+        Action dropAction;
+
+        //tempCollect is leeg. enkel nog drops uit te voeren naar depots
+        //Collect at Depot --> Drop at Drop
+        if (tempCollect.isEmpty()) {
+            drop = getClosestDrop(randomTruck, tempDrop, tempMachines, route);
+            depot = drop.getClosestMachineDepot(distanceMatrix, inventory);
+
+            collectAction = new Action(true, depot.getLocation(), getMachine(inventory, drop.getMachineType(), depot));
+            dropAction = new Action(false, drop.getLocation(), collectAction.getMachine());
+
+            route.add(collectAction);
+            route.add(dropAction);
+
+            if (isFeasible(randomTruck, route)) {
+                //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
+                tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
+                inventory.remove(collectAction.getMachine(), depot);
+                tempDrop.remove(drop);
+
+                createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
+
+            } else {
+                //niet feasible, voortgaan volgende truck
+                route.remove(collectAction);
+                route.remove(dropAction);
+
+                //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
+                //uitbreiding: eerst andere resterende collects en drops selecteren.
+
+                return route;
+            }
+
+            //er zijn nog collects die uitgevoerd moeten worden.
+        } else {
+            collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
+            depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix, depotList);
+
+            collectAction = new Action(true, collect.getMachine().getLocation(), collect.getMachine());
+
+            //geen drops meer of geen drop van zelfde type --> collect droppen in depot
+            //Collect at Collect --> Drop at Depot
+            if (tempDrop.isEmpty() || !collect.hasRelatedDrop(tempDrop)) {
+                dropAction = new Action(false, depot.getLocation(), collect.getMachine());
+
+                route.add(collectAction);
+                route.add(dropAction);
+
+                if (isFeasible(randomTruck, route)) {
+                    //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
+                    tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
+                    inventory.put(collect.getMachine(), depot);
+                    tempCollect.remove(collect);
+
+                    createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
+
+                } else {
+                    //niet feasible, voortgaan volgende truck
+                    route.remove(collectAction);
+                    route.remove(dropAction);
+
+                    //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
+                    //uitbreiding: eerst andere resterende collects en drops selecteren.
+
+                    return route;
+                }
+
+                //nog overeenkomstige drops beschikbaar
+                //Collect at Collect --> Drop at Drop
+            } else {
+                drop = collect.getClosestRelatedDrop(distanceMatrix, tempDrop);
+                dropAction = new Action(false, drop.getLocation(), collect.getMachine());
+
+                route.add(collectAction);
+                route.add(dropAction);
+
+                if (isFeasible(randomTruck, route)) {
+                    //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
+                    tempCollect.remove(collect);
+                    tempDrop.remove(drop);
+                    tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
+
+                    createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
+
+                } else {
+                    //niet feasible, voortgaan volgende truck
+                    route.remove(collectAction);
+                    route.remove(dropAction);
+
+                    //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
+                    //uitbreiding: eerst andere resterende collects en drops selecteren.
+
+                    return route;
+                }
+            }
+
+        }
+
+        return route;
+    }
+
+    private Machine getMachine(Map<Machine, Depot> inventory, MachineType machineType, Depot depot) {
+        Machine m = null;
+
+        for (Map.Entry<Machine, Depot> entry : inventory.entrySet()) {
+            if (entry.getValue() == depot && entry.getKey().getMachineType() == machineType) {
+                m = entry.getKey();
+            }
+        }
+
+        if (m == null) {
+            System.out.println("ERROR GET MACHINE AT DEPOT");
+        }
+
+        return m;
+    }
+
+    private Drop getClosestDrop(Truck randomTruck, List<Drop> tempDrop, List<Machine> tempMachines, List<Action> route) {
+        Drop drop = null;
+
+        if (tempDrop.isEmpty()) {
+            System.out.println("ERROR EMPTY TEMPDROPLIST");
+        } else {
+            drop = route.get(route.size() - 1).getLocation().getClosestDrop(distanceMatrix, tempDrop);
+        }
         return drop;
+    }
+
+    //return closest (first) collect from tempcollect.
+    private Collect getClosestCollect(Truck truck, List<Collect> tempCollect, List<Machine> tempMachines, List<Action> route) {
+        Collect collect = null;
+        if (tempCollect.isEmpty()) {
+            System.out.println("ERROR EMPTY TEMPCOLLECTLIST");
+            //errorhandling
+        }
+        //Truck's first action?
+        if (route.isEmpty()) {
+            collect = truck.getStartLocation().getClosestCollect(distanceMatrix, tempCollect);
+        } else {
+            collect = route.get(route.size() - 1).getLocation().getClosestCollect(distanceMatrix, tempCollect);
+        }
+
+        tempCollect.remove(collect);
+
+        return collect;
+    }
+
+    private boolean isFeasible(Truck truck, List<Action> route) {
+        int volume = truck.getResterendVolume();
+        int time = truck.getTotalTime();
+
+
+        for (Action a : route) {
+            //Time constraint
+            if (route.indexOf(a) == 0) {
+                time += distanceMatrix[truck.getStartLocation().getId()][a.getLocation().getId()];
+            } else {
+                time += distanceMatrix[route.get(route.indexOf(a) - 1).getLocation().getId()][a.getLocation().getId()];
+            }
+            time += a.getServiceTime();
+
+            //Volume constraint
+            if (a.getType()) {
+                volume -= a.getVolumeChange();
+            } else {
+                volume += a.getVolumeChange();
+                if (volume > 100) {
+                    volume = 100;
+                }
+            }
+
+            if (volume < 0 || time > 600) {
+                return false;
+            }
+
+        }
+
+        return true;
     }
 }

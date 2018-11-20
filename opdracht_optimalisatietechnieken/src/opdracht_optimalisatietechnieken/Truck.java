@@ -65,11 +65,22 @@ public class Truck {
     }
 
     //calculates and sets the total distance & total time for this truck with Actionlist actions
-    public void calculateTotalDistanceAndTime(int[][] distanceMatrix, int[][] timeMatrix, List<Action> actions) {
+    public void updateTruckInfo(int[][] distanceMatrix, int[][] timeMatrix, List<Action> actions) {
         this.totalKm = getMatrixResult(distanceMatrix, actions);
         this.totalTime = getMatrixResult(timeMatrix, actions);
         for (Action a : actions) {
             this.totalTime += a.getServiceTime();
+        }
+
+        for (Action a: actions){
+            if (a.getType()){
+                this.resterendVolume -= a.getVolumeChange();
+            }else{
+                this.resterendVolume += a.getVolumeChange();
+                if (this.resterendVolume > 100){
+                    this.resterendVolume =100;
+                }
+            }
         }
     }
 
@@ -89,37 +100,50 @@ public class Truck {
         return result;
     }
 
+    //checks if volume change from action is allowed for this truck (volume constraint truck)
+    public boolean checkVolume(Action action) {
+        //false = drop & true = collect
+        if (action.getType()) {
+            this.resterendVolume -= action.getVolumeChange();
+        } else {
+            this.resterendVolume += action.getVolumeChange();
+        }
+
+        return this.resterendVolume >= 0 && this.resterendVolume <= 100;
+    }
+
+    public boolean checkTime(Action action, List<Action> route, int[][] timeMatrix) {
+        this.totalTime = getMatrixResult(timeMatrix, route);
+        for (Action a : route) {
+            this.totalTime += a.getServiceTime();
+        }
+        this.totalTime += timeMatrix[route.get(route.size() - 1).getLocation().getId()][action.getLocation().getId()];
+        this.totalTime += action.getServiceTime();
+
+        this.totalTime += timeMatrix[action.getLocation().getId()][this.endLocation.getId()];
+
+        return this.totalTime <= 600;
+    }
+
+    public void updateTruckInfo(Action a, int [][] distanceMatrix, int[][] timeMatrix){
+
+    }
+
+    //Checks if there is a drop, the collect from that machine is already executed
+    public boolean checkRelatedCollect(List<Action> actions, Action action) {
+        if (action.getType()) {
+            return true;
+        } else {
+            for (Action a : actions) {
+                return action.getMachine() == a.getMachine() && !a.getType();
+            }
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         return "Truck met id: " + id + " met\nstartlocatie met gegevens:( " + startLocation +
                 ")\nen eindlocatie met gegevens:( " + endLocation + ")";
-    }
-
-    //returns the nearest collect from collectList to the startlocation of the truck
-    public Collect getClosestCollect(Location l, int[][] distanceMatrix, List<Collect> collectList) {
-        Collect result = null;
-        int distance = 100000;
-        //First collect: c = startlocation
-        if (l == this.startLocation) {
-            for (Collect c : collectList) {
-                if (distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()] < distance) {
-                    distance = distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()];
-                    result = c;
-                } else {
-
-                }
-            }
-            return result;
-        } else {
-            for (Collect c : collectList) {
-                if (distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()] < distance) {
-                    distance = distanceMatrix[startLocation.getId()][c.getMachine().getLocation().getId()];
-                    result = c;
-                } else {
-
-                }
-            }
-            return result;
-        }
     }
 }

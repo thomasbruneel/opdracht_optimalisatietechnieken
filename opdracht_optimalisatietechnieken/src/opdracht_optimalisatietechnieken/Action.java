@@ -55,7 +55,7 @@ public class Action {
         return this.machine.getServiceTime();
     }
 
-    public int getActionVolumeChange(){return this.machine.getVolume();}
+    public int getVolumeChange(){return this.machine.getVolume();}
 
     @Override
     public String toString() {

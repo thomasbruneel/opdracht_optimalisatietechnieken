@@ -47,6 +47,49 @@ public class Location {
         this.name = name;
     }
 
+    //returns closest collect from collectList
+    public Collect getClosestCollect(int[][] distanceMatrix, List<Collect> collectList) {
+        Collect c = null;
+        int distance = 50000;
+
+        for (Collect collect : collectList) {
+            if (distanceMatrix[this.id][collect.getMachine().getLocation().getId()] < distance) {
+                distance = distanceMatrix[this.id][collect.getMachine().getLocation().getId()];
+                c = collect;
+            }
+        }
+        return c;
+    }
+
+    //returns closes drop from dropList
+    public Drop getClosestDrop(int[][] distanceMatrix, List<Drop> dropList) {
+        Drop d = null;
+        int distance = 50000;
+
+        for (Drop drop : dropList) {
+            if (distanceMatrix[this.id][drop.getLocation().getId()] < distance) {
+                distance = distanceMatrix[this.id][drop.getLocation().getId()];
+                d = drop;
+            }
+        }
+        return d;
+    }
+
+    //returns closest depot
+    public Depot getClosestDepot(int[][] distanceMatrix, List<Depot> depotList) {
+        Depot d = null;
+        int distance = 50000;
+
+        for (Depot depot : depotList) {
+            if (distanceMatrix[this.id][depot.getLocation().getId()] < distance) {
+                distance = distanceMatrix[this.id][depot.getLocation().getId()];
+                d = depot;
+            }
+        }
+
+        return d;
+    }
+
     @Override
     public String toString() {
         return "Locatie met id: " + id + "\tlatitude: " + latitude + "\tlongitude: " + longitude + "\tnaam: " + name;
