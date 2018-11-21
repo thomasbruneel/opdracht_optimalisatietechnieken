@@ -40,7 +40,6 @@ public class Collect {
 
         d = this.getMachine().getLocation().getClosestDrop(distanceMatrix, tempDrops);
 
-        dropList.remove(d);
         return d;
     }
 
@@ -58,6 +57,5 @@ public class Collect {
     public String toString() {
         return "Collect request met id " + id + "voor de machine met gegevens: (" + machine + ")\n";
     }
-
 
 }

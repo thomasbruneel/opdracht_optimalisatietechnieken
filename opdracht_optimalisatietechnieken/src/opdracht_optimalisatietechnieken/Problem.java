@@ -151,7 +151,6 @@ public class Problem {
         List<Collect> tempCollect = new ArrayList<>(collectList);
         List<Truck> tempTrucks = new ArrayList<>(truckList);
         List<Machine> tempMachines = new ArrayList<>(machineList);
-        List<Action> actions;
 
 
         //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
@@ -159,16 +158,19 @@ public class Problem {
 
             //selecteer een random truck uit de trucklist
             Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
-            tempTrucks.remove(randomTruck);
 
-            List<Action> route = new ArrayList<>();
+            List<Action> actions = new ArrayList<>();
 
             //stel feasible route voor deze truck op
-            actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
+            actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, actions);
 
-            // voeg deze truck met zijn route toe aan de solution
-            solution.addSolution(randomTruck, actions);
+            if (actions.isEmpty()) {
 
+            } else {
+                // voeg deze truck met zijn route toe aan de solution
+                solution.addSolution(randomTruck, actions);
+                tempTrucks.remove(randomTruck);
+            }
         }
         return solution;
     }
@@ -223,7 +225,7 @@ public class Problem {
             //geen drops meer of geen drop van zelfde type --> collect droppen in depot
             //Collect at Collect --> Drop at Depot
             if (tempDrop.isEmpty() || !collect.hasRelatedDrop(tempDrop)) {
-                depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix,depotList);
+                depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix, depotList);
                 dropAction = new Action(false, depot.getLocation(), collect.getMachine());
 
                 route.add(collectAction);
@@ -337,8 +339,6 @@ public class Problem {
                 time += timeMatrix[route.get(route.indexOf(a) - 1).getLocation().getId()][a.getLocation().getId()];
             }
             time += a.getServiceTime();
-            time += timeMatrix[route.get(route.size() - 1).getLocation().getId()][truck.getEndLocation().getId()];
-
 
             //Volume constraint
             if (a.getType()) {
@@ -355,6 +355,11 @@ public class Problem {
             }
 
 
+        }
+
+        time += timeMatrix[route.get(route.size() - 1).getLocation().getId()][truck.getEndLocation().getId()];
+        if (volume < 0 || time > 600) {
+            return false;
         }
         return true;
     }

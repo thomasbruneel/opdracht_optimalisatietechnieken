@@ -58,10 +58,6 @@ public class Solution {
         return routes;
     }
 
-    public void setRoutes(Map<Truck, List<Action>> routes) {
-        this.routes = routes;
-    }
-
     public int getTotalTime() {
         return totalTime;
     }
@@ -74,6 +70,7 @@ public class Solution {
     public void updateTrucksDistancesAndTimes() {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
+            this.totalDistance += entry.getKey().getTotalKm();
         }
     }
 

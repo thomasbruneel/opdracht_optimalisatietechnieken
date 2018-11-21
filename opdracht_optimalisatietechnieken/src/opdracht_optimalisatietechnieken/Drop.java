@@ -46,7 +46,7 @@ public class Drop {
                 "op locatie met gegevens: (" + location + ")";
     }
 
-    //returns related collect for this drop.
+    //returns related collect from collectList for this drop.
     public Collect getClosestRelatedCollect(int[][] distanceMatrix, List<Collect> collectList) {
         Collect collect = null;
         List<Collect> tempCollects = new ArrayList<>();
@@ -72,13 +72,5 @@ public class Drop {
             }
         }
         return depot;
-    }
-
-    public List<Machine> calculatAvailableMachines(List<Collect> tempCollect, Map<Machine, Depot> depotInventory) {
-        List<Machine> oplossing = new ArrayList<>();
-        tempCollect = tempCollect.stream().filter(p -> p.getMachine().getMachineType() == this.machineType).collect(Collectors.toList());
-        for (Collect c : tempCollect) oplossing.add(c.getMachine());
-        for (Machine m : depotInventory.keySet()) if (m.getMachineType() == this.machineType) oplossing.add(m);
-        return oplossing;
     }
 }

@@ -47,7 +47,7 @@ public class Location {
         this.name = name;
     }
 
-    //returns closest collect from collectList
+    //returns closestd collect from collectList
     public Collect getClosestCollect(int[][] distanceMatrix, List<Collect> collectList) {
         Collect c = null;
         int distance = 50000;
@@ -61,7 +61,7 @@ public class Location {
         return c;
     }
 
-    //returns closes drop from dropList
+    //returns closest drop from dropList
     public Drop getClosestDrop(int[][] distanceMatrix, List<Drop> dropList) {
         Drop d = null;
         int distance = 50000;
