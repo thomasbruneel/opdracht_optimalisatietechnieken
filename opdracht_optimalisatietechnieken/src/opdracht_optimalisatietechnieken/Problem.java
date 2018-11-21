@@ -153,7 +153,7 @@ public class Problem {
 
 
         //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
-        while (!tempCollect.isEmpty() || !tempDrop.isEmpty()) {
+        while (!tempDrop.isEmpty()) {
 
             //selecteer een random truck uit de trucklist
             Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
@@ -231,7 +231,7 @@ public class Problem {
             if (tempDrop.isEmpty() || !collect.hasRelatedDrop(tempDrop)) {
                 //TODO: controleren of het niet slimmer is om meteen in eindlocatie te droppen ipv in dichtste depot.
                 depot = collectAction.getLocation().getClosestDepot(distanceMatrix, depotList);
-                dropAction = new Action(false, depot.getLocation(), collectAction.getMachine());
+                dropAction = new Action(false, randomTruck.getStartLocation(), collectAction.getMachine());
 
                 route.add(collectAction);
                 route.add(dropAction);
