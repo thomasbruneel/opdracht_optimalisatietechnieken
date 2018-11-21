@@ -71,6 +71,7 @@ public class Solution {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
             this.totalDistance += entry.getKey().getTotalKm();
+            this.totalTime += entry.getKey().getTotalTime();
         }
     }
 
@@ -141,9 +142,9 @@ public class Solution {
             currentLocation = action.getLocation().getId();
             currentMachine = action.getMachine().getId();
             if (previousLocation == currentLocation) {
-                sb.append(":" + currentMachine);
+                sb.append(":" + currentMachine + " ");
             } else {
-                sb.append(" " + currentLocation + ":" + currentMachine + " ");
+                sb.append(" " + currentLocation + ":" + currentMachine);
 
             }
             previousLocation = currentLocation;

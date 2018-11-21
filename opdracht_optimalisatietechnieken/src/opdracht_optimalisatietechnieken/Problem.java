@@ -143,7 +143,6 @@ public class Problem {
     }
 
     //generate initial solution
-    //TODO
     public Solution generateInitialSolution() {
         Solution solution = new Solution(this.distanceMatrix, this.timeMatrix);
         Random random = new Random();
@@ -187,12 +186,13 @@ public class Problem {
         Action dropAction;
 
         //tempCollect is leeg. enkel nog drops uit te voeren naar depots
-        //Collect at Depot --> Drop at Drop
         if (tempCollect.isEmpty()) {
+            //stopcriterium
             if (tempDrop.isEmpty()) {
                 return route;
+
+                //DEPOTCOLLECT --> DROP
             } else {
-                //TODO: wat als tempdrop ook empty is?
                 drop = getClosestDrop(randomTruck, tempDrop, tempMachines, route);
                 depot = drop.getClosestMachineDepot(distanceMatrix, inventory);
 
@@ -224,14 +224,14 @@ public class Problem {
         } else {
             collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
 
-            collectAction = new Action(true, collect.getMachine().getLocation(), collect.getMachine());
+            collectAction = new Action(true, collect.getLocation(), collect.getMachine());
 
             //geen drops meer of geen drop van zelfde type --> collect droppen in depot
-            //Collect at Collect --> Drop at Depot
+            //COLLECT --> DEPOTDROP
             if (tempDrop.isEmpty() || !collect.hasRelatedDrop(tempDrop)) {
                 //TODO: controleren of het niet slimmer is om meteen in eindlocatie te droppen ipv in dichtste depot.
-                depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix, depotList);
-                dropAction = new Action(false, depot.getLocation(), collect.getMachine());
+                depot = collectAction.getLocation().getClosestDepot(distanceMatrix, depotList);
+                dropAction = new Action(false, depot.getLocation(), collectAction.getMachine());
 
                 route.add(collectAction);
                 route.add(dropAction);
@@ -255,10 +255,10 @@ public class Problem {
                 }
 
                 //nog overeenkomstige drops beschikbaar
-                //Collect at Collect --> Drop at Drop
+                //COLLECT --> DROP
             } else {
                 drop = collect.getClosestRelatedDrop(distanceMatrix, tempDrop);
-                dropAction = new Action(false, drop.getLocation(), collect.getMachine());
+                dropAction = new Action(false, drop.getLocation(), collectAction.getMachine());
 
                 route.add(collectAction);
                 route.add(dropAction);

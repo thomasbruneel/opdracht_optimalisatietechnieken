@@ -192,7 +192,6 @@ public class Main {
 
             Problem p = new Problem(TRUCK_CAPACITY, TRUCK_WORKING_TIME, locationList, depotList, truckList,
                     machineTypeList, machineList, dropList, collectList, timeMatrix, distanceMatrix);
-            System.out.println(p.getDepotList().get(0).toString());
             System.out.println("Input OK");
             return p;
 

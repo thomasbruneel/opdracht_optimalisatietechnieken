@@ -24,6 +24,10 @@ public class Collect {
         return machine;
     }
 
+    public Location getLocation(){
+        return this.machine.getLocation();
+    }
+
     public void setMachine(Machine machine) {
         this.machine = machine;
     }
