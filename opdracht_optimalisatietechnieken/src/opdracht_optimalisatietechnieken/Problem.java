@@ -154,7 +154,7 @@ public class Problem {
 
 
         //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
-        while (!tempCollect.isEmpty() && !tempDrop.isEmpty()) {
+        while (!tempCollect.isEmpty() || !tempDrop.isEmpty()) {
 
             //selecteer een random truck uit de trucklist
             Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
@@ -189,33 +189,37 @@ public class Problem {
         //tempCollect is leeg. enkel nog drops uit te voeren naar depots
         //Collect at Depot --> Drop at Drop
         if (tempCollect.isEmpty()) {
-            drop = getClosestDrop(randomTruck, tempDrop, tempMachines, route);
-            depot = drop.getClosestMachineDepot(distanceMatrix, inventory);
-
-            collectAction = new Action(true, depot.getLocation(), getMachine(inventory, drop.getMachineType(), depot));
-            dropAction = new Action(false, drop.getLocation(), collectAction.getMachine());
-
-            route.add(collectAction);
-            route.add(dropAction);
-
-            if (isFeasible(randomTruck, route)) {
-                //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
-                tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
-                inventory.remove(collectAction.getMachine(), depot);
-                tempDrop.remove(drop);
-
-                createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
-
+            if (tempDrop.isEmpty()) {
+                return route;
             } else {
-                //niet feasible, voortgaan volgende truck
-                route.remove(collectAction);
-                route.remove(dropAction);
+                //TODO: wat als tempdrop ook empty is?
+                drop = getClosestDrop(randomTruck, tempDrop, tempMachines, route);
+                depot = drop.getClosestMachineDepot(distanceMatrix, inventory);
 
-                //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
-                //uitbreiding: eerst andere resterende collects en drops selecteren.
+                collectAction = new Action(true, depot.getLocation(), getMachine(inventory, drop.getMachineType(), depot));
+                dropAction = new Action(false, drop.getLocation(), collectAction.getMachine());
 
+                route.add(collectAction);
+                route.add(dropAction);
+
+                if (isFeasible(randomTruck, route)) {
+                    //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
+                    tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
+                    inventory.remove(collectAction.getMachine(), depot);
+                    tempDrop.remove(drop);
+
+                    createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
+
+                } else {
+                    //niet feasible, voortgaan volgende truck
+                    route.remove(collectAction);
+                    route.remove(dropAction);
+
+                    //TODO: mogelijk uit te breiden (momenteel neemt hij gewoon nieuwe truck wanneer toegevoegde Collect & Drop niet resulteren in feasible route)
+                    //uitbreiding: eerst andere resterende collects en drops selecteren.
+
+                }
             }
-
             //er zijn nog collects die uitgevoerd moeten worden.
         } else {
             collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
@@ -225,6 +229,7 @@ public class Problem {
             //geen drops meer of geen drop van zelfde type --> collect droppen in depot
             //Collect at Collect --> Drop at Depot
             if (tempDrop.isEmpty() || !collect.hasRelatedDrop(tempDrop)) {
+                //TODO: controleren of het niet slimmer is om meteen in eindlocatie te droppen ipv in dichtste depot.
                 depot = collect.getMachine().getLocation().getClosestDepot(distanceMatrix, depotList);
                 dropAction = new Action(false, depot.getLocation(), collect.getMachine());
 
@@ -299,11 +304,15 @@ public class Problem {
         return m;
     }
 
-    private Drop getClosestDrop(Truck randomTruck, List<Drop> tempDrop, List<Machine> tempMachines, List<Action> route) {
+    private Drop getClosestDrop(Truck truck, List<Drop> tempDrop, List<Machine> tempMachines, List<Action> route) {
         Drop drop = null;
 
         if (tempDrop.isEmpty()) {
             System.out.println("ERROR EMPTY TEMPDROPLIST");
+        }
+        //trucks first action?
+        if (route.isEmpty()) {
+            drop = truck.getStartLocation().getClosestDrop(distanceMatrix, tempDrop);
         } else {
             drop = route.get(route.size() - 1).getLocation().getClosestDrop(distanceMatrix, tempDrop);
         }
@@ -317,7 +326,7 @@ public class Problem {
             System.out.println("ERROR EMPTY TEMPCOLLECTLIST");
             //errorhandling
         }
-        //Truck's first action?
+        //Trucks first action?
         if (route.isEmpty()) {
             collect = truck.getStartLocation().getClosestCollect(distanceMatrix, tempCollect);
         } else {
