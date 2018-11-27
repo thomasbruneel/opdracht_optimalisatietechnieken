@@ -144,44 +144,46 @@ public class Problem {
 
     //generate initial solution
     public Solution generateInitialSolution() {
-        Solution solution = new Solution(this.distanceMatrix, this.timeMatrix);
-        Random random = new Random();
-        List<Drop> tempDrop = new ArrayList<>(dropList);
-        List<Collect> tempCollect = new ArrayList<>(collectList);
-        List<Truck> tempTrucks = new ArrayList<>(truckList);
-        List<Machine> tempMachines = new ArrayList<>(machineList);
-        for (int i = 40; i<50; i++){
-            tempTrucks.add(new Truck(i,depotList.get(0).getLocation(),depotList.get(0).getLocation()));
-        }
-
-
-        //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
-        while (!tempDrop.isEmpty()) {
-
-            //selecteer een random truck uit de trucklist
-            Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
-
-            List<Action> actions = new ArrayList<>();
-
-            for(int qq=0; qq<10; qq++) {
-                //stel feasible route voor deze truck op
-                actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, actions);
-                actions = rearrangeRoute(actions, randomTruck);
+        boolean feasible=false;
+        Solution solution = null;
+        int poging=0;
+        while (!feasible) {
+            solution = new Solution(this.distanceMatrix, this.timeMatrix);
+            Random random = new Random();
+            List<Drop> tempDrop = new ArrayList<>(dropList);
+            List<Collect> tempCollect = new ArrayList<>(collectList);
+            List<Truck> tempTrucks = new ArrayList<>(truckList);
+            List<Machine> tempMachines = new ArrayList<>(machineList);
+            for (int i = 40; i < 50; i++) {
+                tempTrucks.add(new Truck(i, depotList.get(0).getLocation(), depotList.get(0).getLocation()));
             }
 
-            if (actions.isEmpty()) {
+            //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
+            while (!tempDrop.isEmpty() && !tempTrucks.isEmpty()) {
 
-            } else {
-                // voeg deze truck met zijn route toe aan de solution
-                solution.addSolution(randomTruck, actions);
-                tempTrucks.remove(randomTruck);
+                //selecteer een random truck uit de trucklist
+                Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
+
+                List<Action> actions = new ArrayList<>();
+
+                for (int qq = 0; qq < 10; qq++) {
+                    //stel feasible route voor deze truck op
+                    actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, actions);
+                    actions = rearrangeRoute(actions, randomTruck);
+                }
+
+                if (actions.isEmpty()) {
+
+                } else {
+                    // voeg deze truck met zijn route toe aan de solution
+                    solution.addSolution(randomTruck, actions);
+                    tempTrucks.remove(randomTruck);
+                }
             }
+            if (solution.getSolution().keySet().size()<=40) feasible = true;
+            else System.out.println("Poging : " + poging++ + " mislukt: size = " + tempTrucks.size());
+
         }
-
-
-
-
-
 
         return solution;
     }

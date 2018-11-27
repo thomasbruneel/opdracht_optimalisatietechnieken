@@ -67,10 +67,13 @@ public class Drop {
         int distance = 50000;
 
         for (Map.Entry<Machine, Depot> entry : inventory.entrySet()) {
-            if (entry.getKey().getMachineType() == this.getMachineType() && distanceMatrix[this.getLocation().getId()][entry.getValue().getLocation().getId()] < distance) {
+            if (entry.getKey().getMachineType() == this.getMachineType() &&
+                    distanceMatrix[this.getLocation().getId()][entry.getValue().getLocation().getId()] < distance) {
                 depot = entry.getValue();
             }
         }
+        if(depot == null)
+            System.out.println("null!");
         return depot;
     }
 }
