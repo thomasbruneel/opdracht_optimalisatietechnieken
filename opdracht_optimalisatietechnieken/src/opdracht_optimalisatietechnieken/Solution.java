@@ -76,6 +76,21 @@ public class Solution {
         this.totalTime = totalTime;
     }
 
+    public int getTotalDistanceWithPenalty(){
+        int totalDistanceWithPenalty = 0;
+        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
+            Truck truck = entry.getKey();
+            List<Action> list = entry.getValue();
+            int totalDistanceTruck = truck.getMatrixResult(distanceMatrix,list);
+            if(truck.getId()>39)
+                totalDistanceTruck*=100;
+            totalDistanceWithPenalty += totalDistanceTruck;
+        }
+
+        return totalDistanceWithPenalty;
+    }
+
+
     // Updates Trucks totalTime and totalDistance
     public void updateTrucksDistancesAndTimes() {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
