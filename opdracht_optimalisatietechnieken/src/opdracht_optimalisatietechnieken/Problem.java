@@ -153,9 +153,7 @@ public class Problem {
             List<Collect> tempCollect = new ArrayList<>(collectList);
             List<Truck> tempTrucks = new ArrayList<>(truckList);
             List<Machine> tempMachines = new ArrayList<>(machineList);
-            for (int i = 40; i < 50; i++) {
-                tempTrucks.add(new Truck(i, depotList.get(0).getLocation(), depotList.get(0).getLocation()));
-            }
+
 
             //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
             while (!tempDrop.isEmpty() && !tempTrucks.isEmpty()) {
@@ -179,7 +177,7 @@ public class Problem {
                     tempTrucks.remove(randomTruck);
                 }
             }
-            if (solution.getSolution().keySet().size()<=40) feasible = true;
+            if (tempCollect.isEmpty() && tempDrop.isEmpty() && solution.isFeasible(machineList.size())) feasible = true;
             else System.out.println("Poging : " + poging++ + " mislukt: size = " + tempTrucks.size());
 
         }
