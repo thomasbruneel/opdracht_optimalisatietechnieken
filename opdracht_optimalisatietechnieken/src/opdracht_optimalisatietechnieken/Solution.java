@@ -25,6 +25,14 @@ public class Solution {
         this.distanceMatrix = distanceMatrix;
         this.timeMatrix = timeMatrix;
     }
+    
+    public Solution(Solution s){
+    	this.routes=s.routes;
+    	this.totalDistance=s.totalDistance;
+    	this.totalTime=s.totalTime;
+    	this.distanceMatrix=s.distanceMatrix;
+    	this.timeMatrix=s.timeMatrix;
+    }
 
     public void addTruck(Truck truck) {
         routes.put(truck, new ArrayList<>());
@@ -76,46 +84,81 @@ public class Solution {
     }
 
     // TODO: feasibility van totale oplossing checken
-    public boolean isFeasible() {
-/*        Map<Truck, List<Action>> routes = s.getSolution();        //alle trucks
-        for (List<Action> actions : routes.values()) {        //actions per truck
-            double serviceTime = 0;
-            double drivingTime = 0;
-            double workingTime = 0;
+    public boolean isFeasible(int machineSize) {
+    	boolean[] collect=new boolean[machineSize];// wordt gebruikt voor te checken of machine 2 maal verplaatst zou worden
+    	boolean[] drop=new boolean[machineSize];// idem + wordt gebruikt voor te checken of machine eerst gecollect wordt en dan gedropt wordt
+    	//double t=0;
+    	for (Map.Entry<Truck, List<Action>> entry : routes.entrySet()) {
+    		Truck truck=entry.getKey();
+    		List<Action> actions=entry.getValue();
+            double truckTime = 0;
             double capacity = 0;
-            int previousLocation = -1;
+            int currentLocation = -1;
+            Machine currentMachine = null;
+            
+            int previousLocation = truck.getStartLocation().getId();
+            for(Action action:actions){
+                double serviceTime = 0;
+                double drivingTime = 0;
+ 
+                currentLocation = action.getLocation().getId();
+                currentMachine = action.getMachine();
 
-            for (Action a : actions) {
-                if (previousLocation == -1) {    //startlocatie enkel collect mogelijk
-                    if (a.getType() == true) {        //type is collect
-                        capacity = capacity + a.getMachine().getMachineType().getVolume();
-
-                    }
-
-                    // nog geen driving time berekenen
-
-                } else {
-                    if (a.getType() == true) {        //type is collect
-                        capacity = capacity + a.getMachine().getMachineType().getVolume();
-
-                    } else {        //type is drop
-                        capacity = capacity - a.getMachine().getMachineType().getVolume();
-                    }
-                    drivingTime = drivingTime + timeMatrix[previousLocation][a.getLocation().getId()];
+                
+                if(action.getType()==true){
+                	//action is collect
+                	capacity=capacity+currentMachine.getMachineType().getVolume();
+                	
+                	if(collect[currentMachine.getId()]==false){
+                		collect[currentMachine.getId()]=true;
+                	}
+                	else{
+                		return false;
+                		
+                	}
+                	
                 }
-                previousLocation = a.getLocation().getId();
-                serviceTime = serviceTime + a.getMachine().getMachineType().getServiceTime();
-                workingTime = serviceTime + drivingTime;
+                else{
+                	//action is drop
+                	capacity=capacity-currentMachine.getMachineType().getVolume();
+                	
+                	if(drop[currentMachine.getId()]==false){
+                		drop[currentMachine.getId()]=true;
+                	}
+                	else{
+                		return false;
+                	}
+                	
+                	if(collect[currentMachine.getId()]==false){
+                		return false;
+                	}
 
-                if (capacity > TRUCK_CAPACITY || workingTime > TRUCK_WORKING_TIME) {
-                    return false;
                 }
-
+                	
+                serviceTime=currentMachine.getMachineType().getServiceTime();
+                drivingTime=timeMatrix[previousLocation][currentLocation];
+                truckTime=truckTime+serviceTime+drivingTime;
+                if(truckTime>600||capacity>100){
+                	return false;
+                }
+                
+                previousLocation = currentLocation;
+                
 
             }
-        }*/
-        return true;
-    }
+            if(previousLocation!=truck.getEndLocation().getId()){
+            	truckTime=truckTime+timeMatrix[previousLocation][truck.getEndLocation().getId()];
+            	if(truckTime>600){
+            		return false;
+            	}
+            }
+            
+            //t=t+truckTime;
+
+           }
+    	//System.out.println("total time "+t);
+    	return true;
+    	}
 
     public void writeOuput(String outputfilename) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(outputfilename));
@@ -142,7 +185,7 @@ public class Solution {
             currentLocation = action.getLocation().getId();
             currentMachine = action.getMachine().getId();
             if (previousLocation == currentLocation) {
-                sb.append(":" + currentMachine + " ");
+                sb.append(":" + currentMachine);
             } else {
                 sb.append(" " + currentLocation + ":" + currentMachine);
 
