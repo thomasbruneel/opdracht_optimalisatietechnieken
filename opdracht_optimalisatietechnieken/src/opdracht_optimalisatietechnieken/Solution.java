@@ -220,34 +220,46 @@ public class Solution {
     }
     
     public void swapCollects(){
-    	Random rand = new Random(); 
-    	List<Truck> trucks = new ArrayList<Truck>(routes.keySet());
-    	Truck randomTruck=trucks.get(rand.nextInt(trucks.size()));
-    	List<Action>actions=routes.get(randomTruck);
-    	
-    	int action1Index=-1;
-    	Action action1;
+    	Problem p = null;
     	while(true){
-    		action1Index=rand.nextInt(actions.size());
-    		action1=actions.get(action1Index);
-    		if(action1.getType()==true){
-    			break;
-    		}
+        	Random rand = new Random(); 
+        	List<Truck> trucks = new ArrayList<Truck>(routes.keySet());
+        	Truck randomTruck=trucks.get(rand.nextInt(trucks.size()));
+        	List<Action>actions=routes.get(randomTruck);
+        	
+        	int action1Index=-1;
+        	Action action1;
+        	while(true){
+        		action1Index=rand.nextInt(actions.size());
+        		action1=actions.get(action1Index);
+        		if(action1.getType()==true){
+        			break;
+        		}
+        		
+        	}
+
+        	int action2Index=-1;
+        	Action action2;
+        	while(true){
+        		action2Index = rand.nextInt(actions.size());
+        		action2=actions.get(action2Index);
+        		if(action2.getType()==true&&action1Index!=action2Index){
+        			break;
+        		}
+        		
+        	}
+
+        	Collections.swap(routes.get(randomTruck), action1Index, action2Index);
+        	
+        	if(p.isFeasible(randomTruck, routes.get(randomTruck))){
+        		break;
+        	}
+        	else{
+        		Collections.swap(routes.get(randomTruck), action1Index, action2Index);
+        	}
     		
     	}
 
-    	int action2Index=-1;
-    	Action action2;
-    	while(true){
-    		action2Index = rand.nextInt(actions.size());
-    		action2=actions.get(action2Index);
-    		if(action2.getType()==true&&action1Index!=action2Index){
-    			break;
-    		}
-    		
-    	}
-
-    	Collections.swap(routes.get(randomTruck), action1Index, action2Index);
     	
     	
     }

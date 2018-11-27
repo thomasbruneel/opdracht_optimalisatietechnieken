@@ -381,7 +381,7 @@ public class Problem {
         return collect;
     }
 
-    private boolean isFeasible(Truck truck, List<Action> route) {
+    public boolean isFeasible(Truck truck, List<Action> route) {
         int volume = truck.getResterendVolume();
         int time = truck.getTotalTime();
 
