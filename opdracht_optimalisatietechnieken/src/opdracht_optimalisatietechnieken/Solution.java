@@ -210,13 +210,6 @@ public class Solution {
         int time = truck.getTotalTime();
 
         for (Action a : route) {
-            //Time constraint
-            if (route.indexOf(a) == 0) {
-                time += timeMatrix[truck.getStartLocation().getId()][a.getLocation().getId()];
-            } else {
-                time += timeMatrix[route.get(route.indexOf(a) - 1).getLocation().getId()][a.getLocation().getId()];
-            }
-            time += a.getServiceTime();
 
             //Volume constraint
             if (a.getType()) {
@@ -239,12 +232,11 @@ public class Solution {
 
         }
 
-        time += timeMatrix[route.get(route.size() - 1).getLocation().getId()][truck.getEndLocation().getId()];
         if (volume < 0 || time > 600) {
             return false;
         }
         return true;
     }
-
+    
 }
 
