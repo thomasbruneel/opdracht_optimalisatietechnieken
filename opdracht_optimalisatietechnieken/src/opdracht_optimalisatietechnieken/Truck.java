@@ -94,11 +94,15 @@ public class Truck {
 
     //Checks if there is a drop, the collect from that machine is already executed
     public boolean checkRelatedCollect(List<Action> actions, Action action) {
+        //collect action
         if (action.getType()) {
             return true;
+            //drop action
         } else {
             for (Action a : actions) {
-                return action.getMachine() == a.getMachine() && !a.getType();
+                if(action.getMachine().getMachineType() == a.getMachine().getMachineType() && a.getType()){
+                    return true;
+                }
             }
             return false;
         }
