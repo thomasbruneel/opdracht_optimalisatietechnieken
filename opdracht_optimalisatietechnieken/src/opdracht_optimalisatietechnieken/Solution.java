@@ -220,11 +220,18 @@ public class Solution {
     }
     
     public void swapCollects(){
-    	Problem p = null;
     	while(true){
         	Random rand = new Random(); 
         	List<Truck> trucks = new ArrayList<Truck>(routes.keySet());
-        	Truck randomTruck=trucks.get(rand.nextInt(trucks.size()));
+        	Truck randomTruck=null;
+        	//neem een randomtruck met minstens 2 collects
+        	while(true){
+        		randomTruck=trucks.get(rand.nextInt(trucks.size()));
+        		if(routes.get(randomTruck).size()>2){
+        			break;
+        		}
+        	}
+
         	List<Action>actions=routes.get(randomTruck);
         	
         	int action1Index=-1;
@@ -251,7 +258,7 @@ public class Solution {
 
         	Collections.swap(routes.get(randomTruck), action1Index, action2Index);
         	
-        	if(p.isFeasible(randomTruck, routes.get(randomTruck))){
+        	if(isFeasibleTruck(randomTruck, routes.get(randomTruck))){
         		break;
         	}
         	else{
@@ -262,6 +269,47 @@ public class Solution {
 
     	
     	
+    }
+    
+    public boolean isFeasibleTruck(Truck truck, List<Action> route) {
+        int volume = truck.getResterendVolume();
+        int time = truck.getTotalTime();
+
+        for (Action a : route) {
+            //Time constraint
+            if (route.indexOf(a) == 0) {
+                time += timeMatrix[truck.getStartLocation().getId()][a.getLocation().getId()];
+            } else {
+                time += timeMatrix[route.get(route.indexOf(a) - 1).getLocation().getId()][a.getLocation().getId()];
+            }
+            time += a.getServiceTime();
+
+            //Volume constraint
+            if (a.getType()) {
+                volume -= a.getVolumeChange();
+            } else {
+                volume += a.getVolumeChange();
+                if (volume > 100) {
+                    volume = 100;
+                }
+            }
+
+            if (!truck.checkRelatedCollect(route, a)){
+                return false;
+            }
+
+            if (volume < 0 || time > 600) {
+                return false;
+            }
+
+
+        }
+
+        time += timeMatrix[route.get(route.size() - 1).getLocation().getId()][truck.getEndLocation().getId()];
+        if (volume < 0 || time > 600) {
+            return false;
+        }
+        return true;
     }
 
 }
