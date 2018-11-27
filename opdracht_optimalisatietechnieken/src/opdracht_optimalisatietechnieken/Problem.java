@@ -150,11 +150,14 @@ public class Problem {
         List<Collect> tempCollect = new ArrayList<>(collectList);
         List<Truck> tempTrucks = new ArrayList<>(truckList);
         List<Machine> tempMachines = new ArrayList<>(machineList);
+        for (int i = 40; i<50; i++){
+            tempTrucks.add(new Truck(i,depotList.get(0).getLocation(),depotList.get(0).getLocation()));
+        }
 
 
         //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
         while (!tempDrop.isEmpty()) {
-
+            
             //selecteer een random truck uit de trucklist
             Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
 
@@ -283,6 +286,29 @@ public class Problem {
 
             }
 
+        }
+
+
+        //TODO: Mogelijkheid tot route te verbeteren?
+        route = rearrangeRoute(route, randomTruck);
+
+        return route;
+    }
+
+    private List<Action> rearrangeRoute(List<Action> route, Truck randomTruck) {
+        List<Location> depotLocations = new ArrayList<>();
+        for( Depot d : depotList) depotLocations.add(d.getLocation());
+
+        for(int i=route.size()-1; i>0; i--){
+            List<Action> currentRoute = new ArrayList<>(route);
+            if(!route.get(i).getType()){
+                if(depotLocations.contains(route.get(i).getLocation())){
+                    Action newDrop = new Action(false,randomTruck.getEndLocation(),route.get(i).getMachine());
+                    currentRoute.remove(i);
+                    currentRoute.add(newDrop);
+                    if (isFeasible(randomTruck,currentRoute)) route = currentRoute;
+                }
+            }
         }
 
         return route;
