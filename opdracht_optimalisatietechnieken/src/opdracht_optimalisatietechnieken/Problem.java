@@ -53,7 +53,6 @@ public class Problem {
             for (Depot d : depotList) {
                 if (m.getLocation().getId() == d.getLocation().getId()) {
                     depotInventory.put(m, d);
-                    break;
                 }
             }
         }
@@ -191,7 +190,6 @@ public class Problem {
     private List<Action> createRoute(Truck randomTruck, List<Collect> tempCollect, List<Drop> tempDrop, List<Machine> tempMachines, List<Action> route) {
 
         Map<Machine, Depot> inventory = calculateInventory(tempMachines);
-
         Collect collect;
         Drop drop;
         Depot depot;
@@ -218,8 +216,8 @@ public class Problem {
 
                 if (isFeasible(randomTruck, route)) {
                     //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
-                    tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
                     inventory.remove(collectAction.getMachine(), depot);
+                    tempMachines.remove(depot);
                     tempDrop.remove(drop);
 
                     createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
@@ -252,7 +250,6 @@ public class Problem {
 
                 if (isFeasible(randomTruck, route)) {
                     //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
-                    tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
                     inventory.put(collect.getMachine(), depot);
                     tempCollect.remove(collect);
 
@@ -281,7 +278,6 @@ public class Problem {
                     //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
                     tempCollect.remove(collect);
                     tempDrop.remove(drop);
-                    tempMachines.get(tempMachines.indexOf(collectAction.getMachine())).setLocation(dropAction.getLocation());
 
                     createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
 
