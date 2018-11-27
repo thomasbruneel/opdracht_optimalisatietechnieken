@@ -405,6 +405,10 @@ public class Problem {
                 }
             }
 
+            if (!truck.checkRelatedCollect(route, a)){
+                return false;
+            }
+
             if (volume < 0 || time > 600) {
                 return false;
             }
