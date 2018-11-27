@@ -157,14 +157,17 @@ public class Problem {
 
         //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
         while (!tempDrop.isEmpty()) {
-            
+
             //selecteer een random truck uit de trucklist
             Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
 
             List<Action> actions = new ArrayList<>();
 
-            //stel feasible route voor deze truck op
-            actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, actions);
+            for(int qq=0; qq<10; qq++) {
+                //stel feasible route voor deze truck op
+                actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, actions);
+                actions = rearrangeRoute(actions, randomTruck);
+            }
 
             if (actions.isEmpty()) {
 
@@ -174,6 +177,12 @@ public class Problem {
                 tempTrucks.remove(randomTruck);
             }
         }
+
+
+
+
+
+
         return solution;
     }
 
@@ -290,7 +299,7 @@ public class Problem {
 
 
         //TODO: Mogelijkheid tot route te verbeteren?
-        route = rearrangeRoute(route, randomTruck);
+
 
         return route;
     }
@@ -307,6 +316,17 @@ public class Problem {
                     currentRoute.remove(i);
                     currentRoute.add(newDrop);
                     if (isFeasible(randomTruck,currentRoute)) route = currentRoute;
+                }
+            }
+        }
+        for(int i=0; i<route.size(); i++){
+            List<Action> currentRoute = new ArrayList<>(route);
+            if(route.get(i).getType()){
+                if(route.get(i).getLocation() == randomTruck.getStartLocation()){
+                    Action newCollect = new Action(true,randomTruck.getStartLocation(),route.get(i).getMachine());
+                    currentRoute.remove(i);
+                    currentRoute.add(0,newCollect);
+                    if(isFeasible(randomTruck,currentRoute)) route = currentRoute;
                 }
             }
         }
