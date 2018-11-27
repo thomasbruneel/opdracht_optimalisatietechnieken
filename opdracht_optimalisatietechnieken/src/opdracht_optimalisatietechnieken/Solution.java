@@ -100,82 +100,16 @@ public class Solution {
         }
     }
 
-    // TODO: feasibility van totale oplossing checken
-    public boolean isFeasible(int machineSize) {
-    	boolean[] collect=new boolean[machineSize];// wordt gebruikt voor te checken of machine 2 maal verplaatst zou worden
-    	boolean[] drop=new boolean[machineSize];// idem + wordt gebruikt voor te checken of machine eerst gecollect wordt en dan gedropt wordt
-    	//double t=0;
-    	for (Map.Entry<Truck, List<Action>> entry : routes.entrySet()) {
-    		Truck truck=entry.getKey();
-    		List<Action> actions=entry.getValue();
-            double truckTime = 0;
-            double capacity = 0;
-            int currentLocation = -1;
-            Machine currentMachine = null;
-            
-            int previousLocation = truck.getStartLocation().getId();
-            for(Action action:actions){
-                double serviceTime = 0;
-                double drivingTime = 0;
- 
-                currentLocation = action.getLocation().getId();
-                currentMachine = action.getMachine();
 
-                
-                if(action.getType()==true){
-                	//action is collect
-                	capacity=capacity+currentMachine.getMachineType().getVolume();
-                	
-                	if(collect[currentMachine.getId()]==false){
-                		collect[currentMachine.getId()]=true;
-                	}
-                	else{
-                		return false;
-                		
-                	}
-                	
-                }
-                else{
-                	//action is drop
-                	capacity=capacity-currentMachine.getMachineType().getVolume();
-                	
-                	if(drop[currentMachine.getId()]==false){
-                		drop[currentMachine.getId()]=true;
-                	}
-                	else{
-                		return false;
-                	}
-                	
-                	if(collect[currentMachine.getId()]==false){
-                		return false;
-                	}
 
-                }
-                	
-                serviceTime=currentMachine.getMachineType().getServiceTime();
-                drivingTime=timeMatrix[previousLocation][currentLocation];
-                truckTime=truckTime+serviceTime+drivingTime;
-                if(truckTime>600||capacity>100){
-                	return false;
-                }
-                
-                previousLocation = currentLocation;
-                
-
+    public boolean isFeasible(){
+        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()){
+            if (!isFeasibleTruck(entry.getKey(), entry.getValue())) {
+                return false;
             }
-            if(previousLocation!=truck.getEndLocation().getId()){
-            	truckTime=truckTime+timeMatrix[previousLocation][truck.getEndLocation().getId()];
-            	if(truckTime>600){
-            		return false;
-            	}
-            }
-            
-            //t=t+truckTime;
-
-           }
-    	//System.out.println("total time "+t);
-    	return true;
-    	}
+        }
+        return true;
+    }
 
     public void writeOuput(String outputfilename) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(outputfilename));

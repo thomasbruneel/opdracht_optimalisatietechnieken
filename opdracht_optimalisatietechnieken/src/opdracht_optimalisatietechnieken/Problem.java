@@ -177,7 +177,7 @@ public class Problem {
                     tempTrucks.remove(randomTruck);
                 }
             }
-            if (tempCollect.isEmpty() && tempDrop.isEmpty() && solution.isFeasible(machineList.size())) feasible = true;
+            if (tempCollect.isEmpty() && tempDrop.isEmpty() && solution.isFeasible()) feasible = true;
             else System.out.println("Poging : " + poging++ + " mislukt: size = " + tempTrucks.size());
 
         }
@@ -215,7 +215,7 @@ public class Problem {
                 if (isFeasible(randomTruck, route)) {
                     //route blijft behouden en nog extra acties toegevoegd uit resterende lijst.
                     inventory.remove(collectAction.getMachine(), depot);
-                    tempMachines.remove(depot);
+                    tempMachines.remove(collectAction.getMachine());
                     tempDrop.remove(drop);
 
                     createRoute(randomTruck, tempCollect, tempDrop, tempMachines, route);
