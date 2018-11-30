@@ -3,21 +3,21 @@ package opdracht_optimalisatietechnieken;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Route {
+public class Route extends ArrayList {
 
     private List<Action> route;
 
     //default constructor
-    public Route(int[][] distanceMatrix, int[][] timeMatrix) {
+    public Route() {
         route = new ArrayList<>();
     }
 
     //copy constructor
-    public Route(Route r) {
-        this.route = r.route;
+    public Route(Route route) {
+        this.route = route.route;
     }
 
-    public Route(List<Action> route, int[][] distanceMatrix, int[][] timeMatrix) {
+    public Route(List<Action> route) {
         this.route = route;
     }
 
@@ -29,5 +29,15 @@ public class Route {
         this.route.add(a);
     }
 
+    public void removeAction(Action a) {
+        this.route.remove(a);
+    }
 
+    public void removeAction(int index) {
+        this.route.remove(index);
+    }
+
+    public Action getAction(int index) {
+        return this.getRoute().get(index);
+    }
 }
