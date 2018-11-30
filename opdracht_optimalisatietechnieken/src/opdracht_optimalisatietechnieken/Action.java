@@ -23,6 +23,12 @@ public class Action {
         this.machine = machine;
     }
 
+    public Action(Action a) {
+        this.type = a.type;
+        this.location = a.location;
+        this.machine = a.machine;
+    }
+
     public boolean getType() {
         return type;
     }
