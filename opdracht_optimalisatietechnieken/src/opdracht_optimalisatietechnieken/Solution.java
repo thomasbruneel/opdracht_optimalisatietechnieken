@@ -29,7 +29,12 @@ public class Solution {
     }
     
     public Solution(Solution s){
-    	this.routes=s.routes;
+    	this.routes=new HashMap<>();
+    	for(Map.Entry<Truck, List<Action>> entry : s.routes.entrySet()){
+    	    List<Action> acties = new ArrayList<>();
+    	    for(Action a : entry.getValue()) acties.add(new Action(a));
+    	    this.routes.put(new Truck(entry.getKey()), acties);
+        }
     	this.totalDistance=s.totalDistance;
     	this.totalTime=s.totalTime;
     	this.distanceMatrix=s.distanceMatrix;
@@ -93,6 +98,7 @@ public class Solution {
 
     // Updates Trucks totalTime and totalDistance
     public void updateTrucksDistancesAndTimes() {
+        this.totalDistance=this.totalTime=0;
     	System.out.println("begin");
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
