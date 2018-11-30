@@ -50,116 +50,7 @@ public class Problem {
 
     }
 
-    private void swapDropCollect(Solution initialSolution) {
-    	System.out.println("start neighbour searching");
-        Solution bestSolution=new Solution(initialSolution);
-        int iterations=0;
-        Random rand = new Random(); 
-        while(true){
-        	//System.out.println("lus");
-        	Solution solution=new Solution(bestSolution);
-        	Action collect1 = null;
-        	Action drop1=null;
-        	Action collect2 = null;
-        	Action drop2=null;
-        	
-        	int collect1Index = 0;
-        	int drop1Index=0;
-        	int collect2Index=0;
-        	int drop2Index=0;
-        	
-        	List<Truck> trucks = new ArrayList(solution.getRoutes().keySet());
-        	int aantalTrucks=trucks.size();
-        	
-        	//2 verschillende randomtrucks nemen
-        	Truck randomTruck1=trucks.get(rand.nextInt(aantalTrucks));
-        	Truck randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
-        	while(randomTruck1.getId()==randomTruck2.getId()){
-        		randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
-        	}
-        	
-        	List<Action>lijst1=solution.getRoutes().get(randomTruck1);
-        	List<Action>lijst2=solution.getRoutes().get(randomTruck2);
-        	
-        	//zoek  drop in randomtruck1
-            while(true){
-            	drop1Index = rand.nextInt(lijst1.size());
-                Action action=lijst1.get(drop1Index);
-                if(action.getType()==false ){
-                	drop1=action;
-                	break;
-                }
-                	
-            }
 
-        	//zoek bijhorende collection in randomtruck1
-            while(true){
-                collect1Index = rand.nextInt(lijst1.size());
-                Action action=lijst1.get(collect1Index);
-                if(action.getType()==true && action.getMachine().getId()==drop1.getMachine().getId()){
-                	collect1=action;
-                	break;
-                }
-                	
-            }
-        	//zoek drop in randomtruck2
-            while(true){
-            	drop2Index = rand.nextInt(lijst2.size());
-                Action action=lijst2.get(drop2Index);
-                if(action.getType()==false){
-                	drop2=action;
-                	break;
-                }
-                	
-            }
-
-            
-        	//zoek bijhorende collection in randomTruck2
-            while(true){
-            	collect2Index = rand.nextInt(lijst2.size());
-                Action action=	lijst2.get(collect2Index);
-                if(action.getType()==true && action.getMachine().getId()==drop2.getMachine().getId()){
-                	collect2=action;
-                	break;
-                }
-                	
-            }
-            
-            solution.getRoutes().get(randomTruck1).remove(collect1);
-            solution.getRoutes().get(randomTruck1).remove(drop1);
-            solution.getRoutes().get(randomTruck2).remove(collect2);
-            solution.getRoutes().get(randomTruck2).remove(drop2);
-
-            solution.getRoutes().get(randomTruck1).add(collect1Index,collect2);
-            solution.getRoutes().get(randomTruck1).add(drop1Index,drop2);
-            solution.getRoutes().get(randomTruck2).add(collect2Index,collect1);
-            solution.getRoutes().get(randomTruck2).add(drop2Index,drop1);
-
-            solution.updateTrucksDistancesAndTimes();
-            
-            
-            if(solution.isFeasible()){
-            	System.out.println("new feasible solution met afstand "+ solution.getTotalDistance()+" de beste oplossing heeft een afstand "+bestSolution.getTotalDistance());
-            	if(solution.getTotalDistance()<=bestSolution.getTotalDistance()){
-            		bestSolution=new Solution(solution);
-            		try {
-						bestSolution.writeOuput("best.txt");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            		System.out.println("new better solution: "+bestSolution.getTotalDistance()+bestSolution.isFeasible());
-            	}
-            }
-            
-        	if(iterations==4000){
-        		break;
-        	}
-        	iterations++;
-        	
-        }
-		
-	}
 
 	private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {
         Map<Machine, Depot> depotInventory = new HashMap<>();
@@ -492,4 +383,115 @@ public class Problem {
         }
         return true;
     }
+    //swap 2 drop/collect (niet random)
+    private void swapDropCollect(Solution initialSolution) {
+    	System.out.println("start neighbour searching");
+        Solution bestSolution=new Solution(initialSolution);
+        int iterations=0;
+        Random rand = new Random(); 
+        while(true){
+        	//System.out.println("lus");
+        	Solution solution=new Solution(bestSolution);
+        	Action collect1 = null;
+        	Action drop1=null;
+        	Action collect2 = null;
+        	Action drop2=null;
+        	
+        	int collect1Index = 0;
+        	int drop1Index=0;
+        	int collect2Index=0;
+        	int drop2Index=0;
+        	
+        	List<Truck> trucks = new ArrayList(solution.getRoutes().keySet());
+        	int aantalTrucks=trucks.size();
+        	
+        	//2 verschillende randomtrucks nemen
+        	Truck randomTruck1=trucks.get(rand.nextInt(aantalTrucks));
+        	Truck randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
+        	while(randomTruck1.getId()==randomTruck2.getId()){
+        		randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
+        	}
+        	
+        	List<Action>lijst1=solution.getRoutes().get(randomTruck1);
+        	List<Action>lijst2=solution.getRoutes().get(randomTruck2);
+        	
+        	//zoek  drop in randomtruck1
+            while(true){
+            	drop1Index = rand.nextInt(lijst1.size());
+                Action action=lijst1.get(drop1Index);
+                if(action.getType()==false ){
+                	drop1=action;
+                	break;
+                }
+                	
+            }
+
+        	//zoek bijhorende collection in randomtruck1
+            while(true){
+                collect1Index = rand.nextInt(lijst1.size());
+                Action action=lijst1.get(collect1Index);
+                if(action.getType()==true && action.getMachine().getId()==drop1.getMachine().getId()){
+                	collect1=action;
+                	break;
+                }
+                	
+            }
+        	//zoek drop in randomtruck2
+            while(true){
+            	drop2Index = rand.nextInt(lijst2.size());
+                Action action=lijst2.get(drop2Index);
+                if(action.getType()==false){
+                	drop2=action;
+                	break;
+                }
+                	
+            }
+
+            
+        	//zoek bijhorende collection in randomTruck2
+            while(true){
+            	collect2Index = rand.nextInt(lijst2.size());
+                Action action=	lijst2.get(collect2Index);
+                if(action.getType()==true && action.getMachine().getId()==drop2.getMachine().getId()){
+                	collect2=action;
+                	break;
+                }
+                	
+            }
+            
+            solution.getRoutes().get(randomTruck1).remove(collect1);
+            solution.getRoutes().get(randomTruck1).remove(drop1);
+            solution.getRoutes().get(randomTruck2).remove(collect2);
+            solution.getRoutes().get(randomTruck2).remove(drop2);
+
+            solution.getRoutes().get(randomTruck1).add(collect1Index,collect2);
+            solution.getRoutes().get(randomTruck1).add(drop1Index,drop2);
+            solution.getRoutes().get(randomTruck2).add(collect2Index,collect1);
+            solution.getRoutes().get(randomTruck2).add(drop2Index,drop1);
+
+            solution.updateTrucksDistancesAndTimes();
+            
+            
+            if(solution.isFeasible()){
+            	System.out.println("new feasible solution met afstand "+ solution.getTotalDistance()+" de beste oplossing heeft een afstand "+bestSolution.getTotalDistance());
+            	if(solution.getTotalDistance()<=bestSolution.getTotalDistance()){
+            		bestSolution=new Solution(solution);
+            		try {
+						bestSolution.writeOuput("best.txt");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            		System.out.println("new better solution: "+bestSolution.getTotalDistance()+bestSolution.isFeasible());
+            	}
+            }
+            
+        	if(iterations==100000){
+        		break;
+        	}
+        	iterations++;
+        	
+        }
+		
+	}
 }
