@@ -93,11 +93,13 @@ public class Solution {
 
     // Updates Trucks totalTime and totalDistance
     public void updateTrucksDistancesAndTimes() {
+    	System.out.println("begin");
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
             this.totalDistance += entry.getKey().getTotalKm();
             this.totalTime += entry.getKey().getTotalTime();
         }
+        System.out.println("einde");
     }
 
 
