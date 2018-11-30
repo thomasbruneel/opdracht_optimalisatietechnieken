@@ -41,10 +41,17 @@ public class Problem {
         try {
             initialSolution.updateTrucksDistancesAndTimes();
             initialSolution.writeOuput(outputfilename);
+            initialSolution.writeOuput("init.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("start neighbour searching");
+        swapDropCollect(initialSolution);
+        
+
+    }
+
+    private void swapDropCollect(Solution initialSolution) {
+    	System.out.println("start neighbour searching");
         Solution bestSolution=new Solution(initialSolution);
         int iterations=0;
         Random rand = new Random(); 
@@ -135,20 +142,26 @@ public class Problem {
             	System.out.println("new feasible solution met afstand "+ solution.getTotalDistance()+" de beste oplossing heeft een afstand "+bestSolution.getTotalDistance());
             	if(solution.getTotalDistance()<=bestSolution.getTotalDistance()){
             		bestSolution=new Solution(solution);
+            		try {
+						bestSolution.writeOuput("best.txt");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
             		System.out.println("new better solution: "+bestSolution.getTotalDistance()+bestSolution.isFeasible());
             	}
             }
             
-        	if(iterations==20){
+        	if(iterations==4000){
         		break;
         	}
         	iterations++;
         	
         }
+		
+	}
 
-    }
-
-    private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {
+	private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {
         Map<Machine, Depot> depotInventory = new HashMap<>();
         for (Machine m : machineList) {
             for (Depot d : depotList) {
