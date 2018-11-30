@@ -237,6 +237,125 @@ public class Solution {
         }
         return true;
     }
-    
+
+
+
+    public void moveCollectDropFromTruckToTruck(){
+        Random random = new Random();
+        int indexFromTruck = random.nextInt(routes.size());
+        int indexToTruck = random.nextInt(routes.size());
+        // while loop verzekert 2 verschillende indexen van 0 - hoogste
+        while(indexFromTruck==indexToTruck){
+            indexToTruck = random.nextInt(routes.size());
+        }
+        System.out.println("Aantal trucks: " + routes.size());
+        System.out.println("From truck: " + indexFromTruck + "  To truck: " + indexToTruck);
+        Truck truckFrom = null;
+        Truck truckTo = null;
+
+        List<Action> routesFrom = null;
+        List<Action> routesTo = null;
+
+
+        for (Map.Entry<Truck, List<Action>> entry : routes.entrySet()) {
+            Truck truck = entry.getKey();
+            List<Action> list = entry.getValue();
+
+            if(truck.getId()==indexFromTruck){
+                truckFrom = truck;
+                routesFrom = list;
+            }
+            if(truck.getId()==indexToTruck){
+                truckTo = truck;
+                routesTo = list;
+            }
+        }
+
+        int aantalActiesFromRoute = routesFrom.size();
+        System.out.println("Aantel acties in from route: " + aantalActiesFromRoute);
+        if(aantalActiesFromRoute==0){
+            System.out.println("LEGE actieslijst -> returned");
+            return;
+        }
+
+        // PRINTING ACTIONS
+        System.out.println("*********ACTIONS FROM BEFORE MOVE***********");
+        System.out.println(routesFrom);
+        System.out.println("*********ACTIONS TO BEFORE MOVE***********");
+        System.out.println(routesTo);
+
+
+
+        // find and delete collect-drop pair in FROM route
+        int index = random.nextInt(routesFrom.size());
+        System.out.println("Index random actie: " + index);
+
+        Action collect = null, drop = null;
+        Action temp = routesFrom.remove(index);
+        boolean collectPicked;
+        if(temp.getType()) {
+            collectPicked = true;
+            collect = temp;
+        }
+        else {
+            collectPicked = false;
+            drop = temp;
+        }
+
+        for(int i = 0; i<routesFrom.size(); i++){
+            if(routesFrom.get(i).getMachine().equals(temp.getMachine())){
+                if(collectPicked)
+                    drop = routesFrom.remove(i);
+                else collect = routesFrom.remove(i);
+                break;
+            }
+        }
+
+        // add same collect-drop pair to TO route,routeToNew list updated
+        System.out.println(collect);
+        System.out.println(drop);
+        System.out.println(truckTo);
+        System.out.println(routesTo);
+        if(addCollectDropPairToRoute(collect,drop,truckTo,routesTo)){
+            // feasible route gevonden met het extra collectdrop paar
+            int newDistance = getTotalDistanceWithPenalty();
+            if(newDistance < totalDistance && isFeasible()) {
+                // update solution if feasible and better
+                updateTrucksDistancesAndTimes();
+                System.out.println("*********MOVE UITGEVOERD*************");
+            }
+        }
+
+        // PRINTING ACTIONS
+        System.out.println("*********ACTIONS FROM AFTER MOVE***********");
+        System.out.println(routesFrom);
+        System.out.println("*********ACTIONS TO AFTER MOVE***********");
+        System.out.println(routesTo);
+
+    }
+
+    private boolean addCollectDropPairToRoute(Action collect, Action drop, Truck to, List<Action> routesTo){
+        // toevoegen van drop/collect, collect en drop worden aansluitend aan mekaar gedaan (CD)
+        // returnt true als er een feasible 'inert is gevonden voor die route'
+        int aantalActions = routesTo.size();
+        // collect en drop op random plaats toevoegen enkel drop mag niet op de laatste positie
+        // collect mag niet op laatste en voorlaatste
+        Random random = new Random();
+
+        for(int i = 0; i<aantalActions-2;i++){
+            routesTo.add(i,collect);
+            routesTo.add(i+1,drop);
+            if(isFeasibleTruck(to,routesTo)){
+                return true;
+            }
+            // wanneer de truck niet feasible is, acties terug verwijderen en op andere plaatsen invoegen
+            routesTo.remove(collect);
+            routesTo.remove(drop);
+        }
+
+        return false;
+    }
+
+
 }
 

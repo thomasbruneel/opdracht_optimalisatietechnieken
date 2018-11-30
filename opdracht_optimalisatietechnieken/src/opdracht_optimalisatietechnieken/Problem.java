@@ -45,6 +45,25 @@ public class Problem {
             e.printStackTrace();
         }
 
+        /*
+        System.out.println(initialSolution.totalDistance);
+
+        for(int i = 1; i<10; i++){
+            System.out.println("ITERATIE " + i + "----------------------******************************");
+            initialSolution.moveCollectDropFromTruckToTruck();
+            initialSolution.updateTrucksDistancesAndTimes();
+            System.out.println("Distance: "+ initialSolution.totalDistance);
+
+        }
+
+        try {
+            initialSolution.updateTrucksDistancesAndTimes();
+            initialSolution.writeOuput(outputfilename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
     }
 
     private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {

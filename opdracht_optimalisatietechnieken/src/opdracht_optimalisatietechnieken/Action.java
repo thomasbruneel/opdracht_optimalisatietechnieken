@@ -56,13 +56,15 @@ public class Action {
     }
 
     public int getVolumeChange(){return this.machine.getVolume();}
-
+/*
     @Override
     public String toString() {
         return "Action{" +
                 "type=" + type +
                 ", location=" + location +
                 ", machine=" + machine +
-                '}';
+                "}\n";
     }
+   */
+
 }
