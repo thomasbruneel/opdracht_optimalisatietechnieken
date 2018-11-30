@@ -45,7 +45,7 @@ public class Problem {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        swapDropCollect(initialSolution);
+       
         
 
     }
@@ -384,7 +384,7 @@ public class Problem {
         return true;
     }
     //swap 2 drop/collect (niet random)
-    private void swapDropCollect(Solution initialSolution) {
+    private Solution swapDropCollect(Solution initialSolution) {
     	System.out.println("start neighbour searching");
         Solution bestSolution=new Solution(initialSolution);
         int iterations=0;
@@ -470,8 +470,8 @@ public class Problem {
             solution.getRoutes().get(randomTruck2).add(drop2Index,drop1);
 
             solution.updateTrucksDistancesAndTimes();
-            
-            
+            return solution;
+            /*
             if(solution.isFeasible()){
             	System.out.println("new feasible solution met afstand "+ solution.getTotalDistance()+" de beste oplossing heeft een afstand "+bestSolution.getTotalDistance());
             	if(solution.getTotalDistance()<=bestSolution.getTotalDistance()){
@@ -490,8 +490,10 @@ public class Problem {
         		break;
         	}
         	iterations++;
-        	
+        	*/
         }
 		
 	}
+    
+
 }
