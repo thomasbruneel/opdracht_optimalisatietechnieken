@@ -16,6 +16,15 @@ public class Truck {
         this.resterendVolume = 100;
     }
 
+    public Truck(Truck t) {
+        this.id = t.id;
+        this.startLocation = t.startLocation;
+        this.endLocation = t.endLocation;
+        this.resterendVolume = 100;
+        this.totalKm = t.totalKm;
+        this.totalTime = t.totalTime;
+    }
+
     public int getId() {
         return id;
     }
@@ -71,6 +80,7 @@ public class Truck {
         for (Action a : actions) {
             this.totalTime += a.getServiceTime();
         }
+        System.out.println(totalTime);
     }
 
     //returns results for Action sequence in actionList out of matrix
