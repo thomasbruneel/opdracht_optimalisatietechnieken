@@ -80,7 +80,6 @@ public class Truck {
         for (Action a : actions) {
             this.totalTime += a.getServiceTime();
         }
-        System.out.println(totalTime);
     }
 
     //returns results for Action sequence in actionList out of matrix

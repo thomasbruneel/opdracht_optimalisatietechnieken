@@ -45,26 +45,31 @@ public class Problem {
         } catch (IOException e) {
             e.printStackTrace();
         }
-       
-        
 
-        /*
         System.out.println(initialSolution.totalDistance);
 
-        for(int i = 1; i<10; i++){
+        bestSolution = initialSolution;
+
+
+
+        /*
+        for(int i = 1; i<100; i++){
             System.out.println("ITERATIE " + i + "----------------------******************************");
-            initialSolution.moveCollectDropFromTruckToTruck();
-            initialSolution.updateTrucksDistancesAndTimes();
-            System.out.println("Distance: "+ initialSolution.totalDistance);
 
+            Solution s = moveDropCollect(bestSolution);
+            if(s.totalDistance<bestSolution.totalDistance && s.isFeasible()){
+                bestSolution = s;
+                System.out.println("Huidige beste afstand: " + s.totalDistance);
+            }
         }
-
         try {
-            initialSolution.updateTrucksDistancesAndTimes();
-            initialSolution.writeOuput(outputfilename);
+            bestSolution.writeOuput(outputfilename);
+            bestSolution.writeOuput("tvh_solution.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(initialSolution.totalDistance);
+        System.out.println(bestSolution.totalDistance);
         */
 
     }
@@ -402,6 +407,7 @@ public class Problem {
         }
         return true;
     }
+
     //swap 2 drop/collect (niet random)
     private Solution swapDropCollect(Solution initialSolution) {
     	System.out.println("start neighbour searching");
@@ -513,6 +519,131 @@ public class Problem {
         }
 		
 	}
-    
+
+
+    // move collect-drop pair from one to another truck
+    private Solution moveDropCollect(Solution solution) {
+        //temp solution is kopie waarin de verwerkingen gebeuren van de acties
+        Solution tempSolution = new Solution(solution);
+        Random random = new Random();
+        int aantalRoutes = tempSolution.routes.size();
+        // from is de route waar de acties uit worden verwijderd
+        // to is de route waar de acties aan toegevoegd worden
+        List<Action> routesFrom = null;
+        List<Action> routesTo = null;
+
+
+        // 2 (verschillende) random getallen nemen die zullen overeenstemmen met 2 entries (of 2 routes)
+        int indexFromTruck = 0;
+        boolean fromRouteEmpty = true;
+        while (fromRouteEmpty) {
+            indexFromTruck = random.nextInt(aantalRoutes);
+
+            for (Map.Entry<Truck, List<Action>> entry : tempSolution.routes.entrySet()) {
+                Truck truck = entry.getKey();
+                List<Action> list = entry.getValue();
+
+                if (truck.getId() == indexFromTruck) {
+                    // from-truck en -list gevonden
+                    routesFrom = list;
+                    if (routesFrom.size() == 0)  // geen acties in de lijst, kan niets verwijderd worden
+                        fromRouteEmpty = true;
+                    else
+                        fromRouteEmpty = false;
+                    break; // break from for loop
+                }
+
+            }
+        }
+
+        int indexToTruck = random.nextInt(aantalRoutes);
+        Truck truckTo = null;
+        // while loop verzekert 2 verschillende indexen van 0 - hoogste
+        while(indexFromTruck==indexToTruck){
+            indexToTruck = random.nextInt(aantalRoutes);
+        }
+
+
+        for (Map.Entry<Truck, List<Action>> entry : tempSolution.routes.entrySet()) {
+            Truck truck = entry.getKey();
+            List<Action> list = entry.getValue();
+            if(truck.getId()==indexToTruck){
+                truckTo = truck;
+                routesTo = list;
+                break; // break from for loop
+            }
+        }
+
+        // find and delete collect-drop pair in FROM route
+
+        int index = random.nextInt(routesFrom.size());
+
+        Action collect = null, drop = null;
+        Action temp = routesFrom.remove(index);
+        boolean collectPicked;
+
+        if(temp.getType()) {
+            collectPicked = true;
+            collect = temp;
+        }
+        else {
+            collectPicked = false;
+            drop = temp;
+        }
+
+        // find associated collect or drop
+        for(int i = 0; i<routesFrom.size(); i++){
+            if(routesFrom.get(i).getMachine().equals(temp.getMachine())){
+                if(collectPicked)
+                    drop = routesFrom.remove(i);
+                else collect = routesFrom.remove(i);
+                break;
+            }
+        }
+
+
+        System.out.println(indexFromTruck + "   " + indexToTruck);
+
+        if(addCollectDropPairToRoute(collect,drop,truckTo,routesTo)){
+            // feasible route gevonden met het extra collectdrop paar
+            tempSolution.updateTrucksDistancesAndTimes();
+            System.out.println("*********MOVE UITGEVOERD*************");
+        }
+        else
+            System.out.println("----------MOVE NIET UITGEVOERD-----------");
+
+        return tempSolution;
+    }
+
+    private boolean addCollectDropPairToRoute(Action collect, Action drop, Truck to, List<Action> routesTo){
+        // toevoegen van drop/collect, collect en drop worden aansluitend aan mekaar gedaan (CD)
+        // returnt true als er een feasible 'inert is gevonden voor die route'
+        int aantalActions = routesTo.size();
+        // collect en drop op random plaats toevoegen enkel drop mag niet op de laatste positie
+        // (laatste drop is meestal op einddepot)
+        // collect mag niet op laatste en voorlaatste
+        Random random = new Random();
+
+        List <Integer> indexen = new ArrayList<>();
+        for(int i = 0 ; i<aantalActions-2;i++)
+            indexen.add(i);
+
+        while(!indexen.isEmpty()){
+            int i = indexen.get(random.nextInt(indexen.size()));
+        //for(int i = 0; i<aantalActions-2;i++){
+            routesTo.add(i,collect);
+            routesTo.add(i+1,drop);
+            if(Solution.isFeasibleTruck(to,routesTo)){
+                return true;
+            }
+            // wanneer de truck niet feasible is, acties terug verwijderen en op andere plaatsen invoegen
+            indexen.remove(new Integer(i));
+            routesTo.remove(collect);
+            routesTo.remove(drop);
+        }
+
+        return false;
+    }
+
 
 }
