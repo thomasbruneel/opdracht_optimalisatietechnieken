@@ -48,7 +48,35 @@ public class Problem {
 
         System.out.println(initialSolution.totalDistance);
 
-        bestSolution = initialSolution;
+        bestSolution = new Solution(initialSolution);
+
+        Random random = new Random();
+
+        for(int neighbourPogingen = 0; neighbourPogingen<1000000; neighbourPogingen++){
+
+            Solution newSolution = null;
+            int neighbourmethode = random.nextInt(3);
+            switch(neighbourmethode){
+                case 0: //CD verplaatsen
+                    newSolution = moveDropCollect(bestSolution);
+                    break;
+                case 1: //C1D1 en C2D2 wisselen
+                    newSolution = swapDropCollect(bestSolution);
+                    break;
+                case 2: //Cs en Ds 'beter' plaatsen van 1 truck
+                    newSolution = rearrangeRoute(bestSolution);
+                    break;
+                default: System.out.println("Geen neighbourmethode gevonden"); break;
+            }
+            if (newSolution != null){
+                newSolution.updateTrucksDistancesAndTimes();
+                if(newSolution.totalDistance<bestSolution.totalDistance){
+                    System.out.println("Betere oplossing: " + newSolution.totalDistance);
+                    bestSolution = newSolution;
+                }
+            } else System.out.println("Route null???");
+
+        }
 
 
 
@@ -89,46 +117,6 @@ public class Problem {
         return depotInventory;
     }
 
-    //Getters & Setters
-    public List<Location> getLocationList() {
-        return locationList;
-    }
-
-    public List<Depot> getDepotList() {
-        return depotList;
-    }
-
-    public List<Truck> getTruckList() {
-        return truckList;
-    }
-
-    public List<MachineType> getMachineTypeList() {
-        return machineTypeList;
-    }
-
-    public List<Machine> getMachineList() {
-        return machineList;
-    }
-
-    public List<Drop> getDropList() {
-        return dropList;
-    }
-
-    public List<Collect> getCollectList() {
-        return collectList;
-    }
-
-    public int[][] getTimeMatrix() {
-        return timeMatrix;
-    }
-
-    public int[][] getDistanceMatrix() {
-        return distanceMatrix;
-    }
-
-    public int getTRUCK_CAPACITY() {
-        return TRUCK_CAPACITY;
-    }
 
     //generate initial solution
     public Solution generateInitialSolution() {
@@ -289,7 +277,7 @@ public class Problem {
         return route;
     }
 
-    private List<Action> rearrangeRoute(List<Action> route, Truck randomTruck) {
+    public List<Action> rearrangeRoute(List<Action> route, Truck randomTruck) {
         List<Location> depotLocations = new ArrayList<>();
         for( Depot d : depotList) depotLocations.add(d.getLocation());
 
@@ -439,6 +427,7 @@ public class Problem {
         	
         	List<Action>lijst1=solution.getRoutes().get(randomTruck1);
         	List<Action>lijst2=solution.getRoutes().get(randomTruck2);
+
         	
         	//zoek  drop in randomtruck1
             while(true){
@@ -520,6 +509,19 @@ public class Problem {
 		
 	}
 
+    //Neighbour methode op basis van rearrangeRoute(...)
+    private Solution rearrangeRoute(Solution solution){
+        Solution tempSolution = new Solution(solution);
+        Random random = new Random();
+
+        List<Map.Entry<Truck,List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
+        Collections.shuffle(tempset);
+
+        List<Action> newRoute = rearrangeRoute(tempset.get(0).getValue(), tempset.get(0).getKey());
+        tempSolution.routes.put(tempset.get(0).getKey(), newRoute);
+
+        return tempSolution;
+    }
 
     // move collect-drop pair from one to another truck
     private Solution moveDropCollect(Solution solution) {
@@ -643,6 +645,47 @@ public class Problem {
         }
 
         return false;
+    }
+
+    //Getters & Setters
+    public List<Location> getLocationList() {
+        return locationList;
+    }
+
+    public List<Depot> getDepotList() {
+        return depotList;
+    }
+
+    public List<Truck> getTruckList() {
+        return truckList;
+    }
+
+    public List<MachineType> getMachineTypeList() {
+        return machineTypeList;
+    }
+
+    public List<Machine> getMachineList() {
+        return machineList;
+    }
+
+    public List<Drop> getDropList() {
+        return dropList;
+    }
+
+    public List<Collect> getCollectList() {
+        return collectList;
+    }
+
+    public int[][] getTimeMatrix() {
+        return timeMatrix;
+    }
+
+    public int[][] getDistanceMatrix() {
+        return distanceMatrix;
+    }
+
+    public int getTRUCK_CAPACITY() {
+        return TRUCK_CAPACITY;
     }
 
 
