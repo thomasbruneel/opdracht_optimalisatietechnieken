@@ -408,7 +408,7 @@ public class Problem {
         return true;
     }
 
-    //swap 2 drop/collect (niet random)
+    //swap 2 drop/collect
     private Solution swapDropCollect(Solution initialSolution) {
     	System.out.println("start neighbour searching");
         Solution bestSolution=new Solution(initialSolution);
@@ -432,8 +432,11 @@ public class Problem {
         	
         	//2 verschillende randomtrucks nemen
         	Truck randomTruck1=trucks.get(rand.nextInt(aantalTrucks));
+        	while(solution.getRoutes().get(randomTruck1).size()<=2){
+        		randomTruck1=trucks.get(rand.nextInt(aantalTrucks));
+        	}
         	Truck randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
-        	while(randomTruck1.getId()==randomTruck2.getId()){
+        	while(randomTruck1.getId()==randomTruck2.getId()||solution.getRoutes().get(randomTruck2).size()<=2){
         		randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
         	}
         	
@@ -489,10 +492,15 @@ public class Problem {
             solution.getRoutes().get(randomTruck2).remove(collect2);
             solution.getRoutes().get(randomTruck2).remove(drop2);
 
-            solution.getRoutes().get(randomTruck1).add(collect1Index,collect2);
-            solution.getRoutes().get(randomTruck1).add(drop1Index,drop2);
-            solution.getRoutes().get(randomTruck2).add(collect2Index,collect1);
-            solution.getRoutes().get(randomTruck2).add(drop2Index,drop1);
+            int newDrop1Index=1+rand.nextInt(solution.getRoutes().get(randomTruck1).size());
+            int newCollect1Index=rand.nextInt(newDrop1Index);
+            int newDrop2Index=1+rand.nextInt(solution.getRoutes().get(randomTruck2).size());
+            int newCollect2Index=rand.nextInt(newDrop2Index);
+            
+            solution.getRoutes().get(randomTruck1).add(newCollect1Index,collect2);
+            solution.getRoutes().get(randomTruck1).add(newDrop1Index,drop2);
+            solution.getRoutes().get(randomTruck2).add(newCollect2Index,collect1);
+            solution.getRoutes().get(randomTruck2).add(newDrop2Index,drop1);
 
             solution.updateTrucksDistancesAndTimes();
             return solution;
