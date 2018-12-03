@@ -52,7 +52,7 @@ public class Problem {
 
         Random random = new Random();
 
-        for(int neighbourPogingen = 0; neighbourPogingen<1000000; neighbourPogingen++){
+        for(int neighbourPogingen = 0; neighbourPogingen<10000; neighbourPogingen++){
 
             Solution newSolution = null;
             int neighbourmethode = random.nextInt(3);
@@ -70,14 +70,21 @@ public class Problem {
             }
             if (newSolution != null){
                 newSolution.updateTrucksDistancesAndTimes();
-                if(newSolution.totalDistance<bestSolution.totalDistance){
-                    System.out.println("Betere oplossing: " + newSolution.totalDistance);
-                    bestSolution = newSolution;
+                if(newSolution.isFeasible()) {
+                    if (newSolution.totalDistance < bestSolution.totalDistance) {
+                        System.out.println("Betere oplossing: " + newSolution.totalDistance);
+                        bestSolution = newSolution;
+                    }
                 }
             } else System.out.println("Route null???");
 
         }
 
+        try {
+            bestSolution.writeOuput(outputfilename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         /*
@@ -90,12 +97,7 @@ public class Problem {
                 System.out.println("Huidige beste afstand: " + s.totalDistance);
             }
         }
-        try {
-            bestSolution.writeOuput(outputfilename);
-            bestSolution.writeOuput("tvh_solution.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         System.out.println(initialSolution.totalDistance);
         System.out.println(bestSolution.totalDistance);
         */
@@ -491,7 +493,6 @@ public class Problem {
             solution.getRoutes().get(randomTruck2).add(newCollect2Index,collect1);
             solution.getRoutes().get(randomTruck2).add(newDrop2Index,drop1);
 
-            solution.updateTrucksDistancesAndTimes();
             return solution;
             /*
             if(solution.isFeasible()){
@@ -539,10 +540,27 @@ public class Problem {
         int aantalRoutes = tempSolution.routes.size();
         // from is de route waar de acties uit worden verwijderd
         // to is de route waar de acties aan toegevoegd worden
-        List<Action> routesFrom = null;
+        List<Action> routesFrom = new ArrayList<>();
         List<Action> routesTo = null;
 
+        Truck fromTruck = null;
+        Truck toTruck = null;
 
+        //starten van een "niet-lege" route
+        while(routesFrom.isEmpty()) {
+            List<Map.Entry<Truck,List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
+            Collections.shuffle(tempset);
+
+            routesFrom = tempset.get(0).getValue();
+            routesTo = tempset.get(1).getValue();
+
+            fromTruck = tempset.get(0).getKey();
+            toTruck = tempset.get(1).getKey();
+        }
+
+
+
+        /*
         // 2 (verschillende) random getallen nemen die zullen overeenstemmen met 2 entries (of 2 routes)
         int indexFromTruck = 0;
         boolean fromRouteEmpty = true;
@@ -582,29 +600,25 @@ public class Problem {
                 routesTo = list;
                 break; // break from for loop
             }
-        }
+        }*/
 
         // find and delete collect-drop pair in FROM route
-
         int index = random.nextInt(routesFrom.size());
 
         Action collect = null, drop = null;
         Action temp = routesFrom.remove(index);
-        boolean collectPicked;
 
         if(temp.getType()) {
-            collectPicked = true;
             collect = temp;
         }
         else {
-            collectPicked = false;
             drop = temp;
         }
 
         // find associated collect or drop
         for(int i = 0; i<routesFrom.size(); i++){
             if(routesFrom.get(i).getMachine().equals(temp.getMachine())){
-                if(collectPicked)
+                if(temp.getType())
                     drop = routesFrom.remove(i);
                 else collect = routesFrom.remove(i);
                 break;
@@ -612,8 +626,21 @@ public class Problem {
         }
 
 
-        System.out.println(indexFromTruck + "   " + indexToTruck);
+        System.out.println(fromTruck.getId() + "   " + toTruck.getId());
 
+        //Add them in ToRoute
+        if(routesTo.size() !=0) {
+            routesTo.add(random.nextInt(routesTo.size()), collect);
+            int indexOfCollect = routesTo.indexOf(collect);
+            int indexOfDrop = -1;
+            while (indexOfDrop <= indexOfCollect) indexOfDrop = random.nextInt(routesTo.size());
+            routesTo.add(indexOfDrop, drop);
+        } else {
+            routesTo.add(collect);
+            routesTo.add(drop);
+        }
+
+        /*
         if(addCollectDropPairToRoute(collect,drop,truckTo,routesTo)){
             // feasible route gevonden met het extra collectdrop paar
             tempSolution.updateTrucksDistancesAndTimes();
@@ -621,7 +648,7 @@ public class Problem {
         }
         else
             System.out.println("----------MOVE NIET UITGEVOERD-----------");
-
+        */
         return tempSolution;
     }
 
