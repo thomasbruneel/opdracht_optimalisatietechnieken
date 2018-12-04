@@ -16,6 +16,8 @@ public class Solution {
 
     Map<Truck, List<Action>> routes;
     int totalDistance, totalTime;
+    List<Drop> tempDrop = null;
+    List<Collect> tempCollect = null;
 
     int[][] distanceMatrix;
     int[][] timeMatrix;
@@ -81,13 +83,29 @@ public class Solution {
         this.totalTime = totalTime;
     }
 
-    public int getTotalDistanceWithPenalty(){
+    public List<Drop> getTempDrop() {
+        return tempDrop;
+    }
+
+    public void setTempDrop(List<Drop> tempDrop) {
+        this.tempDrop = tempDrop;
+    }
+
+    public List<Collect> getTempCollect() {
+        return tempCollect;
+    }
+
+    public void setTempCollect(List<Collect> tempCollect) {
+        this.tempCollect = tempCollect;
+    }
+
+    public int getTotalDistanceWithPenalty(int edge){
         int totalDistanceWithPenalty = 0;
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             Truck truck = entry.getKey();
             List<Action> list = entry.getValue();
             int totalDistanceTruck = truck.getMatrixResult(distanceMatrix,list);
-            if(truck.getId()>39)
+            if(truck.getId()>=edge)
                 totalDistanceTruck*=100;
             totalDistanceWithPenalty += totalDistanceTruck;
         }
@@ -113,6 +131,7 @@ public class Solution {
             if (!isFeasibleTruck(entry.getKey(), entry.getValue())) {
                 return false;
             }
+
         }
         return true;
     }
