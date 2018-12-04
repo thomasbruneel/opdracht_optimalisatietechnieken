@@ -81,7 +81,7 @@ public class Problem {
                         //eventuele lege dummytruck verwijderen
                         Truck toRemove=null;
                         for(Map.Entry<Truck, List<Action>> e: newSolution.routes.entrySet()){
-                            if(e.getKey().getId()>=initialTruckListSize){
+                            if(e.getKey().getId()>=initialTruckListSize && e.getValue().isEmpty()){
                                 toRemove = e.getKey();
                                 break;
                             }
@@ -104,8 +104,7 @@ public class Problem {
 
 
         }while(bestSolution.routes.keySet().size()!=initialTruckListSize);
-
-
+        
 
         Long feasableWithout = System.currentTimeMillis();
         System.out.println("Initial solution: " + truckList.size() + " total trucks. At " + (feasableWithout-first));
