@@ -16,8 +16,8 @@ public class Solution {
 
     Map<Truck, List<Action>> routes;
     int totalDistance, totalTime;
-    List<Drop> tempDrop = null;
-    List<Collect> tempCollect = null;
+    List<Drop> tempDrop = new ArrayList<>();
+    List<Collect> tempCollect = new ArrayList<>();
 
     int[][] distanceMatrix;
     int[][] timeMatrix;
@@ -133,7 +133,7 @@ public class Solution {
             }
 
         }
-        return true;
+        return tempDrop.isEmpty() && tempCollect.isEmpty();
     }
 
     public void writeOuput(String outputfilename) throws IOException {

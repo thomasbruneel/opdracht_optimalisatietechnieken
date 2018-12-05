@@ -45,21 +45,22 @@ public class Problem {
         boolean feasible=false;
         int poging=1;
         while (!feasible) {
-            if(poging%100==0){
+            if(poging%10==0){
                 truckList.add(new Truck(initialTruckListSize+dummyTrucks,locationList.get(random.nextInt(locationList.size())),locationList.get(random.nextInt(locationList.size()))));
                 dummyTrucks++;
             }
             initialSolution = generateInitialSolution();
-            if (initialSolution.tempCollect.isEmpty() && initialSolution.tempDrop.isEmpty() && initialSolution.isFeasible()) feasible = true;
+            if (initialSolution.isFeasible()) feasible = true;
             else poging++;
         }
         Long feasableWith = System.currentTimeMillis();
         System.out.println("First solution generated, " + (dummyTrucks) + " dummytrucks. At " + (feasableWith-first) + " na " + poging + " pogingen");
 
         bestSolution = new Solution(initialSolution);
-
+        poging =0;
         do {
-
+            poging++;
+            if(poging%1000 == 0) System.out.println("Na neighbour " + poging + " : " + bestSolution.totalDistance + " Dummytrucks: " + dummyTrucks);
             Solution newSolution = null;
             int neighbourmethode = random.nextInt(3);
             switch(neighbourmethode){
@@ -84,6 +85,7 @@ public class Problem {
                         for(Map.Entry<Truck, List<Action>> e: newSolution.routes.entrySet()){
                             if(e.getKey().getId()>=initialTruckListSize && e.getValue().isEmpty()){
                                 toRemove = e.getKey();
+                                dummyTrucks--;
                                 break;
                             }
                         }
@@ -104,7 +106,7 @@ public class Problem {
             } else System.out.println("Route null???");
 
 
-        }while(bestSolution.routes.keySet().size()!=initialTruckListSize);
+        }while(dummyTrucks>0);
 
 
         Long feasableWithout = System.currentTimeMillis();
