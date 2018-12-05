@@ -16,6 +16,8 @@ public class Problem {
     private int[][] timeMatrix;
     private int[][] distanceMatrix;
     private Solution bestSolution;
+    Random random = new Random(666);
+
 
     public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
                    List<Truck> truckList, List<MachineType> machineTypeList, List<Machine> machineList, List<Drop> dropList,
@@ -37,7 +39,6 @@ public class Problem {
     public void solve(String outputfilename) {
         Long first = System.currentTimeMillis();
 
-        Random random = new Random();
         int initialTruckListSize = truckList.size();
         int dummyTrucks=0;
         Solution initialSolution = null;
@@ -104,7 +105,7 @@ public class Problem {
 
 
         }while(bestSolution.routes.keySet().size()!=initialTruckListSize);
-        
+
 
         Long feasableWithout = System.currentTimeMillis();
         System.out.println("Initial solution: " + truckList.size() + " total trucks. At " + (feasableWithout-first));
@@ -199,7 +200,6 @@ public class Problem {
     public Solution generateInitialSolution() {
         Solution solution = null;
             solution = new Solution(this.distanceMatrix, this.timeMatrix);
-            Random random = new Random();
             solution.setTempDrop(new ArrayList<>(dropList));
             solution.setTempCollect(new ArrayList<>(collectList));
             List<Truck> tempTrucks = new ArrayList<>(truckList);
@@ -470,7 +470,6 @@ public class Problem {
     	//System.out.println("start neighbour searching");
         Solution bestSolution=new Solution(initialSolution);
         int iterations=0;
-        Random rand = new Random(); 
         while(true){
         	//System.out.println("lus");
         	Solution solution=new Solution(bestSolution);
@@ -488,13 +487,13 @@ public class Problem {
         	int aantalTrucks=trucks.size();
         	
         	//2 verschillende randomtrucks nemen
-        	Truck randomTruck1=trucks.get(rand.nextInt(aantalTrucks));
+        	Truck randomTruck1=trucks.get(random.nextInt(aantalTrucks));
         	while(solution.getRoutes().get(randomTruck1).size()<=2){
-        		randomTruck1=trucks.get(rand.nextInt(aantalTrucks));
+        		randomTruck1=trucks.get(random.nextInt(aantalTrucks));
         	}
-        	Truck randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
+        	Truck randomTruck2=trucks.get(random.nextInt(aantalTrucks));
         	while(randomTruck1.getId()==randomTruck2.getId()||solution.getRoutes().get(randomTruck2).size()<=2){
-        		randomTruck2=trucks.get(rand.nextInt(aantalTrucks));
+        		randomTruck2=trucks.get(random.nextInt(aantalTrucks));
         	}
         	
         	List<Action>lijst1=solution.getRoutes().get(randomTruck1);
@@ -503,7 +502,7 @@ public class Problem {
         	
         	//zoek  drop in randomtruck1
             while(true){
-            	drop1Index = rand.nextInt(lijst1.size());
+            	drop1Index = random.nextInt(lijst1.size());
                 Action action=lijst1.get(drop1Index);
                 if(action.getType()==false ){
                 	drop1=action;
@@ -514,7 +513,7 @@ public class Problem {
 
         	//zoek bijhorende collection in randomtruck1
             while(true){
-                collect1Index = rand.nextInt(lijst1.size());
+                collect1Index = random.nextInt(lijst1.size());
                 Action action=lijst1.get(collect1Index);
                 if(action.getType()==true && action.getMachine().getId()==drop1.getMachine().getId()){
                 	collect1=action;
@@ -524,7 +523,7 @@ public class Problem {
             }
         	//zoek drop in randomtruck2
             while(true){
-            	drop2Index = rand.nextInt(lijst2.size());
+            	drop2Index = random.nextInt(lijst2.size());
                 Action action=lijst2.get(drop2Index);
                 if(action.getType()==false){
                 	drop2=action;
@@ -536,7 +535,7 @@ public class Problem {
             
         	//zoek bijhorende collection in randomTruck2
             while(true){
-            	collect2Index = rand.nextInt(lijst2.size());
+            	collect2Index = random.nextInt(lijst2.size());
                 Action action=	lijst2.get(collect2Index);
                 if(action.getType()==true && action.getMachine().getId()==drop2.getMachine().getId()){
                 	collect2=action;
@@ -550,10 +549,10 @@ public class Problem {
             solution.getRoutes().get(randomTruck2).remove(collect2);
             solution.getRoutes().get(randomTruck2).remove(drop2);
 
-            int newDrop1Index=1+rand.nextInt(solution.getRoutes().get(randomTruck1).size());
-            int newCollect1Index=rand.nextInt(newDrop1Index);
-            int newDrop2Index=1+rand.nextInt(solution.getRoutes().get(randomTruck2).size());
-            int newCollect2Index=rand.nextInt(newDrop2Index);
+            int newDrop1Index=1+random.nextInt(solution.getRoutes().get(randomTruck1).size());
+            int newCollect1Index=random.nextInt(newDrop1Index);
+            int newDrop2Index=1+random.nextInt(solution.getRoutes().get(randomTruck2).size());
+            int newCollect2Index=random.nextInt(newDrop2Index);
             
             solution.getRoutes().get(randomTruck1).add(newCollect1Index,collect2);
             solution.getRoutes().get(randomTruck1).add(newDrop1Index,drop2);
@@ -588,7 +587,6 @@ public class Problem {
     //Neighbour methode op basis van rearrangeRoute(...)
     private Solution rearrangeRoute(Solution solution){
         Solution tempSolution = new Solution(solution);
-        Random random = new Random();
 
         List<Map.Entry<Truck,List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
         Collections.shuffle(tempset);
@@ -603,7 +601,6 @@ public class Problem {
     private Solution moveDropCollect(Solution solution) {
         //temp solution is kopie waarin de verwerkingen gebeuren van de acties
         Solution tempSolution = new Solution(solution);
-        Random random = new Random();
         int aantalRoutes = tempSolution.routes.size();
         // from is de route waar de acties uit worden verwijderd
         // to is de route waar de acties aan toegevoegd worden
@@ -726,7 +723,6 @@ public class Problem {
         // collect en drop op random plaats toevoegen enkel drop mag niet op de laatste positie
         // (laatste drop is meestal op einddepot)
         // collect mag niet op laatste en voorlaatste
-        Random random = new Random();
 
         List <Integer> indexen = new ArrayList<>();
         for(int i = 0 ; i<aantalActions-2;i++)
