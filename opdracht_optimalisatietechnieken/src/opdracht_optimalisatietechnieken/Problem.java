@@ -45,7 +45,9 @@ public class Problem {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        swapDropCollectRandom(initialSolution);
+        //swapDropCollectRandom(initialSolution);
+       SimulatedAnnealing sa=new SimulatedAnnealing(initialSolution);
+       sa.startSimulatedAnnealing();
        
         
 
