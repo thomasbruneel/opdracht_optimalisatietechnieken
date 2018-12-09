@@ -163,10 +163,13 @@ public class Problem {
 
                 List<Action> actions = new ArrayList<>();
 
-                for (int qq = 0; qq < 10; qq++) {
+                for (int qq = 0; qq < 15; qq++) {
                     //stel feasible route voor deze truck op
                     actions = createRoute(randomTruck, tempCollect, tempDrop, tempMachines, actions);
-                    actions = rearrangeRoute(actions, randomTruck);
+                    Route r = new Route(actions);
+                   r.optimizeRoute();
+                    actions = rearrangeRoute(r.getRoute(), randomTruck);
+                    //TODO: arrange route optimal
                 }
 
                 if (actions.isEmpty()) {
@@ -178,8 +181,9 @@ public class Problem {
                 }
             }
             if (tempCollect.isEmpty() && tempDrop.isEmpty() && solution.isFeasible()) feasible = true;
-            else System.out.println("Poging : " + poging++ + " mislukt: size = " + tempTrucks.size());
+            else System.out.println("Attempt:" +poging);
 
+            poging ++;
         }
 
         return solution;
