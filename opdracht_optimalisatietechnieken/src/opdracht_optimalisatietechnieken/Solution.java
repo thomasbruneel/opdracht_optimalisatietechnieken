@@ -136,9 +136,9 @@ public class Solution {
         return tempDrop.isEmpty() && tempCollect.isEmpty();
     }
 
-    public void writeOuput(String outputfilename) throws IOException {
+    public void writeOuput(String inputFilename,String outputfilename) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(outputfilename));
-        bw.write("PROBLEM: " + FILENAME);
+        bw.write("PROBLEM: " + inputFilename);
         bw.write("\n");
         bw.write("DISTANCE: " + totalDistance);
         bw.write("\n");

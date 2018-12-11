@@ -22,7 +22,7 @@ public class MainJar {
     	long timeLimit=Integer.parseInt(args[3].replace("--time=",""))*1000;//ingeven in seconden converteren naar milliseconden
     	
     	problem=readInput(inputFile);
-    	problem.solve(solutionFile,randomSeed,startTime,timeLimit);
+    	problem.solve(inputFile,solutionFile,randomSeed,startTime,timeLimit);
 	}
 	
     private static Problem readInput(String inputFile) {

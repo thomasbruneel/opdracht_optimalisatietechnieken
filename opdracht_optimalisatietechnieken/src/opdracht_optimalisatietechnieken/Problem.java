@@ -40,7 +40,7 @@ public class Problem {
         this.bestSolution = new Solution(distanceMatrix, timeMatrix);
     }
 
-    public void solve(String outputfilename,int randomSeed,long startime,long timeLimit) {
+    public void solve(String inputFilename,String outputfilename,int randomSeed,long startime,long timeLimit) {
         Long first = System.currentTimeMillis();
         random=new Random(randomSeed);
         int initialTruckListSize = truckList.size();
@@ -118,7 +118,7 @@ public class Problem {
         //start heuristic with feasable solution without dummytrucks
         try {
             bestSolution.updateTrucksDistancesAndTimes();
-            bestSolution.writeOuput(outputfilename);
+            bestSolution.writeOuput(inputFilename,outputfilename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -153,7 +153,7 @@ public class Problem {
                         //System.out.println("Betere oplossing: " + newSolution.totalDistance + " at: " + (nu-current));
                         bestSolution = newSolution;
                         try {
-							bestSolution.writeOuput(outputfilename);
+							bestSolution.writeOuput(inputFilename,outputfilename);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
