@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) {
 
         Problem p = readInput();
-        //p.solve(OUTPUT_FILENAME);
+        p.solve(FILENAME,OUTPUT_FILENAME,5,System.currentTimeMillis(),60000 );
 
         System.out.println("Done");
     }

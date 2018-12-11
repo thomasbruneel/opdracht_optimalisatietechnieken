@@ -2,6 +2,7 @@ package opdracht_optimalisatietechnieken;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.events.EndDocument;
 
@@ -211,6 +212,7 @@ public class Problem {
             solution.setTempCollect(new ArrayList<>(collectList));
             List<Truck> tempTrucks = new ArrayList<>(truckList);
             List<Machine> tempMachines = new ArrayList<>(machineList);
+            List<Action> depotdrops = new ArrayList<>();
 
 
             //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
@@ -223,8 +225,8 @@ public class Problem {
 
                 for (int qq = 0; qq < 10; qq++) {
                     //stel feasible route voor deze truck op
-                    actions = createRoute(randomTruck, solution.tempCollect, solution.tempDrop, tempMachines, actions);
-                    actions = rearrangeRoute(actions, randomTruck);
+                    actions = createRouteNew(randomTruck, solution.tempCollect, solution.tempDrop, tempMachines, actions,depotdrops);
+                    //actions = rearrangeRoute(actions, randomTruck);
                 }
 
                 if (actions.isEmpty()) {
@@ -744,7 +746,7 @@ public class Problem {
                 return true;
             }
             // wanneer de truck niet feasible is, acties terug verwijderen en op andere plaatsen invoegen
-            indexen.remove(new Integer(i));
+            indexen.remove(Integer.valueOf(i));
             routesTo.remove(collect);
             routesTo.remove(drop);
         }
@@ -791,6 +793,141 @@ public class Problem {
 
     public int getTRUCK_CAPACITY() {
         return TRUCK_CAPACITY;
+    }
+
+    private List<Action> createRouteNew(Truck randomTruck, List<Collect> tempCollect, List<Drop> tempDrop, List<Machine> tempMachines, List<Action> route, List<Action> drops) {
+        Map<Machine, Depot> inventory = calculateInventory(tempMachines);
+        Collect collect;
+        Drop drop;
+        Depot depot;
+
+        Action collectAction;
+        Action dropAction;
+
+        //drops verwijderen om ze achteraf achteraan toe te voegen.
+        drops.stream().forEach(action -> {
+            route.remove(action);
+        });
+
+        //geen drops en collects meer resterend: stopcriterium
+        if (tempCollect.isEmpty() && tempDrop.isEmpty()) {
+            drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+        }
+        //geen drops meer, enkel nog collects uit te voeren en te droppen in depot
+        else if (!tempCollect.isEmpty() && tempDrop.isEmpty()) {
+            //Selecteer dichtste collect
+            //selecteer eindlocatie
+            //blijf nieuwe collect selecteren
+            //zolang volumeconstraint niet wordt overschreden
+            //timeconstraint met return naar eindlocatie indien oppikken niet wordt overschreden
+            //drop alles opgepikte collects op eindlocatie.
+            for (int i = 0; i < tempCollect.size(); i++) {
+                collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
+                collectAction = new Action(true, collect.getLocation(), collect.getMachine());
+                dropAction = new Action(false, randomTruck.getEndLocation(), collectAction.getMachine());
+
+                route.add(collectAction);
+                drops.add(dropAction);
+                drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+
+                //controleren of toevoegen van deze collect en alle drops nog feasible is
+                if (isFeasible(randomTruck, route)) {
+
+                    tempCollect.remove(collect);
+                    tempMachines.remove(collectAction.getMachine());
+
+                    createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, route, drops);
+                } else {
+                    //extra toevoeging niet feasible:
+                    route.remove(collectAction);
+                    route.removeAll(drops);
+                    drops.remove(dropAction);
+                    drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+                    drops.clear();
+                }
+            }
+        }
+        //geen collects meer, enkel nog drops uit te voeren vanuit depots
+        else if (tempCollect.isEmpty() && !tempDrop.isEmpty()) {
+            //TODO!!
+            drop = getClosestDrop(randomTruck, tempDrop, tempMachines, route);
+            depot = drop.getClosestMachineDepot(distanceMatrix, inventory);
+
+            collectAction = new Action(true, depot.getLocation(), getMachine(inventory, drop.getMachineType(), depot));
+            dropAction = new Action(false, drop.getLocation(), collectAction.getMachine());
+
+            route.add(collectAction);
+            drops.add(dropAction);
+            drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+
+            if (isFeasible(randomTruck, route)) {
+                tempDrop.remove(drop);
+                tempMachines.remove(collectAction.getMachine());
+
+                createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, route, drops);
+            } else {
+                //extra toevoeging niet feasible:
+                route.remove(collectAction);
+                route.removeAll(drops);
+                drops.remove(dropAction);
+                drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+                drops.clear();
+            }
+
+        }
+        //zowel nog drops als collects uit te voeren
+        else if (!tempCollect.isEmpty() && !tempDrop.isEmpty()) {
+            collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
+            collectAction = new Action(true, collect.getLocation(), collect.getMachine());
+
+            if (collect.hasRelatedDrop(tempDrop)) {
+                drop = collect.getClosestRelatedDrop(distanceMatrix, tempDrop);
+                dropAction = new Action(false, drop.getLocation(), collectAction.getMachine());
+
+                route.add(collectAction);
+                drops.add(dropAction);
+                drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+
+                if (isFeasible(randomTruck, route)) {
+                    tempCollect.remove(collect);
+                    tempDrop.remove(drop);
+
+                    createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, route, drops);
+                } else {
+                    //extra toevoeging niet feasible:
+                    route.remove(collectAction);
+                    route.removeAll(drops);
+                    drops.remove(dropAction);
+                    drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+                    drops.clear();
+                }
+            }
+            //Collect has no related drop --> must drop in depot
+            //TODO
+            else {
+                dropAction = new Action(false, randomTruck.getStartLocation(), collectAction.getMachine());
+
+                route.add(collectAction);
+                drops.add(dropAction);
+                drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+
+                if (isFeasible(randomTruck, route)) {
+                    tempCollect.remove(collect);
+                    tempMachines.remove(collectAction.getMachine());
+
+                    createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, route, drops);
+                } else {
+                    //extra toevoeging niet feasible:
+                    route.remove(collectAction);
+                    route.removeAll(drops);
+                    drops.remove(dropAction);
+                    drops.stream().collect(Collectors.toCollection(LinkedList::new)).descendingIterator().forEachRemaining(action -> route.add(action));
+                    drops.clear();
+                }
+            }
+        }
+
+        return route;
     }
 
 
