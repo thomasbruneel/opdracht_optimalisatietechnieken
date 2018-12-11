@@ -11,12 +11,18 @@ public class Main {
     public static final String FILENAME = "tvh_problem_4.txt";
     public static final String OUTPUT_FILENAME = "tvh_solution.txt";
 
+<<<<<<< HEAD
     public static void main(String[] args) {
 
         Problem p = readInput();
         p.solve(OUTPUT_FILENAME);
 
         System.out.println("Done");
+=======
+    public static void main(String[] args) throws IOException {
+        Problem p = readInput();
+        p.solve();
+>>>>>>> e418c1c3d8233da63877cca894d45d2258ec7178
     }
 
     private static Problem readInput() {

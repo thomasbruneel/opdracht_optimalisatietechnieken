@@ -51,6 +51,7 @@ public class Drop {
         Collect collect = null;
         List<Collect> tempCollects = new ArrayList<>();
 
+<<<<<<< HEAD
         for (Collect c : collectList) {
             if (this.machineType == c.getMachine().getMachineType()) {
                 tempCollects.add(c);
@@ -75,5 +76,21 @@ public class Drop {
         if(depot == null)
             System.out.println("null!");
         return depot;
+=======
+    public List<Machine> calculatAvailableMachines(List<Collect> tempCollect, Map<Machine, Depot> depotInventory) {
+        List<Machine> oplossing = null;
+        if (tempCollect != null) {
+            tempCollect = tempCollect.stream().filter(p -> p.getMachine().getMachineType() == this.machineType).collect(Collectors.toList());
+            if(tempCollect != null) {
+                oplossing = new ArrayList<>();
+                for(Collect c : tempCollect) oplossing.add(c.getMachine());
+            }
+        }
+        if (depotInventory!=null){
+            oplossing = new ArrayList<>();
+            for(Machine m : depotInventory.keySet()) if(m.getMachineType() == this.machineType) oplossing.add(m);
+        }
+        return oplossing;
+>>>>>>> e418c1c3d8233da63877cca894d45d2258ec7178
     }
 }
