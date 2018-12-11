@@ -3,6 +3,10 @@ package opdracht_optimalisatietechnieken;
 import java.io.IOException;
 import java.util.*;
 
+import javax.xml.stream.events.EndDocument;
+
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+
 public class Problem {
     private final int TRUCK_CAPACITY;
     private final int TRUCK_WORKING_TIME;
@@ -36,7 +40,7 @@ public class Problem {
         this.bestSolution = new Solution(distanceMatrix, timeMatrix);
     }
 
-    public void solve(String outputfilename) {
+    public void solve(String outputfilename,int randomSeed,long startime,long timeLimit) {
         Long first = System.currentTimeMillis();
 
         int initialTruckListSize = truckList.size();
@@ -114,7 +118,7 @@ public class Problem {
         //start heuristic with feasable solution without dummytrucks
         try {
             bestSolution.updateTrucksDistancesAndTimes();
-            bestSolution.writeOuput("init.txt");
+            bestSolution.writeOuput(outputfilename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,18 +152,19 @@ public class Problem {
                     if (newSolution.totalDistance < bestSolution.totalDistance) {
                         //System.out.println("Betere oplossing: " + newSolution.totalDistance + " at: " + (nu-current));
                         bestSolution = newSolution;
+                        try {
+							bestSolution.writeOuput(outputfilename);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
                     }
                 }
             } else System.out.println("Route null???");
 
 
-        } while(((nu-current))< 1800);
-
-        try {
-            bestSolution.writeOuput(outputfilename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } while((System.currentTimeMillis()) < (startime+timeLimit));
+        System.out.println("end time  "+(System.currentTimeMillis()-startime));
         System.out.println(bestSolution.totalDistance);
 
 

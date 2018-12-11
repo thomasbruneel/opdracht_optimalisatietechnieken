@@ -4,25 +4,31 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
-public class Main {
+public class MainJar {
 
-    public static final String FILENAME = "tvh_problem_4.txt";
-    public static final String OUTPUT_FILENAME = "tvh_solution.txt";
-
-    public static void main(String[] args) {
-
-        Problem p = readInput();
-        //p.solve(OUTPUT_FILENAME);
-
-        System.out.println("Done");
-    }
-
-    private static Problem readInput() {
+	public static void main(String[] args) {
+		long startTime=System.currentTimeMillis();
+		
+		Problem problem;
+		//java -jar algorithm.jar --problem=<input_file> --solution=<solution_file> --seed=<random_seed> --time=<time_limit>
+		
+	   	String inputFile=args[0];
+    	String solutionFile=args[1];
+    	int randomSeed=Integer.parseInt(args[2]);
+    	long timeLimit=Integer.parseInt(args[3])*1000;//ingeven in seconden converteren naar milliseconden
+    	
+    	problem=readInput(inputFile);
+    	problem.solve(solutionFile,randomSeed,startTime,timeLimit);
+	}
+	
+    private static Problem readInput(String inputFile) {
         try {
             System.out.println("Reading input...");
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(FILENAME));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFile));
             Scanner sc;
 
             // skip first line
@@ -197,10 +203,10 @@ public class Main {
 
 
         } catch (FileNotFoundException e) {
-            System.out.println("Error reading file '" + FILENAME + "'");
+            System.out.println("Error reading file");
             e.printStackTrace();
         } catch (IOException ex) {
-            System.out.println("Error reading file '" + FILENAME + "'");
+            System.out.println("Error reading file");
             // Or we could just do this:
             // ex.printStackTrace();
         }
