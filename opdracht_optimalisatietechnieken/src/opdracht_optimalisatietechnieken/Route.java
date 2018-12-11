@@ -35,6 +35,8 @@ public class Route {
         this.route.add(a);
     }
 
+    public void removeAction(Action a){this.route.remove(a);}
+
     public Route optimizeRoute() {
         Route temproute = new Route(this);
         Route betterRoute = new Route();
