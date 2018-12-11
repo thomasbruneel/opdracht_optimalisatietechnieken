@@ -447,7 +447,6 @@ public class Problem {
         //drops verwijderen om ze achteraf achteraan toe te voegen.
         drops.stream().forEach(action -> {
             route.remove(action);
-            updateMachineLocation(action, tempMachines);
         });
 
         //geen drops en collects meer resterend: stopcriterium
@@ -475,6 +474,7 @@ public class Problem {
                 if (isFeasible(randomTruck, route)) {
 
                     tempCollect.remove(collect);
+                    tempMachines.remove(collectAction.getMachine());
 
                     createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, route, drops);
                 } else {
@@ -553,6 +553,7 @@ public class Problem {
 
                 if (isFeasible(randomTruck, route)) {
                     tempCollect.remove(collect);
+                    tempMachines.remove(collectAction.getMachine());
 
                     createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, route, drops);
                 } else {
