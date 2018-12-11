@@ -23,12 +23,6 @@ public class Action {
         this.machine = machine;
     }
 
-    public Action(Action a) {
-        this.type = a.type;
-        this.location = a.location;
-        this.machine = a.machine;
-    }
-
     public boolean getType() {
         return type;
     }
@@ -62,15 +56,24 @@ public class Action {
     }
 
     public int getVolumeChange(){return this.machine.getVolume();}
-/*
+
+    public void print(){
+        StringBuilder sb = new StringBuilder();
+        if (this.type) sb.append("Collect");
+        else sb.append("Drop");
+
+        sb.append(" Machine " + this.machine.getId());
+        sb.append(" at Location " + this.location.getId());
+
+        System.out.println(sb);
+    }
+
     @Override
     public String toString() {
         return "Action{" +
                 "type=" + type +
                 ", location=" + location +
                 ", machine=" + machine +
-                "}\n";
+                '}';
     }
-   */
-
 }
