@@ -16,15 +16,6 @@ public class Truck {
         this.resterendVolume = 100;
     }
 
-    public Truck(Truck t) {
-        this.id = t.id;
-        this.startLocation = t.startLocation;
-        this.endLocation = t.endLocation;
-        this.resterendVolume = 100;
-        this.totalKm = t.totalKm;
-        this.totalTime = t.totalTime;
-    }
-
     public int getId() {
         return id;
     }
@@ -37,24 +28,12 @@ public class Truck {
         return startLocation;
     }
 
-    public void setStartLocation(Location startLocation) {
-        this.startLocation = startLocation;
-    }
-
     public Location getEndLocation() {
         return endLocation;
     }
 
-    public void setEndLocation(Location endLocation) {
-        this.endLocation = endLocation;
-    }
-
     public int getTotalKm() {
         return totalKm;
-    }
-
-    public void setTotalKm(int totalKm) {
-        this.totalKm = totalKm;
     }
 
     public int getTotalTime() {
@@ -65,37 +44,29 @@ public class Truck {
         return resterendVolume;
     }
 
-    public void setResterendVolume(int resterendVolume) {
-        this.resterendVolume = resterendVolume;
-    }
-
-    public void setTotalTime(int totalTime) {
-        this.totalTime = totalTime;
-    }
-
     //calculates and sets the total distance & total time for this truck with Actionlist actions
-    public void updateTruckInfo(int[][] distanceMatrix, int[][] timeMatrix, List<Action> actions) {
-        this.totalKm = getMatrixResult(distanceMatrix, actions);
-        this.totalTime = getMatrixResult(timeMatrix, actions);
-        for (Action a : actions) {
+    public void updateTruckInfo(int[][] distanceMatrix, int[][] timeMatrix, Route route) {
+        this.totalKm = getMatrixResult(distanceMatrix, route);
+        this.totalTime = getMatrixResult(timeMatrix, route);
+        for (Action a : route.getRoute()) {
             this.totalTime += a.getServiceTime();
         }
     }
 
     //returns results for Action sequence in actionList out of matrix
-    public int getMatrixResult(int[][] matrix, List<Action> actions) {
+    public int getMatrixResult(int[][] matrix, Route route) {
         int result = 0;
-        if (actions.isEmpty()) {
+        if (route.getRoute().isEmpty()) {
             return 0;
         } else {
-            for (Action action : actions) {
-                if (actions.indexOf(action) == 0) {
+            for (Action action : route.getRoute()) {
+                if (route.getRoute().indexOf(action) == 0) {
                     result += matrix[startLocation.getId()][action.getLocation().getId()];
                 } else {
-                    result += matrix[actions.get(actions.indexOf(action) - 1).getLocation().getId()][action.getLocation().getId()];
+                    result += matrix[route.getRoute().get(route.getRoute().indexOf(action) - 1).getLocation().getId()][action.getLocation().getId()];
                 }
             }
-            result += matrix[actions.get(actions.size() - 1).getLocation().getId()][endLocation.getId()];
+            result += matrix[route.getRoute().get(route.getRoute().size() - 1).getLocation().getId()][endLocation.getId()];
 
             return result;
         }
@@ -109,7 +80,7 @@ public class Truck {
             //drop action
         } else {
             for (Action a : actions) {
-                if(action.getMachine().getMachineType() == a.getMachine().getMachineType() && a.getType()){
+                if (action.getMachine().getMachineType() == a.getMachine().getMachineType() && a.getType()) {
                     return true;
                 }
             }

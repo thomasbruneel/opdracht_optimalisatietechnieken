@@ -1,9 +1,5 @@
 package opdracht_optimalisatietechnieken;
 
-<<<<<<< HEAD
-=======
-import java.util.ArrayList;
->>>>>>> e418c1c3d8233da63877cca894d45d2258ec7178
 import java.util.List;
 
 public class Location {
@@ -11,13 +7,12 @@ public class Location {
     private double latitude;
     private double longitude;
     private String name;
-    private List<Location> orderedLocationList;
+
     public Location(int id, double latitude, double longitude, String name) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
-        this.orderedLocationList = new ArrayList<Location>();
     }
 
     public int getId() {
@@ -31,7 +26,7 @@ public class Location {
     public double getLatitude() {
         return latitude;
     }
-   
+
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
@@ -50,13 +45,6 @@ public class Location {
 
     public void setName(String name) {
         this.name = name;
-    }
-    
-    public void initOrderedLocationList(int[] distanceRow) {
-    	
-    	// TODO MAYBEEEEEEEEEE
-    
-
     }
 
     //returns closestd collect from collectList

@@ -11,61 +11,24 @@ public class Action {
         this.machine = machine;
     }
 
-    public Action(Machine machine){
-        this.type = true;
-        this.location = machine.getLocation();
-        this.machine = machine;
-    }
-
-    public Action(Location location, Machine machine){
-        this.type = false;
-        this.location = location;
-        this.machine = machine;
-    }
-
     public boolean getType() {
         return type;
-    }
-
-    public void setType(boolean type) {
-        this.type = type;
     }
 
     public Location getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public Machine getMachine() {
         return machine;
     }
 
-    public void setMachine(Machine machine) {
-        this.machine = machine;
-    }
-
-    public boolean isType() {
-        return type;
-    }
-
-    public int getServiceTime(){
+    public int getServiceTime() {
         return this.machine.getServiceTime();
     }
 
-    public int getVolumeChange(){return this.machine.getVolume();}
-
-    public void print(){
-        StringBuilder sb = new StringBuilder();
-        if (this.type) sb.append("Collect");
-        else sb.append("Drop");
-
-        sb.append(" Machine " + this.machine.getId());
-        sb.append(" at Location " + this.location.getId());
-
-        System.out.println(sb);
+    public int getVolumeChange() {
+        return this.machine.getVolume();
     }
 
     @Override

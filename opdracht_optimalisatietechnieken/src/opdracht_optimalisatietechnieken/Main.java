@@ -4,27 +4,19 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
-    public static final String FILENAME = "tvh_problem_5.txt";
+    public static final String FILENAME = "tvh_problem_4.txt";
     public static final String OUTPUT_FILENAME = "tvh_solution.txt";
 
-<<<<<<< HEAD
     public static void main(String[] args) {
 
         Problem p = readInput();
         p.solve(OUTPUT_FILENAME);
 
         System.out.println("Done");
-=======
-    public static void main(String[] args) throws IOException {
-        Problem p = readInput();
-        p.solve();
->>>>>>> e418c1c3d8233da63877cca894d45d2258ec7178
     }
 
     private static Problem readInput() {
@@ -51,7 +43,7 @@ public class Main {
 
             // LOCATIONS
             // adding location-objects to locationList
-            List<Location> locationList = new ArrayList<Location>();
+            List<Location> locationList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfLocations = sc.nextInt();
@@ -70,7 +62,7 @@ public class Main {
 
             // DEPOTS
             // adding location-objects to locationList
-            List<Depot> depotList = new ArrayList<Depot>();
+            List<Depot> depotList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfDepots = sc.nextInt();
@@ -87,7 +79,7 @@ public class Main {
 
             // TRUCKS
             // adding truck-objects to truckList
-            List<Truck> truckList = new ArrayList<Truck>();
+            List<Truck> truckList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfTrucks = sc.nextInt();
@@ -104,7 +96,7 @@ public class Main {
 
             // MACHINE TYPES
             // adding type-objects to machineTypeList
-            List<MachineType> machineTypeList = new ArrayList<MachineType>();
+            List<MachineType> machineTypeList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfMachineTypes = sc.nextInt();
@@ -123,7 +115,7 @@ public class Main {
 
             // MACHINE TYPES
             // adding type-objects to machineTypeList
-            List<Machine> machineList = new ArrayList<Machine>();
+            List<Machine> machineList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfMachines = sc.nextInt();
@@ -141,7 +133,7 @@ public class Main {
 
             // DROPS
             // adding drop-objects to dropList
-            List<Drop> dropList = new ArrayList<Drop>();
+            List<Drop> dropList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfDrops = sc.nextInt();
@@ -159,7 +151,7 @@ public class Main {
 
             // COLLECTS
             // adding collect-objects to dropList
-            List<Collect> collectList = new ArrayList<Collect>();
+            List<Collect> collectList = new ArrayList<>();
             sc = new Scanner(bufferedReader.readLine());
             sc.next();
             int numberOfCollects = sc.nextInt();
