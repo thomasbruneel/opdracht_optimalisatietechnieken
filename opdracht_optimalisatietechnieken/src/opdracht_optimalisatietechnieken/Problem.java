@@ -168,7 +168,6 @@ public class Problem {
                 for (int qq = 0; qq < 15; qq++) {
                     //stel feasible route voor deze truck op
                     actions = createRouteNew(randomTruck, tempCollect, tempDrop, tempMachines, actions,depotdrops);
-                    actions = rearrangeRoute(actions, randomTruck);
                     //TODO: arrange route optimal
                 }
 
