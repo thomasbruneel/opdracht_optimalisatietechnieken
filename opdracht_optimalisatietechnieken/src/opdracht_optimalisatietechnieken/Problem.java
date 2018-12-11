@@ -20,7 +20,7 @@ public class Problem {
     private int[][] timeMatrix;
     private int[][] distanceMatrix;
     private Solution bestSolution;
-    Random random = new Random(666);
+    Random random ;
 
 
     public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
@@ -42,7 +42,7 @@ public class Problem {
 
     public void solve(String outputfilename,int randomSeed,long startime,long timeLimit) {
         Long first = System.currentTimeMillis();
-
+        random=new Random(randomSeed);
         int initialTruckListSize = truckList.size();
         int dummyTrucks=0;
         Solution initialSolution = null;

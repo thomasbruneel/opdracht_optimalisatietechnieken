@@ -16,10 +16,10 @@ public class MainJar {
 		Problem problem;
 		//java -jar algorithm.jar --problem=<input_file> --solution=<solution_file> --seed=<random_seed> --time=<time_limit>
 		
-	   	String inputFile=args[0];
-    	String solutionFile=args[1];
-    	int randomSeed=Integer.parseInt(args[2]);
-    	long timeLimit=Integer.parseInt(args[3])*1000;//ingeven in seconden converteren naar milliseconden
+	   	String inputFile=args[0].replace("--problem=","");
+    	String solutionFile=args[1].replace("--solution=","");
+    	int randomSeed=Integer.parseInt(args[2].replace("--seed=",""));
+    	long timeLimit=Integer.parseInt(args[3].replace("--time=",""))*1000;//ingeven in seconden converteren naar milliseconden
     	
     	problem=readInput(inputFile);
     	problem.solve(solutionFile,randomSeed,startTime,timeLimit);
