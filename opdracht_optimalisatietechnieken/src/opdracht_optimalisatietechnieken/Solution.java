@@ -14,7 +14,7 @@ import static opdracht_optimalisatietechnieken.Main.*;
 
 public class Solution {
 
-    Map<Truck, Route> routes;
+    Map<Truck, List<Action>> routes;
     int totalDistance, totalTime;
 
     int[][] distanceMatrix;
@@ -81,7 +81,7 @@ public class Solution {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             Truck truck = entry.getKey();
             List<Action> list = entry.getValue();
-            int totalDistanceTruck = truck.getMatrixResult(distanceMatrix,routes);
+            int totalDistanceTruck = truck.getMatrixResult(distanceMatrix,new Route(list));
             if(truck.getId()>39)
                 totalDistanceTruck*=100;
             totalDistanceWithPenalty += totalDistanceTruck;
@@ -94,7 +94,7 @@ public class Solution {
     // Updates Trucks totalTime and totalDistance
     public void updateTrucksDistancesAndTimes() {
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
-            entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
+            entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, new Route(entry.getValue()));
             this.totalDistance += entry.getKey().getTotalKm();
             this.totalTime += entry.getKey().getTotalTime();
         }
