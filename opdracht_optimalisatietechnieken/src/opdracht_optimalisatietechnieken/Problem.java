@@ -45,29 +45,31 @@ public class Problem {
         Long first = System.currentTimeMillis();
         random=new Random(randomSeed);
         int initialTruckListSize = truckList.size();
-        int dummyTrucks=0;
+        int dummys=0;
         Solution initialSolution = null;
         boolean feasible=false;
         int poging=1;
         while (!feasible) {
             if(poging%10==0){
-                truckList.add(new Truck(initialTruckListSize+dummyTrucks,locationList.get(random.nextInt(locationList.size())),locationList.get(random.nextInt(locationList.size()))));
-                dummyTrucks++;
+                truckList.add(new Truck(initialTruckListSize+dummys,locationList.get(random.nextInt(locationList.size())),locationList.get(random.nextInt(locationList.size()))));
+                dummys++;
             }
             initialSolution = generateInitialSolution();
             if (initialSolution.isFeasible()) feasible = true;
             else poging++;
         }
         Long feasableWith = System.currentTimeMillis();
-        System.out.println("First solution generated, " + (dummyTrucks) + " dummytrucks. At " + (feasableWith-first) + " na " + poging + " pogingen");
+        System.out.println("First solution generated, " + (dummys) + " dummytrucks. At " + (feasableWith-first) + " na " + poging + " pogingen");
 
         bestSolution = new Solution(initialSolution);
         poging =0;
         do {
             poging++;
-            if(poging%1000 == 0) System.out.println("Na neighbour " + poging + " : " + bestSolution.totalDistance + " Dummytrucks: " + dummyTrucks);
+            List<Truck> emptyTrucks = bestSolution.getEmptyTrucks();
+            List<Truck> dummyTrucks = bestSolution.getDummyTrucks(initialTruckListSize);
+            if(poging%1000 == 0) System.out.println("Na neighbour " + poging + " : " + bestSolution.totalDistance + " Dummytrucks: " + dummys);
             Solution newSolution = null;
-            int neighbourmethode = random.nextInt(3);
+            int neighbourmethode = random.nextInt(2);
             switch(neighbourmethode){
                 case 0: //CD verplaatsen
                     newSolution = moveDropCollect(bestSolution);
@@ -75,9 +77,9 @@ public class Problem {
                 case 1: //C1D1 en C2D2 wisselen
                     newSolution = swapDropCollect(bestSolution);
                     break;
-                case 2: //Cs en Ds 'beter' plaatsen van 1 truck
-                    newSolution = rearrangeRoute(bestSolution);
-                    break;
+
+                    //TODO: item verplaatsen van dummy naar gewone truck if possible!
+
                 default: System.out.println("Geen neighbourmethode gevonden"); break;
             }
             if (newSolution != null){
@@ -90,7 +92,7 @@ public class Problem {
                         for(Map.Entry<Truck, List<Action>> e: newSolution.routes.entrySet()){
                             if(e.getKey().getId()>=initialTruckListSize && e.getValue().isEmpty()){
                                 toRemove = e.getKey();
-                                dummyTrucks--;
+                                dummys--;
                                 break;
                             }
                         }
@@ -110,8 +112,15 @@ public class Problem {
                 }
             } else System.out.println("Route null???");
 
+            if(!emptyTrucks.isEmpty()){
+                System.out.println("----------EMPTY TRUCKS----------");
+                emptyTrucks.stream().forEach(truck -> System.out.println(truck.getId()));
+                dummyTrucks.stream().forEach(truck -> System.out.println(truck.getId()));
 
-        }while(dummyTrucks>0);
+            }
+
+
+        }while(dummys>0);
 
 
         Long feasableWithout = System.currentTimeMillis();
@@ -133,7 +142,7 @@ public class Problem {
         do {
 
             Solution newSolution = null;
-            int neighbourmethode = random.nextInt(3);
+            int neighbourmethode = random.nextInt(2);
             switch(neighbourmethode){
                 case 0: //CD verplaatsen
                     newSolution = moveDropCollect(bestSolution);
@@ -144,7 +153,6 @@ public class Problem {
                 case 2: //Cs en Ds 'beter' plaatsen van 1 truck
                     newSolution = rearrangeRoute(bestSolution);
                     break;
-                default: System.out.println("Geen neighbourmethode gevonden"); break;
             }
             nu = System.currentTimeMillis();
             if (newSolution != null){
@@ -214,6 +222,7 @@ public class Problem {
             List<Machine> tempMachines = new ArrayList<>(machineList);
             List<Action> depotdrops = new ArrayList<>();
 
+            //TODO: aanpassen naar optimalisatie, routes van huidige trucks proberen uitbreiden na herschikking?
 
             //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
             while (!solution.tempDrop.isEmpty() && !tempTrucks.isEmpty()) {
@@ -237,6 +246,7 @@ public class Problem {
                     tempTrucks.remove(randomTruck);
                 }
             }
+
         return solution;
     }
 

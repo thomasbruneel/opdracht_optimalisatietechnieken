@@ -3,14 +3,7 @@ package opdracht_optimalisatietechnieken;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import static opdracht_optimalisatietechnieken.Main.*;
+import java.util.*;
 
 public class Solution {
 
@@ -29,18 +22,18 @@ public class Solution {
         this.distanceMatrix = distanceMatrix;
         this.timeMatrix = timeMatrix;
     }
-    
-    public Solution(Solution s){
-    	this.routes=new HashMap<>();
-    	for(Map.Entry<Truck, List<Action>> entry : s.routes.entrySet()){
-    	    List<Action> acties = new ArrayList<>();
-    	    for(Action a : entry.getValue()) acties.add(new Action(a));
-    	    this.routes.put(new Truck(entry.getKey()), acties);
+
+    public Solution(Solution s) {
+        this.routes = new HashMap<>();
+        for (Map.Entry<Truck, List<Action>> entry : s.routes.entrySet()) {
+            List<Action> acties = new ArrayList<>();
+            for (Action a : entry.getValue()) acties.add(new Action(a));
+            this.routes.put(new Truck(entry.getKey()), acties);
         }
-    	this.totalDistance=s.totalDistance;
-    	this.totalTime=s.totalTime;
-    	this.distanceMatrix=s.distanceMatrix;
-    	this.timeMatrix=s.timeMatrix;
+        this.totalDistance = s.totalDistance;
+        this.totalTime = s.totalTime;
+        this.distanceMatrix = s.distanceMatrix;
+        this.timeMatrix = s.timeMatrix;
     }
 
     public void addTruck(Truck truck) {
@@ -99,14 +92,14 @@ public class Solution {
         this.tempCollect = tempCollect;
     }
 
-    public int getTotalDistanceWithPenalty(int edge){
+    public int getTotalDistanceWithPenalty(int edge) {
         int totalDistanceWithPenalty = 0;
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             Truck truck = entry.getKey();
             List<Action> list = entry.getValue();
-            int totalDistanceTruck = truck.getMatrixResult(distanceMatrix,list);
-            if(truck.getId()>=edge)
-                totalDistanceTruck*=100;
+            int totalDistanceTruck = truck.getMatrixResult(distanceMatrix, list);
+            if (truck.getId() >= edge)
+                totalDistanceTruck *= 100000;
             totalDistanceWithPenalty += totalDistanceTruck;
         }
 
@@ -116,7 +109,7 @@ public class Solution {
 
     // Updates Trucks totalTime and totalDistance
     public void updateTrucksDistancesAndTimes() {
-        this.totalDistance=this.totalTime=0;
+        this.totalDistance = this.totalTime = 0;
         for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             entry.getKey().updateTruckInfo(this.distanceMatrix, this.timeMatrix, entry.getValue());
             this.totalDistance += entry.getKey().getTotalKm();
@@ -124,10 +117,8 @@ public class Solution {
         }
     }
 
-
-
-    public boolean isFeasible(){
-        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()){
+    public boolean isFeasible() {
+        for (Map.Entry<Truck, List<Action>> entry : this.routes.entrySet()) {
             if (!isFeasibleTruck(entry.getKey(), entry.getValue())) {
                 return false;
             }
@@ -136,7 +127,7 @@ public class Solution {
         return tempDrop.isEmpty() && tempCollect.isEmpty();
     }
 
-    public void writeOuput(String inputFilename,String outputfilename) throws IOException {
+    public void writeOuput(String inputFilename, String outputfilename) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(outputfilename));
         bw.write("PROBLEM: " + inputFilename);
         bw.write("\n");
@@ -177,65 +168,61 @@ public class Solution {
 
         return sb.toString();
     }
-    
-    public void swapCollects(){
-    	while(true){
-        	Random rand = new Random(); 
-        	List<Truck> trucks = new ArrayList<Truck>(routes.keySet());
-        	Truck randomTruck=null;
-        	//neem een randomtruck met minstens 2 collects
-        	while(true){
-        		randomTruck=trucks.get(rand.nextInt(trucks.size()));
-        		if(routes.get(randomTruck).size()>2){
-        			break;
-        		}
-        	}
 
-        	List<Action>actions=routes.get(randomTruck);
-        	
-        	int action1Index=-1;
-        	Action action1;
-        	while(true){
-        		action1Index=rand.nextInt(actions.size());
-        		action1=actions.get(action1Index);
-        		if(action1.getType()==true){
-        			break;
-        		}
-        		
-        	}
+    public void swapCollects() {
+        while (true) {
+            Random rand = new Random();
+            List<Truck> trucks = new ArrayList<Truck>(routes.keySet());
+            Truck randomTruck = null;
+            //neem een randomtruck met minstens 2 collects
+            while (true) {
+                randomTruck = trucks.get(rand.nextInt(trucks.size()));
+                if (routes.get(randomTruck).size() > 2) {
+                    break;
+                }
+            }
 
-        	int action2Index=-1;
-        	Action action2;
-        	while(true){
-        		action2Index = rand.nextInt(actions.size());
-        		action2=actions.get(action2Index);
-        		if(action2.getType()==true&&action1Index!=action2Index){
-        			break;
-        		}
-        		
-        	}
+            List<Action> actions = routes.get(randomTruck);
 
-        	Collections.swap(routes.get(randomTruck), action1Index, action2Index);
-        	
-        	if(isFeasibleTruck(randomTruck, routes.get(randomTruck))){
-        		break;
-        	}
-        	else{
-        		Collections.swap(routes.get(randomTruck), action1Index, action2Index);
-        	}
-    		
-    	}
+            int action1Index = -1;
+            Action action1;
+            while (true) {
+                action1Index = rand.nextInt(actions.size());
+                action1 = actions.get(action1Index);
+                if (action1.getType() == true) {
+                    break;
+                }
 
-    	
-    	
+            }
+
+            int action2Index = -1;
+            Action action2;
+            while (true) {
+                action2Index = rand.nextInt(actions.size());
+                action2 = actions.get(action2Index);
+                if (action2.getType() == true && action1Index != action2Index) {
+                    break;
+                }
+
+            }
+
+            Collections.swap(routes.get(randomTruck), action1Index, action2Index);
+
+            if (isFeasibleTruck(randomTruck, routes.get(randomTruck))) {
+                break;
+            } else {
+                Collections.swap(routes.get(randomTruck), action1Index, action2Index);
+            }
+
+        }
+
     }
-    
+
     public static boolean isFeasibleTruck(Truck truck, List<Action> route) {
         int volume = truck.getResterendVolume();
         int time = truck.getTotalTime();
 
         for (Action a : route) {
-
             //Volume constraint
             if (a.getType()) {
                 volume -= a.getVolumeChange();
@@ -245,23 +232,38 @@ public class Solution {
                     volume = 100;
                 }
             }
-
-            if (!truck.checkRelatedCollect(route, a)){
+            if (!truck.checkRelatedCollect(route, a)) {
                 return false;
             }
-
             if (volume < 0 || time > 600) {
                 return false;
             }
-
-
         }
-
         if (volume < 0 || time > 600) {
             return false;
         }
         return true;
     }
 
+    public List<Truck> getEmptyTrucks() {
+        List<Truck> result = new ArrayList<>();
+        this.routes.forEach((truck, actions) -> {
+            if (actions.isEmpty()) {
+                result.add(truck);
+            }
+        });
+
+        return result;
+    }
+
+    public List<Truck> getDummyTrucks(int initialTruckListSize) {
+        List<Truck> result = new ArrayList<>();
+        this.routes.forEach((truck, actions) -> {
+            if (truck.getId() >= initialTruckListSize) {
+                result.add(truck);
+            }
+        });
+        return result;
+    }
 }
 
