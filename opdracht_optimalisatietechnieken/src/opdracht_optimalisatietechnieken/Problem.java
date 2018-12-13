@@ -70,16 +70,19 @@ public class Problem {
             poging++;
             List<Truck> emptyTrucks = bestSolution.getEmptyTrucks();
             List<Truck> dummyTrucks = bestSolution.getDummyTrucks(initialTruckListSize);
-            if (poging % 1000 == 0)
+            if (poging % 10000 == 0)
                 System.out.println("Na neighbour " + poging + " : " + bestSolution.totalDistance + " Dummytrucks: " + dummys);
             Solution newSolution = null;
-            int neighbourmethode = random.nextInt(2);
+            int neighbourmethode = random.nextInt(3);
             switch (neighbourmethode) {
                 case 0: //CD verplaatsen
-                    newSolution = moveDropCollect(bestSolution);
+                    newSolution = bestSolution.moveDropCollect();
                     break;
                 case 1: //C1D1 en C2D2 wisselen
-                    newSolution = swapDropCollect(bestSolution);
+                    newSolution = bestSolution.swapDropCollect();
+                    break;
+                case 2: //Cs en Ds 'beter' plaatsen van 1 truck
+                    newSolution = rearrangeRoute(bestSolution);
                     break;
 
                 //TODO: item verplaatsen van dummy naar gewone truck if possible!
@@ -118,8 +121,7 @@ public class Problem {
                 }
             } else System.out.println("Route null???");
 
-            //TODO
-            if (!emptyTrucks.isEmpty()) {
+            if (!emptyTrucks.isEmpty() && !dummyTrucks.isEmpty()) {
                 System.out.println("----------EMPTY TRUCKS----------");
                 emptyTrucks.stream().forEach(truck -> System.out.println(truck.getId()));
                 dummyTrucks.stream().forEach(truck -> System.out.println(truck.getId()));
@@ -157,13 +159,13 @@ public class Problem {
         do {
 
             Solution newSolution = null;
-            int neighbourmethode = random.nextInt(2);
+            int neighbourmethode = random.nextInt(3);
             switch (neighbourmethode) {
                 case 0: //CD verplaatsen
-                    newSolution = moveDropCollect(bestSolution);
+                    newSolution = bestSolution.moveDropCollect();
                     break;
                 case 1: //C1D1 en C2D2 wisselen
-                    newSolution = swapDropCollect(bestSolution);
+                    newSolution = bestSolution.swapDropCollect();
                     break;
                 case 2: //Cs en Ds 'beter' plaatsen van 1 truck
                     newSolution = rearrangeRoute(bestSolution);
@@ -179,7 +181,6 @@ public class Problem {
                         try {
                             bestSolution.writeOuput(inputFilename, outputfilename);
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -236,9 +237,7 @@ public class Problem {
         List<Machine> tempMachines = new ArrayList<>(machineList);
         List<Action> depotdrops = new ArrayList<>();
 
-        //TODO: aanpassen naar optimalisatie, routes van huidige trucks proberen uitbreiden na herschikking?
-
-        //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
+        //blijven uitvoeren zolang er drops/collects zijn.
         while (!solution.tempDrop.isEmpty() && !tempTrucks.isEmpty()) {
 
             //selecteer een random truck uit de trucklist
@@ -498,125 +497,6 @@ public class Problem {
         return true;
     }
 
-    //swap 2 drop/collect
-    private Solution swapDropCollect(Solution initialSolution) {
-        //System.out.println("start neighbour searching");
-        Solution bestSolution = new Solution(initialSolution);
-        int iterations = 0;
-        while (true) {
-            //System.out.println("lus");
-            Solution solution = new Solution(bestSolution);
-            Action collect1 = null;
-            Action drop1 = null;
-            Action collect2 = null;
-            Action drop2 = null;
-
-            int collect1Index = 0;
-            int drop1Index = 0;
-            int collect2Index = 0;
-            int drop2Index = 0;
-
-            List<Truck> trucks = new ArrayList(solution.getRoutes().keySet());
-            int aantalTrucks = trucks.size();
-
-            //2 verschillende randomtrucks nemen
-            Truck randomTruck1 = trucks.get(random.nextInt(aantalTrucks));
-            while (solution.getRoutes().get(randomTruck1).size() <= 2) {
-                randomTruck1 = trucks.get(random.nextInt(aantalTrucks));
-            }
-            Truck randomTruck2 = trucks.get(random.nextInt(aantalTrucks));
-            while (randomTruck1.getId() == randomTruck2.getId() || solution.getRoutes().get(randomTruck2).size() <= 2) {
-                randomTruck2 = trucks.get(random.nextInt(aantalTrucks));
-            }
-
-            List<Action> lijst1 = solution.getRoutes().get(randomTruck1);
-            List<Action> lijst2 = solution.getRoutes().get(randomTruck2);
-
-
-            //zoek  drop in randomtruck1
-            while (true) {
-                drop1Index = random.nextInt(lijst1.size());
-                Action action = lijst1.get(drop1Index);
-                if (action.getType() == false) {
-                    drop1 = action;
-                    break;
-                }
-
-            }
-
-            //zoek bijhorende collection in randomtruck1
-            while (true) {
-                collect1Index = random.nextInt(lijst1.size());
-                Action action = lijst1.get(collect1Index);
-                if (action.getType() == true && action.getMachine().getId() == drop1.getMachine().getId()) {
-                    collect1 = action;
-                    break;
-                }
-
-            }
-            //zoek drop in randomtruck2
-            while (true) {
-                drop2Index = random.nextInt(lijst2.size());
-                Action action = lijst2.get(drop2Index);
-                if (action.getType() == false) {
-                    drop2 = action;
-                    break;
-                }
-
-            }
-
-
-            //zoek bijhorende collection in randomTruck2
-            while (true) {
-                collect2Index = random.nextInt(lijst2.size());
-                Action action = lijst2.get(collect2Index);
-                if (action.getType() == true && action.getMachine().getId() == drop2.getMachine().getId()) {
-                    collect2 = action;
-                    break;
-                }
-
-            }
-
-            solution.getRoutes().get(randomTruck1).remove(collect1);
-            solution.getRoutes().get(randomTruck1).remove(drop1);
-            solution.getRoutes().get(randomTruck2).remove(collect2);
-            solution.getRoutes().get(randomTruck2).remove(drop2);
-
-            int newDrop1Index = 1 + random.nextInt(solution.getRoutes().get(randomTruck1).size());
-            int newCollect1Index = random.nextInt(newDrop1Index);
-            int newDrop2Index = 1 + random.nextInt(solution.getRoutes().get(randomTruck2).size());
-            int newCollect2Index = random.nextInt(newDrop2Index);
-
-            solution.getRoutes().get(randomTruck1).add(newCollect1Index, collect2);
-            solution.getRoutes().get(randomTruck1).add(newDrop1Index, drop2);
-            solution.getRoutes().get(randomTruck2).add(newCollect2Index, collect1);
-            solution.getRoutes().get(randomTruck2).add(newDrop2Index, drop1);
-
-            return solution;
-            /*
-            if(solution.isFeasible()){
-            	System.out.println("new feasible solution met afstand "+ solution.getTotalDistance()+" de beste oplossing heeft een afstand "+bestSolution.getTotalDistance());
-            	if(solution.getTotalDistance()<=bestSolution.getTotalDistance()){
-            		bestSolution=new Solution(solution);
-            		try {
-						bestSolution.writeOuput("best.txt");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            		System.out.println("new better solution: "+bestSolution.getTotalDistance()+bestSolution.isFeasible());
-            	}
-            }
-            
-        	if(iterations==100000){
-        		break;
-        	}
-        	iterations++;
-        	*/
-        }
-
-    }
-
     //Neighbour methode op basis van rearrangeRoute(...)
     private Solution rearrangeRoute(Solution solution) {
         Solution tempSolution = new Solution(solution);
@@ -627,124 +507,6 @@ public class Problem {
         List<Action> newRoute = rearrangeRoute(tempset.get(0).getValue(), tempset.get(0).getKey());
         tempSolution.routes.put(tempset.get(0).getKey(), newRoute);
 
-        return tempSolution;
-    }
-
-    // move collect-drop pair from one to another truck
-    private Solution moveDropCollect(Solution solution) {
-        //temp solution is kopie waarin de verwerkingen gebeuren van de acties
-        Solution tempSolution = new Solution(solution);
-        int aantalRoutes = tempSolution.routes.size();
-        // from is de route waar de acties uit worden verwijderd
-        // to is de route waar de acties aan toegevoegd worden
-        List<Action> routesFrom = new ArrayList<>();
-        List<Action> routesTo = null;
-
-        Truck fromTruck = null;
-        Truck toTruck = null;
-
-        //starten van een "niet-lege" route
-        while (routesFrom.isEmpty()) {
-            List<Map.Entry<Truck, List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
-            Collections.shuffle(tempset);
-
-            routesFrom = tempset.get(0).getValue();
-            routesTo = tempset.get(1).getValue();
-
-            fromTruck = tempset.get(0).getKey();
-            toTruck = tempset.get(1).getKey();
-        }
-
-
-
-        /*
-        // 2 (verschillende) random getallen nemen die zullen overeenstemmen met 2 entries (of 2 routes)
-        int indexFromTruck = 0;
-        boolean fromRouteEmpty = true;
-        while (fromRouteEmpty) {
-            indexFromTruck = random.nextInt(aantalRoutes);
-
-            for (Map.Entry<Truck, List<Action>> entry : tempSolution.routes.entrySet()) {
-                Truck truck = entry.getKey();
-                List<Action> list = entry.getValue();
-
-                if (truck.getId() == indexFromTruck) {
-                    // from-truck en -list gevonden
-                    routesFrom = list;
-                    if (routesFrom.size() == 0)  // geen acties in de lijst, kan niets verwijderd worden
-                        fromRouteEmpty = true;
-                    else
-                        fromRouteEmpty = false;
-                    break; // break from for loop
-                }
-
-            }
-        }
-
-        int indexToTruck = random.nextInt(aantalRoutes);
-        Truck truckTo = null;
-        // while loop verzekert 2 verschillende indexen van 0 - hoogste
-        while(indexFromTruck==indexToTruck){
-            indexToTruck = random.nextInt(aantalRoutes);
-        }
-
-
-        for (Map.Entry<Truck, List<Action>> entry : tempSolution.routes.entrySet()) {
-            Truck truck = entry.getKey();
-            List<Action> list = entry.getValue();
-            if(truck.getId()==indexToTruck){
-                truckTo = truck;
-                routesTo = list;
-                break; // break from for loop
-            }
-        }*/
-
-        // find and delete collect-drop pair in FROM route
-        int index = random.nextInt(routesFrom.size());
-
-        Action collect = null, drop = null;
-        Action temp = routesFrom.remove(index);
-
-        if (temp.getType()) {
-            collect = temp;
-        } else {
-            drop = temp;
-        }
-
-        // find associated collect or drop
-        for (int i = 0; i < routesFrom.size(); i++) {
-            if (routesFrom.get(i).getMachine().equals(temp.getMachine())) {
-                if (temp.getType())
-                    drop = routesFrom.remove(i);
-                else collect = routesFrom.remove(i);
-                break;
-            }
-        }
-
-
-        //System.out.println(fromTruck.getId() + "   " + toTruck.getId());
-
-        //Add them in ToRoute
-        if (routesTo.size() != 0) {
-            routesTo.add(random.nextInt(routesTo.size()), collect);
-            int indexOfCollect = routesTo.indexOf(collect);
-            int indexOfDrop = -1;
-            while (indexOfDrop <= indexOfCollect) indexOfDrop = random.nextInt(routesTo.size());
-            routesTo.add(indexOfDrop, drop);
-        } else {
-            routesTo.add(collect);
-            routesTo.add(drop);
-        }
-
-        /*
-        if(addCollectDropPairToRoute(collect,drop,truckTo,routesTo)){
-            // feasible route gevonden met het extra collectdrop paar
-            tempSolution.updateTrucksDistancesAndTimes();
-            System.out.println("*********MOVE UITGEVOERD*************");
-        }
-        else
-            System.out.println("----------MOVE NIET UITGEVOERD-----------");
-        */
         return tempSolution;
     }
 
@@ -847,7 +609,13 @@ public class Problem {
             for (int i = 0; i < tempCollect.size(); i++) {
                 collect = getClosestCollect(randomTruck, tempCollect, tempMachines, route);
                 collectAction = new Action(true, collect.getLocation(), collect.getMachine());
-                dropAction = new Action(false, randomTruck.getEndLocation(), collectAction.getMachine());
+
+                if (depotList.contains(randomTruck.getEndLocation())){
+                    dropAction = new Action(false, randomTruck.getEndLocation(), collectAction.getMachine());
+                }else{
+                    depot = collect.getLocation().getClosestDepot(distanceMatrix,depotList);
+                    dropAction = new Action(false, depot.getLocation(), collectAction.getMachine());
+                }
 
                 route.add(collectAction);
                 drops.add(dropAction);
@@ -872,7 +640,6 @@ public class Problem {
         }
         //geen collects meer, enkel nog drops uit te voeren vanuit depots
         else if (tempCollect.isEmpty() && !tempDrop.isEmpty()) {
-            //TODO!!
             drop = getClosestDrop(randomTruck, tempDrop, tempMachines, route);
             depot = drop.getClosestMachineDepot(distanceMatrix, inventory);
 
@@ -926,9 +693,13 @@ public class Problem {
                 }
             }
             //Collect has no related drop --> must drop in depot
-            //TODO
             else {
-                dropAction = new Action(false, randomTruck.getStartLocation(), collectAction.getMachine());
+                if (depotList.contains(randomTruck.getEndLocation())){
+                    dropAction = new Action(false, randomTruck.getEndLocation(), collectAction.getMachine());
+                }else{
+                    depot = collect.getLocation().getClosestDepot(distanceMatrix,depotList);
+                    dropAction = new Action(false, depot.getLocation(), collectAction.getMachine());
+                }
 
                 route.add(collectAction);
                 drops.add(dropAction);
@@ -952,6 +723,5 @@ public class Problem {
 
         return route;
     }
-
 
 }
