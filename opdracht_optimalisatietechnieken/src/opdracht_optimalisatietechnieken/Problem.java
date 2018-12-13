@@ -47,7 +47,7 @@ public class Problem {
         int poging = 1;
         while (!feasible) {
             if (poging % 10 == 0) {
-                truckList.add(new Truck(initialTruckListSize + dummys, locationList.get(random.nextInt(locationList.size())), locationList.get(random.nextInt(locationList.size()))));
+                truckList.add(new Truck((initialTruckListSize + dummys), depotList.get(random.nextInt(depotList.size())).getLocation(), depotList.get(random.nextInt(depotList.size())).getLocation()));
                 dummys++;
             }
             initialSolution = generateInitialSolution();
@@ -60,6 +60,11 @@ public class Problem {
         System.out.println("First solution generated, " + (dummys) + " dummytrucks. At " + (feasableWith - first) + " na " + poging + " pogingen");
 
         bestSolution = new Solution(initialSolution);
+        try {
+            bestSolution.writeOuput(inputFilename, "init.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         poging = 0;
         do {
             poging++;
@@ -244,7 +249,7 @@ public class Problem {
             for (int qq = 0; qq < 10; qq++) {
                 //stel feasible route voor deze truck op
                 actions = createRouteNew(randomTruck, solution.tempCollect, solution.tempDrop, tempMachines, actions, depotdrops);
-                //actions = rearrangeRoute(actions, randomTruck);
+                actions = rearrangeRoute(actions, randomTruck);
             }
 
             if (actions.isEmpty()) {
