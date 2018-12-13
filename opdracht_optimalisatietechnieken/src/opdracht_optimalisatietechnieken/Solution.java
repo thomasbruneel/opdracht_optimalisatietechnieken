@@ -265,5 +265,9 @@ public class Solution {
         });
         return result;
     }
+
+    public void deleteRoute(Truck t, List<Action> actions) {
+        this.routes.remove(t, actions);
+    }
 }
 

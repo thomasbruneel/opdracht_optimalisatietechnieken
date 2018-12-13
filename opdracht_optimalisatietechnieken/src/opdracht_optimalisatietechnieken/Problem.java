@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.xml.stream.events.EndDocument;
-
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
 public class Problem {
     private final int TRUCK_CAPACITY;
     private final int TRUCK_WORKING_TIME;
@@ -21,7 +17,7 @@ public class Problem {
     private int[][] timeMatrix;
     private int[][] distanceMatrix;
     private Solution bestSolution;
-    Random random ;
+    Random random;
 
 
     public Problem(int tRUCK_CAPACITY, int tRUCK_WORKING_TIME, List<Location> locationList, List<Depot> depotList,
@@ -41,36 +37,39 @@ public class Problem {
         this.bestSolution = new Solution(distanceMatrix, timeMatrix);
     }
 
-    public void solve(String inputFilename,String outputfilename,int randomSeed,long startime,long timeLimit) {
+    public void solve(String inputFilename, String outputfilename, int randomSeed, long startime, long timeLimit) {
         Long first = System.currentTimeMillis();
-        random=new Random(randomSeed);
+        random = new Random(randomSeed);
         int initialTruckListSize = truckList.size();
-        int dummys=0;
+        int dummys = 0;
         Solution initialSolution = null;
-        boolean feasible=false;
-        int poging=1;
+        boolean feasible = false;
+        int poging = 1;
         while (!feasible) {
-            if(poging%10==0){
-                truckList.add(new Truck(initialTruckListSize+dummys,locationList.get(random.nextInt(locationList.size())),locationList.get(random.nextInt(locationList.size()))));
+            if (poging % 10 == 0) {
+                truckList.add(new Truck(initialTruckListSize + dummys, locationList.get(random.nextInt(locationList.size())), locationList.get(random.nextInt(locationList.size()))));
                 dummys++;
             }
             initialSolution = generateInitialSolution();
-            if (initialSolution.isFeasible()) feasible = true;
-            else poging++;
+            if (initialSolution.isFeasible()) {
+                feasible = true;
+
+            } else poging++;
         }
         Long feasableWith = System.currentTimeMillis();
-        System.out.println("First solution generated, " + (dummys) + " dummytrucks. At " + (feasableWith-first) + " na " + poging + " pogingen");
+        System.out.println("First solution generated, " + (dummys) + " dummytrucks. At " + (feasableWith - first) + " na " + poging + " pogingen");
 
         bestSolution = new Solution(initialSolution);
-        poging =0;
+        poging = 0;
         do {
             poging++;
             List<Truck> emptyTrucks = bestSolution.getEmptyTrucks();
             List<Truck> dummyTrucks = bestSolution.getDummyTrucks(initialTruckListSize);
-            if(poging%1000 == 0) System.out.println("Na neighbour " + poging + " : " + bestSolution.totalDistance + " Dummytrucks: " + dummys);
+            if (poging % 1000 == 0)
+                System.out.println("Na neighbour " + poging + " : " + bestSolution.totalDistance + " Dummytrucks: " + dummys);
             Solution newSolution = null;
             int neighbourmethode = random.nextInt(2);
-            switch(neighbourmethode){
+            switch (neighbourmethode) {
                 case 0: //CD verplaatsen
                     newSolution = moveDropCollect(bestSolution);
                     break;
@@ -78,28 +77,30 @@ public class Problem {
                     newSolution = swapDropCollect(bestSolution);
                     break;
 
-                    //TODO: item verplaatsen van dummy naar gewone truck if possible!
+                //TODO: item verplaatsen van dummy naar gewone truck if possible!
 
-                default: System.out.println("Geen neighbourmethode gevonden"); break;
+                default:
+                    System.out.println("Geen neighbourmethode gevonden");
+                    break;
             }
-            if (newSolution != null){
+            if (newSolution != null) {
                 newSolution.updateTrucksDistancesAndTimes();
-                if(newSolution.isFeasible()) {
+                if (newSolution.isFeasible()) {
                     if (newSolution.getTotalDistanceWithPenalty(initialTruckListSize) < bestSolution.getTotalDistanceWithPenalty(initialTruckListSize)) {
 
                         //eventuele lege dummytruck verwijderen
-                        Truck toRemove=null;
-                        for(Map.Entry<Truck, List<Action>> e: newSolution.routes.entrySet()){
-                            if(e.getKey().getId()>=initialTruckListSize && e.getValue().isEmpty()){
+                        Truck toRemove = null;
+                        for (Map.Entry<Truck, List<Action>> e : newSolution.routes.entrySet()) {
+                            if (e.getKey().getId() >= initialTruckListSize && e.getValue().isEmpty()) {
                                 toRemove = e.getKey();
                                 dummys--;
                                 break;
                             }
                         }
-                        if (toRemove!=null) {
+                        if (toRemove != null) {
                             newSolution.routes.remove(toRemove);
-                            for(int i= initialTruckListSize-1; i<truckList.size();i++){
-                                if(truckList.get(i).getId()==toRemove.getId()){
+                            for (int i = initialTruckListSize - 1; i < truckList.size(); i++) {
+                                if (truckList.get(i).getId() == toRemove.getId()) {
                                     truckList.remove(i);
                                     break;
                                 }
@@ -112,23 +113,32 @@ public class Problem {
                 }
             } else System.out.println("Route null???");
 
-            if(!emptyTrucks.isEmpty()){
+            //TODO
+            if (!emptyTrucks.isEmpty()) {
                 System.out.println("----------EMPTY TRUCKS----------");
                 emptyTrucks.stream().forEach(truck -> System.out.println(truck.getId()));
                 dummyTrucks.stream().forEach(truck -> System.out.println(truck.getId()));
 
+                Truck emptyTruck = emptyTrucks.get(0);
+                Truck dummyTruck = dummyTrucks.get(0);
+
+                bestSolution.deleteRoute(emptyTruck, bestSolution.getSolutionRoute(emptyTruck));
+                bestSolution.addSolution(emptyTruck, bestSolution.getSolutionRoute(dummyTruck));
+                bestSolution.deleteRoute(dummyTruck, bestSolution.getSolutionRoute(dummyTruck));
+                dummys--;
+
             }
 
 
-        }while(dummys>0);
+        } while (dummys > 0);
 
 
         Long feasableWithout = System.currentTimeMillis();
-        System.out.println("Initial solution: " + truckList.size() + " total trucks. At " + (feasableWithout-first));
+        System.out.println("Initial solution: " + truckList.size() + " total trucks. At " + (feasableWithout - first));
         //start heuristic with feasable solution without dummytrucks
         try {
             bestSolution.updateTrucksDistancesAndTimes();
-            bestSolution.writeOuput(inputFilename,outputfilename);
+            bestSolution.writeOuput(inputFilename, outputfilename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,13 +147,13 @@ public class Problem {
 
 
         long current = System.currentTimeMillis();
-        long nu= 0;
+        long nu = 0;
 
         do {
 
             Solution newSolution = null;
             int neighbourmethode = random.nextInt(2);
-            switch(neighbourmethode){
+            switch (neighbourmethode) {
                 case 0: //CD verplaatsen
                     newSolution = moveDropCollect(bestSolution);
                     break;
@@ -155,25 +165,25 @@ public class Problem {
                     break;
             }
             nu = System.currentTimeMillis();
-            if (newSolution != null){
+            if (newSolution != null) {
                 newSolution.updateTrucksDistancesAndTimes();
-                if(newSolution.isFeasible()) {
+                if (newSolution.isFeasible()) {
                     if (newSolution.totalDistance < bestSolution.totalDistance) {
                         //System.out.println("Betere oplossing: " + newSolution.totalDistance + " at: " + (nu-current));
                         bestSolution = newSolution;
                         try {
-							bestSolution.writeOuput(inputFilename,outputfilename);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+                            bestSolution.writeOuput(inputFilename, outputfilename);
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                     }
                 }
             } else System.out.println("Route null???");
 
 
-        } while((System.currentTimeMillis()) < (startime+timeLimit));
-        System.out.println("end time  "+(System.currentTimeMillis()-startime));
+        } while ((System.currentTimeMillis()) < (startime + timeLimit));
+        System.out.println("end time  " + (System.currentTimeMillis() - startime));
         System.out.println(bestSolution.totalDistance);
 
 
@@ -197,8 +207,7 @@ public class Problem {
     }
 
 
-
-	private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {
+    private Map<Machine, Depot> calculateInventory(List<Machine> machineList) {
         Map<Machine, Depot> depotInventory = new HashMap<>();
         for (Machine m : machineList) {
             for (Depot d : depotList) {
@@ -215,37 +224,37 @@ public class Problem {
     //generate initial solution
     public Solution generateInitialSolution() {
         Solution solution = null;
-            solution = new Solution(this.distanceMatrix, this.timeMatrix);
-            solution.setTempDrop(new ArrayList<>(dropList));
-            solution.setTempCollect(new ArrayList<>(collectList));
-            List<Truck> tempTrucks = new ArrayList<>(truckList);
-            List<Machine> tempMachines = new ArrayList<>(machineList);
-            List<Action> depotdrops = new ArrayList<>();
+        solution = new Solution(this.distanceMatrix, this.timeMatrix);
+        solution.setTempDrop(new ArrayList<>(dropList));
+        solution.setTempCollect(new ArrayList<>(collectList));
+        List<Truck> tempTrucks = new ArrayList<>(truckList);
+        List<Machine> tempMachines = new ArrayList<>(machineList);
+        List<Action> depotdrops = new ArrayList<>();
 
-            //TODO: aanpassen naar optimalisatie, routes van huidige trucks proberen uitbreiden na herschikking?
+        //TODO: aanpassen naar optimalisatie, routes van huidige trucks proberen uitbreiden na herschikking?
 
-            //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
-            while (!solution.tempDrop.isEmpty() && !tempTrucks.isEmpty()) {
+        //blijven uitvoeren zolang er drops/collects zijn. TODO: eventueel splitsen in 2 while loops! eest collects uitvoeren, daarna overblijvende drops
+        while (!solution.tempDrop.isEmpty() && !tempTrucks.isEmpty()) {
 
-                //selecteer een random truck uit de trucklist
-                Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
+            //selecteer een random truck uit de trucklist
+            Truck randomTruck = tempTrucks.get(random.nextInt(tempTrucks.size()));
 
-                List<Action> actions = new ArrayList<>();
+            List<Action> actions = new ArrayList<>();
 
-                for (int qq = 0; qq < 10; qq++) {
-                    //stel feasible route voor deze truck op
-                    actions = createRouteNew(randomTruck, solution.tempCollect, solution.tempDrop, tempMachines, actions,depotdrops);
-                    //actions = rearrangeRoute(actions, randomTruck);
-                }
-
-                if (actions.isEmpty()) {
-
-                } else {
-                    // voeg deze truck met zijn route toe aan de solution
-                    solution.addSolution(randomTruck, actions);
-                    tempTrucks.remove(randomTruck);
-                }
+            for (int qq = 0; qq < 10; qq++) {
+                //stel feasible route voor deze truck op
+                actions = createRouteNew(randomTruck, solution.tempCollect, solution.tempDrop, tempMachines, actions, depotdrops);
+                //actions = rearrangeRoute(actions, randomTruck);
             }
+
+            if (actions.isEmpty()) {
+
+            } else {
+                // voeg deze truck met zijn route toe aan de solution
+                solution.addSolution(randomTruck, actions);
+                tempTrucks.remove(randomTruck);
+            }
+        }
 
         return solution;
     }
@@ -367,27 +376,27 @@ public class Problem {
 
     public List<Action> rearrangeRoute(List<Action> route, Truck randomTruck) {
         List<Location> depotLocations = new ArrayList<>();
-        for( Depot d : depotList) depotLocations.add(d.getLocation());
+        for (Depot d : depotList) depotLocations.add(d.getLocation());
 
-        for(int i=route.size()-1; i>0; i--){
+        for (int i = route.size() - 1; i > 0; i--) {
             List<Action> currentRoute = new ArrayList<>(route);
-            if(!route.get(i).getType()){
-                if(depotLocations.contains(route.get(i).getLocation())){
-                    Action newDrop = new Action(false,randomTruck.getEndLocation(),route.get(i).getMachine());
+            if (!route.get(i).getType()) {
+                if (depotLocations.contains(route.get(i).getLocation())) {
+                    Action newDrop = new Action(false, randomTruck.getEndLocation(), route.get(i).getMachine());
                     currentRoute.remove(i);
                     currentRoute.add(newDrop);
-                    if (isFeasible(randomTruck,currentRoute)) route = currentRoute;
+                    if (isFeasible(randomTruck, currentRoute)) route = currentRoute;
                 }
             }
         }
-        for(int i=0; i<route.size(); i++){
+        for (int i = 0; i < route.size(); i++) {
             List<Action> currentRoute = new ArrayList<>(route);
-            if(route.get(i).getType()){
-                if(route.get(i).getLocation() == randomTruck.getStartLocation()){
-                    Action newCollect = new Action(true,randomTruck.getStartLocation(),route.get(i).getMachine());
+            if (route.get(i).getType()) {
+                if (route.get(i).getLocation() == randomTruck.getStartLocation()) {
+                    Action newCollect = new Action(true, randomTruck.getStartLocation(), route.get(i).getMachine());
                     currentRoute.remove(i);
-                    currentRoute.add(0,newCollect);
-                    if(isFeasible(randomTruck,currentRoute)) route = currentRoute;
+                    currentRoute.add(0, newCollect);
+                    if (isFeasible(randomTruck, currentRoute)) route = currentRoute;
                 }
             }
         }
@@ -466,7 +475,7 @@ public class Problem {
                 }
             }
 
-            if (!truck.checkRelatedCollect(route, a)){
+            if (!truck.checkRelatedCollect(route, a)) {
                 return false;
             }
 
@@ -486,97 +495,97 @@ public class Problem {
 
     //swap 2 drop/collect
     private Solution swapDropCollect(Solution initialSolution) {
-    	//System.out.println("start neighbour searching");
-        Solution bestSolution=new Solution(initialSolution);
-        int iterations=0;
-        while(true){
-        	//System.out.println("lus");
-        	Solution solution=new Solution(bestSolution);
-        	Action collect1 = null;
-        	Action drop1=null;
-        	Action collect2 = null;
-        	Action drop2=null;
-        	
-        	int collect1Index = 0;
-        	int drop1Index=0;
-        	int collect2Index=0;
-        	int drop2Index=0;
-        	
-        	List<Truck> trucks = new ArrayList(solution.getRoutes().keySet());
-        	int aantalTrucks=trucks.size();
-        	
-        	//2 verschillende randomtrucks nemen
-        	Truck randomTruck1=trucks.get(random.nextInt(aantalTrucks));
-        	while(solution.getRoutes().get(randomTruck1).size()<=2){
-        		randomTruck1=trucks.get(random.nextInt(aantalTrucks));
-        	}
-        	Truck randomTruck2=trucks.get(random.nextInt(aantalTrucks));
-        	while(randomTruck1.getId()==randomTruck2.getId()||solution.getRoutes().get(randomTruck2).size()<=2){
-        		randomTruck2=trucks.get(random.nextInt(aantalTrucks));
-        	}
-        	
-        	List<Action>lijst1=solution.getRoutes().get(randomTruck1);
-        	List<Action>lijst2=solution.getRoutes().get(randomTruck2);
+        //System.out.println("start neighbour searching");
+        Solution bestSolution = new Solution(initialSolution);
+        int iterations = 0;
+        while (true) {
+            //System.out.println("lus");
+            Solution solution = new Solution(bestSolution);
+            Action collect1 = null;
+            Action drop1 = null;
+            Action collect2 = null;
+            Action drop2 = null;
 
-        	
-        	//zoek  drop in randomtruck1
-            while(true){
-            	drop1Index = random.nextInt(lijst1.size());
-                Action action=lijst1.get(drop1Index);
-                if(action.getType()==false ){
-                	drop1=action;
-                	break;
-                }
-                	
+            int collect1Index = 0;
+            int drop1Index = 0;
+            int collect2Index = 0;
+            int drop2Index = 0;
+
+            List<Truck> trucks = new ArrayList(solution.getRoutes().keySet());
+            int aantalTrucks = trucks.size();
+
+            //2 verschillende randomtrucks nemen
+            Truck randomTruck1 = trucks.get(random.nextInt(aantalTrucks));
+            while (solution.getRoutes().get(randomTruck1).size() <= 2) {
+                randomTruck1 = trucks.get(random.nextInt(aantalTrucks));
+            }
+            Truck randomTruck2 = trucks.get(random.nextInt(aantalTrucks));
+            while (randomTruck1.getId() == randomTruck2.getId() || solution.getRoutes().get(randomTruck2).size() <= 2) {
+                randomTruck2 = trucks.get(random.nextInt(aantalTrucks));
             }
 
-        	//zoek bijhorende collection in randomtruck1
-            while(true){
+            List<Action> lijst1 = solution.getRoutes().get(randomTruck1);
+            List<Action> lijst2 = solution.getRoutes().get(randomTruck2);
+
+
+            //zoek  drop in randomtruck1
+            while (true) {
+                drop1Index = random.nextInt(lijst1.size());
+                Action action = lijst1.get(drop1Index);
+                if (action.getType() == false) {
+                    drop1 = action;
+                    break;
+                }
+
+            }
+
+            //zoek bijhorende collection in randomtruck1
+            while (true) {
                 collect1Index = random.nextInt(lijst1.size());
-                Action action=lijst1.get(collect1Index);
-                if(action.getType()==true && action.getMachine().getId()==drop1.getMachine().getId()){
-                	collect1=action;
-                	break;
+                Action action = lijst1.get(collect1Index);
+                if (action.getType() == true && action.getMachine().getId() == drop1.getMachine().getId()) {
+                    collect1 = action;
+                    break;
                 }
-                	
+
             }
-        	//zoek drop in randomtruck2
-            while(true){
-            	drop2Index = random.nextInt(lijst2.size());
-                Action action=lijst2.get(drop2Index);
-                if(action.getType()==false){
-                	drop2=action;
-                	break;
+            //zoek drop in randomtruck2
+            while (true) {
+                drop2Index = random.nextInt(lijst2.size());
+                Action action = lijst2.get(drop2Index);
+                if (action.getType() == false) {
+                    drop2 = action;
+                    break;
                 }
-                	
+
             }
 
-            
-        	//zoek bijhorende collection in randomTruck2
-            while(true){
-            	collect2Index = random.nextInt(lijst2.size());
-                Action action=	lijst2.get(collect2Index);
-                if(action.getType()==true && action.getMachine().getId()==drop2.getMachine().getId()){
-                	collect2=action;
-                	break;
+
+            //zoek bijhorende collection in randomTruck2
+            while (true) {
+                collect2Index = random.nextInt(lijst2.size());
+                Action action = lijst2.get(collect2Index);
+                if (action.getType() == true && action.getMachine().getId() == drop2.getMachine().getId()) {
+                    collect2 = action;
+                    break;
                 }
-                	
+
             }
-            
+
             solution.getRoutes().get(randomTruck1).remove(collect1);
             solution.getRoutes().get(randomTruck1).remove(drop1);
             solution.getRoutes().get(randomTruck2).remove(collect2);
             solution.getRoutes().get(randomTruck2).remove(drop2);
 
-            int newDrop1Index=1+random.nextInt(solution.getRoutes().get(randomTruck1).size());
-            int newCollect1Index=random.nextInt(newDrop1Index);
-            int newDrop2Index=1+random.nextInt(solution.getRoutes().get(randomTruck2).size());
-            int newCollect2Index=random.nextInt(newDrop2Index);
-            
-            solution.getRoutes().get(randomTruck1).add(newCollect1Index,collect2);
-            solution.getRoutes().get(randomTruck1).add(newDrop1Index,drop2);
-            solution.getRoutes().get(randomTruck2).add(newCollect2Index,collect1);
-            solution.getRoutes().get(randomTruck2).add(newDrop2Index,drop1);
+            int newDrop1Index = 1 + random.nextInt(solution.getRoutes().get(randomTruck1).size());
+            int newCollect1Index = random.nextInt(newDrop1Index);
+            int newDrop2Index = 1 + random.nextInt(solution.getRoutes().get(randomTruck2).size());
+            int newCollect2Index = random.nextInt(newDrop2Index);
+
+            solution.getRoutes().get(randomTruck1).add(newCollect1Index, collect2);
+            solution.getRoutes().get(randomTruck1).add(newDrop1Index, drop2);
+            solution.getRoutes().get(randomTruck2).add(newCollect2Index, collect1);
+            solution.getRoutes().get(randomTruck2).add(newDrop2Index, drop1);
 
             return solution;
             /*
@@ -600,14 +609,14 @@ public class Problem {
         	iterations++;
         	*/
         }
-		
-	}
+
+    }
 
     //Neighbour methode op basis van rearrangeRoute(...)
-    private Solution rearrangeRoute(Solution solution){
+    private Solution rearrangeRoute(Solution solution) {
         Solution tempSolution = new Solution(solution);
 
-        List<Map.Entry<Truck,List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
+        List<Map.Entry<Truck, List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
         Collections.shuffle(tempset);
 
         List<Action> newRoute = rearrangeRoute(tempset.get(0).getValue(), tempset.get(0).getKey());
@@ -630,8 +639,8 @@ public class Problem {
         Truck toTruck = null;
 
         //starten van een "niet-lege" route
-        while(routesFrom.isEmpty()) {
-            List<Map.Entry<Truck,List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
+        while (routesFrom.isEmpty()) {
+            List<Map.Entry<Truck, List<Action>>> tempset = new ArrayList<>(tempSolution.routes.entrySet());
             Collections.shuffle(tempset);
 
             routesFrom = tempset.get(0).getValue();
@@ -691,17 +700,16 @@ public class Problem {
         Action collect = null, drop = null;
         Action temp = routesFrom.remove(index);
 
-        if(temp.getType()) {
+        if (temp.getType()) {
             collect = temp;
-        }
-        else {
+        } else {
             drop = temp;
         }
 
         // find associated collect or drop
-        for(int i = 0; i<routesFrom.size(); i++){
-            if(routesFrom.get(i).getMachine().equals(temp.getMachine())){
-                if(temp.getType())
+        for (int i = 0; i < routesFrom.size(); i++) {
+            if (routesFrom.get(i).getMachine().equals(temp.getMachine())) {
+                if (temp.getType())
                     drop = routesFrom.remove(i);
                 else collect = routesFrom.remove(i);
                 break;
@@ -712,7 +720,7 @@ public class Problem {
         //System.out.println(fromTruck.getId() + "   " + toTruck.getId());
 
         //Add them in ToRoute
-        if(routesTo.size() !=0) {
+        if (routesTo.size() != 0) {
             routesTo.add(random.nextInt(routesTo.size()), collect);
             int indexOfCollect = routesTo.indexOf(collect);
             int indexOfDrop = -1;
@@ -735,7 +743,7 @@ public class Problem {
         return tempSolution;
     }
 
-    private boolean addCollectDropPairToRoute(Action collect, Action drop, Truck to, List<Action> routesTo){
+    private boolean addCollectDropPairToRoute(Action collect, Action drop, Truck to, List<Action> routesTo) {
         // toevoegen van drop/collect, collect en drop worden aansluitend aan mekaar gedaan (CD)
         // returnt true als er een feasible 'inert is gevonden voor die route'
         int aantalActions = routesTo.size();
@@ -743,16 +751,16 @@ public class Problem {
         // (laatste drop is meestal op einddepot)
         // collect mag niet op laatste en voorlaatste
 
-        List <Integer> indexen = new ArrayList<>();
-        for(int i = 0 ; i<aantalActions-2;i++)
+        List<Integer> indexen = new ArrayList<>();
+        for (int i = 0; i < aantalActions - 2; i++)
             indexen.add(i);
 
-        while(!indexen.isEmpty()){
+        while (!indexen.isEmpty()) {
             int i = indexen.get(random.nextInt(indexen.size()));
-        //for(int i = 0; i<aantalActions-2;i++){
-            routesTo.add(i,collect);
-            routesTo.add(i+1,drop);
-            if(Solution.isFeasibleTruck(to,routesTo)){
+            //for(int i = 0; i<aantalActions-2;i++){
+            routesTo.add(i, collect);
+            routesTo.add(i + 1, drop);
+            if (Solution.isFeasibleTruck(to, routesTo)) {
                 return true;
             }
             // wanneer de truck niet feasible is, acties terug verwijderen en op andere plaatsen invoegen
