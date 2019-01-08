@@ -290,7 +290,7 @@ public class Solution {
 
             this.routes.forEach((truck, actions) -> {
                 if(addDummyPairCheck(truck, actions, collect, drop)){
-                    swapDummyPair(dummyTruck, truck, collect, drop);
+                    //swapDummyPair(dummyTruck, truck, collect, drop);
                 }
             });
 
